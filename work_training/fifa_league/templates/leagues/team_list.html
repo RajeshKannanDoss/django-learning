@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leagues - Main</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="All FIFA leagues">
+    <meta name="keywords" content="FIFA, football">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all">
+    <style>
+     * {
+            margin:0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .main_menu {
+            width: 100vw;
+            height: 10vh;
+            background-color: green;
+        }
+
+        .teams_table
+        {
+            float: left;
+            width: 50vw;
+            border: 0.15em solid black;
+            border-collapse: collapse;
+        }
+
+        .teams_table td
+        {
+            border: 0.1em solid black;
+            padding: 0.5em;
+        }
+
+        .teams_table td a
+        {
+            text-decoration: none;
+            color: black;
+            font-size: 1.5em;
+        }
+
+        .teams_table td a:hover
+        {
+            color: grey;
+        }
+
+        .create_match_div
+        {
+            width: 50vw;
+            float: right;
+        }
+     </style>
+</head>
+<body>
+<div class="main_menu">
+
+</div>
+
+<div>
+    {% if teams %}
+        <table class="teams_table">
+            <tr>
+                <td>Team</td>
+                <td>Count</td>
+                <td>Wins</td>
+                <td>Loses</td>
+                <td>Draws</td>
+                <td>Goals SC</td>
+                <td>Goals CN</td>
+                <td>Points</td>
+            </tr>
+            {% for team in teams %}
+            <tr>
+                <td><a href='{{team.shortcut}}'> {{ team.name }} </a></td>
+                <td> {{ team.match_count }} </td>
+                <td> {{ team.wins }} </td>
+                <td> {{ team.loses }} </td>
+                <td> {{ team.draws }} </td>
+                <td> {{ team.goals_scored }} </td>
+                <td> {{ team.goals_conceded }} </td>
+                <td> {{ team.points }} </td>
+            </tr>
+            {% endfor%}
+        </table>
+    {% else %}
+        <p>No teams available</p>
+    {% endif %}
+</div>
+
+<div class="create_match_div">
+    <h3>Create match</h3>
+    <form action="create_match/" method="post">
+        {% csrf_token %}
+        Home:
+        <select name="home_team">
+            {% for team in teams %}
+                <option value="{{team.shortcut}}"> {{ team.name }}</option>
+            {% endfor%}
+        </select>
+        <br>
+        Guest:
+        <select name="guest_team">
+            {% for team in teams %}
+                <option value="{{team.shortcut}}"> {{ team.name }}</option>
+            {% endfor%}
+        </select>
+        <br>
+        Home score: <input type="number" name="home_score" min="0" max="999" required>
+        <br>
+        Guest score: <input type="number" name="guest_score" min="0" max="999" required>
+        <input type="submit" value="Create match">
+    </form>
+</div>
+
+<div class="create_team_div">
+    <h3>Create team</h3>
+    <form action="create_team/" method="post">
+        {% csrf_token %}
+        League:
+        <select name="league_name">
+            {% for league in leagues_list  %}
+                <option value="{{league.shortcut}}"> {{ league.name }}</option>
+            {% endfor%}
+        </select>
+        <br>
+        Team name: <input name="team_name">
+        <br>
+        Team shortcut (for user-friendly url): <input name="team_shortcut" required pattern="[A-Za-z0-9]+">
+        <input type="submit" value="Create team" required>
+    </form>
+</div>
+
+</body>
+</html>

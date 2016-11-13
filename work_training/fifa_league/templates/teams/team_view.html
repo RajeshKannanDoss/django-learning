@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leagues - Main</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="All FIFA leagues">
+    <meta name="keywords" content="FIFA, football">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all">
+    <style>
+        * {
+            margin:0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .main_menu {
+            width: 100vw;
+            height: 10vh;
+            background-color: green;
+        }
+
+        .match
+        {
+            text-align: center;
+            border: 0.1em solid green;
+            padding: 0.5em;
+            width: 100%;
+        }
+
+        .matches_div
+        {
+            width: 40vw;
+            float: left;
+        }
+
+        .players_div
+        {
+            width: 40vw;
+            float: right;
+        }
+
+        .player
+        {
+            text-align:center;
+            border: 0.1em solid red;
+            padding: 0.5em;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="main_menu">
+
+</div>
+<h1> Team name: {{ team.name }} </h1>
+<div class="matches_div">
+    <h2>Matches:</h2>
+    {% if team.team_home.all and team.team_guest.all %}
+        {% for match in team.team_home.all %}
+            <div class="match">
+                Home  -  Guest <br>
+                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home_goals }} - {{ match.team_guest_goals}}
+            </div>
+        {% endfor%}
+        {% for match in team.team_guest.all%}
+             <div class="match">
+                 Home  -  Guest <br>
+                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home_goals }} - {{ match.team_guest_goals}}
+             </div>
+        {% endfor%}
+    {% elif team.team_home.all %}
+        {% for match in team.team_home.all %}
+             <div class="match">
+                 Home  -  Guest <br>
+                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home_goals }} - {{ match.team_guest_goals}}
+             </div>
+        {% endfor%}
+    {% elif team.team_guest.all %}
+        {% for match in team.team_guest.all %}
+             <div class="match">
+                 Home  -  Guest <br>
+                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home_goals }} - {{ match.team_guest_goals}}
+             </div>
+        {% endfor%}
+    {% else %}
+        <h2>No matches</h2>
+    {% endif %}
+</div>
+<div class="players_div">
+    <h2>Players:</h2>
+    {% for player in team.player_set.all %}
+             <div class="player">
+                 Name: {{ player.name }} <br>
+                 Age: {{ player.age }}
+             </div>
+        {% endfor%}
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leagues - Main</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="All FIFA leagues">
+    <meta name="keywords" content="FIFA, football">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all">
+    <style>
+        * {
+            margin:0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .league_list {
+            list-style: none;
+            margin-left: 2em;
+        }
+
+        .league_list li a
+        {
+            text-decoration: none;
+            color: black;
+            font-size: 1.5em;
+        }
+
+        .league_list li a:hover
+        {
+            color: grey;
+        }
+
+        .main_menu {
+            width: 100vw;
+            height: 10vh;
+            background-color: green;
+        }
+
+        .create_match_div
+        {
+            float: right;
+        }
+
+        .create_team_div
+        {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+<div class="main_menu">
+
+</div>
+
+<div>
+    <h2>Leagues:</h2>
+    {% if leagues_list %}
+        <ul class="league_list">
+            {% for league in leagues_list %}
+            <li><a href='{{league.shortcut}}'> {{ league.name }} </a></li>
+            {% endfor%}
+        </ul>
+    {% else %}
+        <h2>No leagues available</h2>
+    {% endif %}
+</div>
+</body>
+</html>
