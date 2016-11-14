@@ -1,4 +1,4 @@
-from .models import League, Team, Match
+from .models import League, Team, Match, TeamStat
 from django.views import generic, View
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -15,20 +15,25 @@ class IndexView(generic.ListView):
 # Teams for league view
 class TeamsView(View):
     def get(self, request, *args, **kwargs):
-        teams = url_to_id(str(self.kwargs['league_id']), League).team_set.order_by("points").reverse()
+        teams = url_to_id(str(self.kwargs['league_id']), League).league.order_by("points").reverse()
         leagues_list = League.objects.all()
         return render(request, 'leagues/team_list.html', {'teams': teams, 'leagues_list': leagues_list})
 
 
-class TeamView(generic.ListView):
-    template_name = 'teams/team_view.html'
-    context_object_name = 'team'
+class TeamView(View):
+    def get(self, request, *args, **kwargs):
+        league = League.objects.get(shortcut=self.kwargs['league_id'])
+        team = Team.objects.get(shortcut=self.kwargs['team_id'])
+        team_stat = team.team.get(team=team, league=league)
+        return render(request, 'teams/team_view.html', {'team': team, 'team_stat': team_stat})
 
-    def get_queryset(self):
-        object = League.objects.get(shortcut=self.kwargs['league_id'])
-        return object.team_set.get(shortcut=self.kwargs['team_id'])
+
+class AddMenu(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'menus/add_menu.html')
 
 
+# Not in use
 class CreateMatch(View):
     def post(self, request, *args, **kwargs):
         win_point = 3
@@ -69,6 +74,7 @@ class CreateMatch(View):
         return HttpResponseRedirect('/fifa/' + self.kwargs['league_id'])
 
 
+# Not in use 
 class CreateTeam(View):
     def post(self, request, *args, **kwargs):
         league = url_to_id(request.POST['league_name'], League)

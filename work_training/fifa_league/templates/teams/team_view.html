@@ -56,34 +56,34 @@
 <h1> Team name: {{ team.name }} </h1>
 <div class="matches_div">
     <h2>Matches:</h2>
-    {% if team.team_home.all and team.team_guest.all %}
-        {% for match in team.team_home.all %}
+    {% if team_stat.team_home.all and team_stat.team_guest.all %}
+        {% for match in team_stat.team_home.all %}
             <div class="match">
                 Home  -  Guest <br>
-                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home.team.name }}  - {{ match.team_guest.team.name }} <br>
                 {{ match.team_home_goals }} - {{ match.team_guest_goals}}
             </div>
         {% endfor%}
-        {% for match in team.team_guest.all%}
+        {% for match in team_stat.team_guest.all%}
              <div class="match">
                  Home  -  Guest <br>
-                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home.team.name }}  - {{ match.team_guest.team.name }} <br>
                 {{ match.team_home_goals }} - {{ match.team_guest_goals}}
              </div>
         {% endfor%}
-    {% elif team.team_home.all %}
-        {% for match in team.team_home.all %}
+    {% elif team_stat.team_home.all %}
+        {% for match in team_stat.team_home.all %}
              <div class="match">
                  Home  -  Guest <br>
-                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home.team.name }}  - {{ match.team_guest.team.name }} <br>
                 {{ match.team_home_goals }} - {{ match.team_guest_goals}}
              </div>
         {% endfor%}
-    {% elif team.team_guest.all %}
-        {% for match in team.team_guest.all %}
+    {% elif team_stat.team_guest.all %}
+        {% for match in team_stat.team_guest.all %}
              <div class="match">
                  Home  -  Guest <br>
-                {{ match.team_home }}  - {{ match.team_guest }} <br>
+                {{ match.team_home.team.name }}  - {{ match.team_guest.team.name }} <br>
                 {{ match.team_home_goals }} - {{ match.team_guest_goals}}
              </div>
         {% endfor%}

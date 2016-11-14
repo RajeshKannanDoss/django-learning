@@ -73,7 +73,7 @@
             </tr>
             {% for team in teams %}
             <tr>
-                <td><a href='{{team.shortcut}}'> {{ team.name }} </a></td>
+                <td><a href='{{team.team.shortcut}}'> {{ team.team.name }} </a></td>
                 <td> {{ team.match_count }} </td>
                 <td> {{ team.wins }} </td>
                 <td> {{ team.loses }} </td>
@@ -88,49 +88,5 @@
         <p>No teams available</p>
     {% endif %}
 </div>
-
-<div class="create_match_div">
-    <h3>Create match</h3>
-    <form action="create_match/" method="post">
-        {% csrf_token %}
-        Home:
-        <select name="home_team">
-            {% for team in teams %}
-                <option value="{{team.shortcut}}"> {{ team.name }}</option>
-            {% endfor%}
-        </select>
-        <br>
-        Guest:
-        <select name="guest_team">
-            {% for team in teams %}
-                <option value="{{team.shortcut}}"> {{ team.name }}</option>
-            {% endfor%}
-        </select>
-        <br>
-        Home score: <input type="number" name="home_score" min="0" max="999" required>
-        <br>
-        Guest score: <input type="number" name="guest_score" min="0" max="999" required>
-        <input type="submit" value="Create match">
-    </form>
-</div>
-
-<div class="create_team_div">
-    <h3>Create team</h3>
-    <form action="create_team/" method="post">
-        {% csrf_token %}
-        League:
-        <select name="league_name">
-            {% for league in leagues_list  %}
-                <option value="{{league.shortcut}}"> {{ league.name }}</option>
-            {% endfor%}
-        </select>
-        <br>
-        Team name: <input name="team_name">
-        <br>
-        Team shortcut (for user-friendly url): <input name="team_shortcut" required pattern="[A-Za-z0-9]+">
-        <input type="submit" value="Create team" required>
-    </form>
-</div>
-
 </body>
 </html>
