@@ -8,46 +8,8 @@
     <meta name="keywords" content="FIFA, football">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all">
-    <style>
-        * {
-            margin:0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .main_menu {
-            width: 100vw;
-            height: 10vh;
-            background-color: green;
-        }
-
-        .match
-        {
-            text-align: center;
-            border: 0.1em solid green;
-            padding: 0.5em;
-            width: 100%;
-        }
-
-        .matches_div
-        {
-            width: 40vw;
-            float: left;
-        }
-
-        .players_div
-        {
-            width: 40vw;
-            float: right;
-        }
-
-        .player
-        {
-            text-align:center;
-            border: 0.1em solid red;
-            padding: 0.5em;
-            width: 100%;
-        }
-    </style>
+    {% load static %}
+    <link href="{% static 'fifa_league/css/team_view.css'%}" rel="stylesheet"/>
 </head>
 <body>
 <div class="main_menu">

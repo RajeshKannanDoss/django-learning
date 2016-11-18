@@ -1,0 +1,37 @@
+* {
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.league_list {
+    list-style: none;
+    margin-left: 2em;
+}
+
+.league_list li a
+{
+    text-decoration: none;
+    color: black;
+    font-size: 1.5em;
+}
+
+.league_list li a:hover
+{
+    color: grey;
+}
+
+.main_menu {
+    width: 100vw;
+    height: 10vh;
+    background-color: green;
+}
+
+.create_match_div
+{
+    float: right;
+}
+
+.create_team_div
+{
+    float: right;
+}

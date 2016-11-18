@@ -1,0 +1,38 @@
+* {
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.main_menu {
+    width: 100vw;
+    height: 10vh;
+    background-color: green;
+}
+
+.match
+{
+    text-align: center;
+    border: 0.1em solid green;
+    padding: 0.5em;
+    width: 100%;
+}
+
+.matches_div
+{
+    width: 40vw;
+    float: left;
+}
+
+.players_div
+{
+    width: 40vw;
+    float: right;
+}
+
+.player
+{
+    text-align:center;
+    border: 0.1em solid red;
+    padding: 0.5em;
+    width: 100%;
+}

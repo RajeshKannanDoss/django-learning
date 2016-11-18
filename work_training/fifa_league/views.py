@@ -16,8 +16,8 @@ class IndexView(generic.ListView):
 class TeamsView(View):
     def get(self, request, *args, **kwargs):
         teams = url_to_id(str(self.kwargs['league_id']), League).league.order_by("points").reverse()
-        leagues_list = League.objects.all()
-        return render(request, 'leagues/team_list.html', {'teams': teams, 'leagues_list': leagues_list})
+        league = url_to_id(str(self.kwargs['league_id']), League)
+        return render(request, 'leagues/team_list.html', {'teams': teams, 'league': league})
 
 
 class TeamView(View):
@@ -74,7 +74,7 @@ class CreateMatch(View):
         return HttpResponseRedirect('/fifa/' + self.kwargs['league_id'])
 
 
-# Not in use 
+# Not in use
 class CreateTeam(View):
     def post(self, request, *args, **kwargs):
         league = url_to_id(request.POST['league_name'], League)

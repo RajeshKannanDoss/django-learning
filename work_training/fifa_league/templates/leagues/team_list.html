@@ -2,56 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Leagues - Main</title>
+    <title>{{ league.name }} - League</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="All FIFA leagues">
     <meta name="keywords" content="FIFA, football">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all">
-    <style>
-     * {
-            margin:0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .main_menu {
-            width: 100vw;
-            height: 10vh;
-            background-color: green;
-        }
 
-        .teams_table
-        {
-            float: left;
-            width: 50vw;
-            border: 0.15em solid black;
-            border-collapse: collapse;
-        }
-
-        .teams_table td
-        {
-            border: 0.1em solid black;
-            padding: 0.5em;
-        }
-
-        .teams_table td a
-        {
-            text-decoration: none;
-            color: black;
-            font-size: 1.5em;
-        }
-
-        .teams_table td a:hover
-        {
-            color: grey;
-        }
-
-        .create_match_div
-        {
-            width: 50vw;
-            float: right;
-        }
-     </style>
+    {% load static%}
+    <link href="{% static 'fifa_league/css/team_list.css'%}" rel="stylesheet" />
 </head>
 <body>
 <div class="main_menu">
