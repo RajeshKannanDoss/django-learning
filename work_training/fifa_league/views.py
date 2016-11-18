@@ -1,6 +1,6 @@
 from .models import League, Team, Match, TeamStat
 from django.views import generic, View
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 
 
@@ -28,50 +28,76 @@ class TeamView(View):
         return render(request, 'teams/team_view.html', {'team': team, 'team_stat': team_stat})
 
 
-class AddMenu(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'menus/add_menu.html')
+def get_data(request):
+    if request.is_ajax:
+        action = request.POST['action']
+        if action == 'get_teams_list_from_league':
+            try:
+                league_shortcut = request.POST['league_shortcut']
+                teams = League.objects.get(shortcut=league_shortcut).league.all()
+                response = []
+                response_data = {}
+                for team in teams:
+                    response.append(team.team.name)
+                response_data['teams_names'] = response
+                return JsonResponse(response_data)
+            except:
+                return HttpResponse("[!] Error")
+
+class CreateLeague(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            league_name = str(request.POST['name'])
+            league_shortcut = str(request.POST['shortcut'])
+            league = League.objects.create(name=league_name, shortcut=league_shortcut)
+            league.save()
+            return HttpResponse("League" + league_name)
+        except:
+            return HttpResponse("[!] Error")
 
 
-# Not in use
 class CreateMatch(View):
     def post(self, request, *args, **kwargs):
         win_point = 3
         draw_point = 1
-        home_team = url_to_id(request.POST['home_team'], Team)
-        guest_team = url_to_id(request.POST['guest_team'], Team)
+        league = League.objects.get(shortcut=request.POST['league'])
+        home_team = Team.objects.get(name=request.POST['home_team'])
+        guest_team = Team.objects.get(name=request.POST['guest_team'])
 
         if home_team == guest_team:
-            return HttpResponseRedirect("/fifa/")
+            return HttpResponse("[!] Error")
 
         home_score = int(request.POST['home_score'])
         guest_score = int(request.POST['guest_score'])
+
+        home_stat = TeamStat.objects.get(team=home_team, league=league)
+        guest_stat = TeamStat.objects.get(team=guest_team, league=league)
         if home_score > guest_score:
-            home_team.points += win_point
-            home_team.wins += 1
-            guest_team.loses += 1
+            home_stat.points += win_point
+            home_stat.wins += 1
+            guest_stat.loses += 1
         elif home_score < guest_score:
-            guest_team.points += win_point
-            guest_team.wins += 1
-            home_team.loses += 1
+            guest_stat.points += win_point
+            guest_stat.wins += 1
+            home_stat.loses += 1
         else:
-            guest_team.draws += draw_point
-            home_team.draws += draw_point
-            guest_team.points += 1
-            home_team.points += 1
+            guest_stat.draws += draw_point
+            home_stat.draws += draw_point
+            guest_stat.points += 1
+            home_stat.points += 1
 
-        home_team.match_count += 1
-        guest_team.match_count += 1
-        home_team.goals_scored += home_score
-        guest_team.goals_scored += guest_score
-        home_team.goals_conceded += guest_score
-        guest_team.goals_conceded += home_score
+        home_stat.match_count += 1
+        guest_stat.match_count += 1
+        home_stat.goals_scored += home_score
+        guest_stat.goals_scored += guest_score
+        home_stat.goals_conceded += guest_score
+        guest_stat.goals_conceded += home_score
 
-        match = Match.objects.create(team_home=home_team, team_guest=guest_team, team_home_goals=home_score, team_guest_goals=guest_score)
+        match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score, team_guest_goals=guest_score)
         match.save()
-        home_team.save()
-        guest_team.save()
-        return HttpResponseRedirect('/fifa/' + self.kwargs['league_id'])
+        home_stat.save()
+        guest_stat.save()
+        return HttpResponse("All work!")
 
 
 # Not in use

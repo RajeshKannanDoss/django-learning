@@ -1,0 +1,33 @@
+.add_menu
+{
+    position: fixed;
+    display: none;
+    z-index: 10;
+    width: 30%;
+    height: 30%;
+    padding: 0.5em;
+    background-color: white;
+    color: black;
+    margin-left: 35%;
+    margin-top: 15%;
+    border: 0.2em solid green;
+}
+
+.close
+{
+    position: absolute;
+    right: 0;
+
+    width: 4em;
+    height: 4em;
+    margin-top: .8em;
+    margin-right: .8em;
+}
+
+.close:hover
+{
+    width: 4.2em;
+    height: 4.2em;
+    margin-top: .7em;
+    margin-right: .7em;
+}

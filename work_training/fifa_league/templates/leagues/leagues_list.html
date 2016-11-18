@@ -8,51 +8,69 @@
     <meta name="keywords" content="FIFA, football">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all">
-    {% load static%}
+
+    {% load static %}
+
     <link href="{% static 'fifa_league/css/leagues_list.css'%}" rel="stylesheet" />
-    <style>
-        * {
-            margin:0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        .league_list {
-            list-style: none;
-            margin-left: 2em;
-        }
+    <link href="{% static 'fifa_league/css/addmenu.css'%}" rel="stylesheet" />
 
-        .league_list li a
-        {
-            text-decoration: none;
-            color: black;
-            font-size: 1.5em;
-        }
-
-        .league_list li a:hover
-        {
-            color: grey;
-        }
-
-        .main_menu {
-            width: 100vw;
-            height: 10vh;
-            background-color: green;
-        }
-
-        .create_match_div
-        {
-            float: right;
-        }
-
-        .create_team_div
-        {
-            float: right;
-        }
-    </style>
+    <script src="{% static 'fifa_league/libs/jquery-3.1.0.min.js' %}"></script>
+    <script src="{% static 'fifa_league/js/Ajax.js' %}"></script>
+    <script src="{% static 'fifa_league/js/UI.js' %}"></script>
+    <script>
+        $(document).ready(function (){
+            UI.init();
+        })
+    </script>
 </head>
 <body>
+{% csrf_token %}
+<div class="add_menu" id="add-league-menu">
+    <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
+    <h3>Create new league</h3>
+    <form action="/fifa/create_league/" method="post" id="create-league-form">
+        Name: <input id="league-name-form" required>
+        <br>
+        Shortcut: <input id="league-shortcut-form" required pattern="[A-Za-z0-9]+">
+        <br>
+        <input type="submit" value="Create league">
+    </form>
+</div>
+
+<div class="add_menu" id="add-match-menu">
+    <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
+    <h3>Create new match</h3>
+    <form action="/fifa/create_match/" method="post" id="create-match-form">
+        League:
+        <select id="match-league-form">
+            {% for league in leagues_list %}
+                <option value="{{league.shortcut}}"> {{ league.name }}</option>
+            {% endfor%}
+        </select>
+        <br>
+        Home:
+        <select id="match-home-form">
+
+        </select>
+        <br>
+        Guest:
+        <select id="match-guest-form">
+
+        </select>
+        <br>
+        Home score: <input type="number" id="match-home-score-form" min="0" max="999" required>
+        <br>
+        Guest score: <input type="number" id="match-guest-score-form" min="0" max="999" required>
+        <br>
+        <input type="submit" value="Create league">
+    </form>
+</div>
+
+
+
 <div class="main_menu">
-    <a href="{% url 'fifa_league:add_menu' %}">Add menu</a>
+    <button id="add-league-menu-button">Add league</button>
+    <button id="add-match-menu-button">Add match</button>
 </div>
 
 <div>
