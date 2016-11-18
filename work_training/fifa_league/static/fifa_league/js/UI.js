@@ -2,14 +2,23 @@ var UI = {
     init: function () {
         var leagueMenuButton = $("#add-league-menu-button");
         var matchMenuButton = $("#add-match-menu-button");
+        var teamMenuButton = $("#add-team-menu-button");
+        var playerMenuButton = $("#add-player-menu-button");
+        var teamToLeagueMenuButton = $("#add-team-to-league-menu-button");
 
         var leagueMenu = $("#add-league-menu");
         var matchMenu = $("#add-match-menu");
+        var teamMenu = $("#add-team-menu");
+        var playerMenu = $("#add-player-menu");
+        var teamToLeagueMenu = $("#add-team-to-league-menu");
 
         var closeButton = $(".close");
 
         var createLeagueForm = $("#create-league-form");
         var createMatchForm = $("#create-match-form");
+        var createTeamForm = $("#create-team-form");
+        var createPlayerForm = $("#create-player-form");
+        var createTeamToLeagueForm = $("#create-team-to-league-form");
 
         // Menus open
         // START
@@ -19,6 +28,20 @@ var UI = {
 
         matchMenuButton.on("click", function(){
             matchMenu.fadeIn(250);
+        })
+
+        teamMenuButton.on("click", function(){
+            teamMenu.fadeIn(250);
+        })
+
+        playerMenuButton.on("click", function(){
+            get_all_teams("player-team-form");
+            playerMenu.fadeIn(250);
+        })
+
+        teamToLeagueMenuButton.on("click", function(){
+            get_all_teams("team-to-league-team-form");
+            teamToLeagueMenu.fadeIn(250);
         })
         // END
 
@@ -49,7 +72,7 @@ var UI = {
             })
         // END
 
-        // get all teams
+        // get all teams for league
         // START
         $("#match-league-form").on("change", function(){
                 var obj = {
@@ -83,8 +106,7 @@ var UI = {
 
         // create match
         // START
-         createMatchForm.on("submit", function(event)
-            {
+         createMatchForm.on("submit", function(event){
                 event.preventDefault();
                 var obj = {
                     league: $("#match-league-form").val(),
@@ -95,10 +117,95 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/create_match/")
                 .done(function (response) {
-                    console(response);
+                    console.log(response);
                 })
                 .fail(function (response) {
-                    console(response);
+                    console.log(response);
+                })
+            })
+        // END
+
+        // create team
+        // START
+        createTeamForm.on("submit", function(event)
+            {
+                event.preventDefault();
+                var obj = {
+                    team_name: $("#team-name-form").val(),
+                    team_shortcut: $("#team-shortcut-form").val(),
+                }
+                Ajax.send(obj, "/fifa/create_team/")
+                .done(function (response) {
+                    console.log(response);
+                })
+                .fail(function (response) {
+                    console.log(response);
+                })
+            })
+        // END
+
+        // create player
+        // START
+        createPlayerForm.on("submit", function(event)
+            {
+                event.preventDefault();
+                var obj = {
+                    player_name: $("#player-name-form").val(),
+                    player_age: $("#player-age-form").val(),
+                    player_team: $("#player-team-form").val(),
+                }
+                Ajax.send(obj, "/fifa/create_player/")
+                .done(function (response) {
+                    console.log(response);
+                })
+                .fail(function (response) {
+                    console.log(response);
+                })
+            })
+        // END
+
+        // get all teams (need to refactory in future)
+        // START
+        function get_all_teams(id){
+                element = $("#" + id)
+                var obj = {
+                    action: "get_teams_list",
+                    team: element.val(),
+                }
+                Ajax.send(obj, "/fifa/get_data/")
+                .done(function (response) {
+                   teams_names_list = response['teams_names']
+                   element.empty();
+                   for(i=0; i < teams_names_list.length; i++)
+                   {
+                   new_option = $("<option>");
+                   new_option.attr("value", teams_names_list[i]);
+                   new_option.html(teams_names_list[i]);
+
+                   element.append(new_option);
+                   }
+                })
+                .fail(function (response) {
+                    console.log(response);
+                })
+        }
+        // END
+
+        // add team to league
+        // START
+        createTeamToLeagueForm.on("submit", function(event)
+            {
+                event.preventDefault();
+                var obj = {
+                    team_name: $("#team-to-league-team-form").val(),
+                    league_name: $("#team-to-league-league-form").val(),
+                }
+                Ajax.send(obj, "/fifa/add_team_to_league/")
+                .done(function (response) {
+                    console.log(response);
+                })
+                .fail(function (response) {
+                    console.log(response);
                 })
             })
         // END

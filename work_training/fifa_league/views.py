@@ -1,6 +1,6 @@
-from .models import League, Team, Match, TeamStat
+from .models import League, Team, Match, TeamStat, Player
 from django.views import generic, View
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 
@@ -17,32 +17,44 @@ class TeamsView(View):
     def get(self, request, *args, **kwargs):
         teams = url_to_id(str(self.kwargs['league_id']), League).league.order_by("points").reverse()
         league = url_to_id(str(self.kwargs['league_id']), League)
-        return render(request, 'leagues/team_list.html', {'teams': teams, 'league': league})
+        leagues_list = League.objects.all()
+        return render(request, 'leagues/team_list.html', {'teams': teams, 'leagues_list': leagues_list, 'league':league})
 
 
 class TeamView(View):
     def get(self, request, *args, **kwargs):
         league = League.objects.get(shortcut=self.kwargs['league_id'])
+        leagues_list = League.objects.all()
         team = Team.objects.get(shortcut=self.kwargs['team_id'])
         team_stat = team.team.get(team=team, league=league)
-        return render(request, 'teams/team_view.html', {'team': team, 'team_stat': team_stat})
+        return render(request, 'teams/team_view.html', {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
 
 
 def get_data(request):
     if request.is_ajax:
         action = request.POST['action']
+        response = []
+        response_data = {}
         if action == 'get_teams_list_from_league':
             try:
                 league_shortcut = request.POST['league_shortcut']
                 teams = League.objects.get(shortcut=league_shortcut).league.all()
-                response = []
-                response_data = {}
                 for team in teams:
                     response.append(team.team.name)
                 response_data['teams_names'] = response
                 return JsonResponse(response_data)
             except:
                 return HttpResponse("[!] Error")
+        elif action == 'get_teams_list':
+            try:
+                teams = Team.objects.all()
+                for team in teams:
+                    response.append(team.name)
+                response_data['teams_names'] = response
+                return JsonResponse(response_data)
+            except:
+                return HttpResponse("[!] Error while data getting")
+
 
 class CreateLeague(View):
     def post(self, request, *args, **kwargs):
@@ -100,15 +112,48 @@ class CreateMatch(View):
         return HttpResponse("All work!")
 
 
-# Not in use
+# create team AJAX handle
 class CreateTeam(View):
     def post(self, request, *args, **kwargs):
-        league = url_to_id(request.POST['league_name'], League)
-        team_name = request.POST['team_name']
-        team_shortcut = request.POST['team_shortcut']
-        team = Team.objects.create(league=league, name=team_name, shortcut=team_shortcut)
-        team.save()
-        return HttpResponseRedirect('/fifa/')
+        try:
+            team_name = request.POST['team_name']
+            team_shortcut = request.POST['team_shortcut']
+            team = Team.objects.create(name=team_name, shortcut=team_shortcut)
+            team.save()
+            return HttpResponse('Team is created!')
+        except:
+            return HttpResponse('[!] Error while team creation!')
+
+
+class CreatePlayer(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            player_name = request.POST['player_name']
+            player_age = request.POST['player_age']
+            player_team = request.POST['player_team']
+            team = Team.objects.get(name=player_team)
+            player = Player.objects.create(team=team, name=player_name, age=player_age)
+            player.save()
+            return HttpResponse('Player is created!')
+        except:
+            return HttpResponse('[!] Error in player create!')
+
+
+class AddTeamToLeague(View):
+    def post(self, request):
+        try:
+            team_name = request.POST['team_name']
+            league_name = request.POST['league_name']
+            team = Team.objects.get(name=team_name)
+            league = League.objects.get(shortcut=league_name)
+            if TeamStat.objects.filter(team=team, league=league):
+                return HttpResponse("Team already play in this league")
+            team_stat = TeamStat.objects.create(team=team, league=league)
+            team_stat.save()
+            return HttpResponse("Team " + str(team_name) + " now in " + str(league_name))
+        except:
+            return HttpResponse("[!] Error")
+
 
 
 def url_to_id(url, model):

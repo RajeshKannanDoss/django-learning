@@ -10,6 +10,8 @@
     }
 }
 
+// Thanks for code https://github.com/realpython/django-form-fun/blob/master/part1/main.js
+// START
 $(function() {
 
 
@@ -65,3 +67,4 @@ $(function() {
     });
 
 });
+// END

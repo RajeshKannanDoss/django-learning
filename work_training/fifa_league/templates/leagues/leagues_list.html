@@ -24,11 +24,11 @@
     </script>
 </head>
 <body>
-{% csrf_token %}
 <div class="add_menu" id="add-league-menu">
     <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
     <h3>Create new league</h3>
     <form action="/fifa/create_league/" method="post" id="create-league-form">
+        {% csrf_token %}
         Name: <input id="league-name-form" required>
         <br>
         Shortcut: <input id="league-shortcut-form" required pattern="[A-Za-z0-9]+">
@@ -41,6 +41,7 @@
     <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
     <h3>Create new match</h3>
     <form action="/fifa/create_match/" method="post" id="create-match-form">
+        {% csrf_token %}
         League:
         <select id="match-league-form">
             {% for league in leagues_list %}
@@ -66,11 +67,64 @@
     </form>
 </div>
 
+<div class="add_menu" id="add-team-menu">
+    <h3>Create team</h3>
+    <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
+    <form action="/fifa/create_team/" method="post" id="create-team-form">
+        {% csrf_token %}
+        Name: <input id="team-name-form">
+        <br>
+        Shortcut: <input id="team-shortcut-form" required pattern="[A-Za-z0-9]+">
+        <br>
+        <input type="submit" value="Create team" required>
+    </form>
+</div>
 
+<div class="add_menu" id="add-player-menu">
+    <h3>Add player</h3>
+    <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
+    <form action="/fifa/create_player/" method="post" id="create-player-form">
+        {% csrf_token %}
+        Team:
+        <select id="player-team-form">
+
+        </select>
+        <br>
+        Name: <input id="player-name-form">
+        <br>
+        Age: <input id="player-age-form" type="number" min="0" max="200" required>
+        <br>
+        <input type="submit" value="Create player" required>
+    </form>
+</div>
+
+<div class="add_menu" id="add-team-to-league-menu">
+    <h3>Add team to league</h3>
+    <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
+    <form action="/fifa/create_player/" method="post" id="create-team-to-league-form">
+        {% csrf_token %}
+        Team:
+        <select id="team-to-league-team-form">
+
+        </select>
+        <br>
+        League:
+        <select id="team-to-league-league-form">
+            {% for league in leagues_list %}
+                <option value="{{league.shortcut}}"> {{ league.name }}</option>
+            {% endfor%}
+        </select>
+        <br>
+        <input type="submit" value="Add team to league">
+    </form>
+</div>
 
 <div class="main_menu">
     <button id="add-league-menu-button">Add league</button>
     <button id="add-match-menu-button">Add match</button>
+    <button id="add-team-menu-button">Add team</button>
+    <button id="add-player-menu-button">Add player</button>
+    <button id="add-team-to-league-menu-button">Add team to league</button>
 </div>
 
 <div>
