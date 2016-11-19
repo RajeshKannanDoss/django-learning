@@ -1,33 +1,43 @@
+# -*- coding: utf-8 -*-
 from .models import League, Team, Match, TeamStat, Player
 from django.views import generic, View
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 
-# Main view
 class IndexView(generic.ListView):
+    """
+    Render all leagues
+    """
     def get(self, request, *args, **kwargs):
         leagues_list = League.objects.all()
         teams = Team.objects.all()
         return render(request, 'leagues/leagues_list.html', {'leagues_list': leagues_list, 'teams': teams})
 
 
-# Teams for league view
 class TeamsView(View):
+    """
+    Render teams list for specific league
+    """
     def get(self, request, *args, **kwargs):
         teams = url_to_id(str(self.kwargs['league_id']), League).league.order_by("points").reverse()
         league = url_to_id(str(self.kwargs['league_id']), League)
         leagues_list = League.objects.all()
-        return render(request, 'leagues/team_list.html', {'teams': teams, 'leagues_list': leagues_list, 'league':league})
+        return render(request, 'leagues/team_list.html',
+                      {'teams': teams, 'leagues_list': leagues_list, 'league': league})
 
 
 class TeamView(View):
+    """
+    Render team view for specific league
+    """
     def get(self, request, *args, **kwargs):
         league = League.objects.get(shortcut=self.kwargs['league_id'])
         leagues_list = League.objects.all()
         team = Team.objects.get(shortcut=self.kwargs['team_id'])
         team_stat = team.team.get(team=team, league=league)
-        return render(request, 'teams/team_view.html', {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
+        return render(request, 'teams/team_view.html',
+                      {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
 
 
 def get_data(request):
@@ -57,7 +67,10 @@ def get_data(request):
 
 
 class CreateLeague(View):
-    def post(self, request, *args, **kwargs):
+    """
+    Handle AJAX request and create new league
+    """
+    def post(self, request):
         try:
             league_name = str(request.POST['name'])
             league_shortcut = str(request.POST['shortcut'])
@@ -71,7 +84,10 @@ class CreateLeague(View):
 
 
 class CreateMatch(View):
-    def post(self, request, *args, **kwargs):
+    """
+    Handle AJAX request create new match and add points to related teams
+    """
+    def post(self, request):
         win_point = 3
         draw_point = 1
         try:
@@ -118,7 +134,8 @@ class CreateMatch(View):
             return HttpResponse("[!] Score process error!")
 
         try:
-            match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score, team_guest_goals=guest_score)
+            match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score,
+                                         team_guest_goals=guest_score)
             match.save()
             home_stat.save()
             guest_stat.save()
@@ -127,9 +144,11 @@ class CreateMatch(View):
         return HttpResponse("Match between " + home_team.name + " and " + guest_team.name + " is created")
 
 
-# create team AJAX handle
 class CreateTeam(View):
-    def post(self, request, *args, **kwargs):
+    """
+    Handle AJAX request and create new team
+    """
+    def post(self, request):
         try:
             team_name = request.POST['team_name']
             team_shortcut = request.POST['team_shortcut']
@@ -143,7 +162,10 @@ class CreateTeam(View):
 
 
 class CreatePlayer(View):
-    def post(self, request, *args, **kwargs):
+    """
+    Handle AJAX request and create new player for specific team
+    """
+    def post(self, request):
         try:
             player_name = request.POST['player_name']
             player_age = request.POST['player_age']
@@ -159,6 +181,9 @@ class CreatePlayer(View):
 
 
 class AddTeamToLeague(View):
+    """
+    Handle AJAX request and add specific team to league
+    """
     def post(self, request):
         try:
             team_name = request.POST['team_name']
@@ -174,6 +199,5 @@ class AddTeamToLeague(View):
             return HttpResponse("[!] Error")
 
 
-# need to refact
 def url_to_id(url, model):
     return model.objects.get(shortcut=url)
