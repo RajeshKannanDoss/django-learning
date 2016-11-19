@@ -10,7 +10,7 @@
     <meta name="robots" content="all">
 
     {% load static %}
-
+    <!-- CSS -->
     <link href="{% static 'fifa_league/css/leagues_list.css'%}" rel="stylesheet" />
     <link href="{% static 'fifa_league/css/addmenu.css'%}" rel="stylesheet" />
 
@@ -24,6 +24,10 @@
     </script>
 </head>
 <body>
+<div class="alert" id="alert-div">
+    <h4 id="alert-div-mes"></h4>
+</div>
+
 <div class="add_menu" id="add-league-menu">
     <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
     <h3>Create new league</h3>
@@ -33,7 +37,7 @@
         <br>
         Shortcut: <input id="league-shortcut-form" required pattern="[A-Za-z0-9]+">
         <br>
-        <input type="submit" value="Create league">
+        <input class="btn" type="submit" value="Create league">
     </form>
 </div>
 
@@ -53,17 +57,15 @@
         <select id="match-home-form">
 
         </select>
+        Score: <input type="number" id="match-home-score-form" min="0" max="999" required autocomplete="off">
         <br>
         Guest:
         <select id="match-guest-form">
 
         </select>
+        Score: <input type="number" id="match-guest-score-form" min="0" max="999" required autocomplete="off">
         <br>
-        Home score: <input type="number" id="match-home-score-form" min="0" max="999" required>
-        <br>
-        Guest score: <input type="number" id="match-guest-score-form" min="0" max="999" required>
-        <br>
-        <input type="submit" value="Create league">
+        <input class="btn" type="submit" value="Create league">
     </form>
 </div>
 
@@ -72,11 +74,11 @@
     <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
     <form action="/fifa/create_team/" method="post" id="create-team-form">
         {% csrf_token %}
-        Name: <input id="team-name-form">
+        Name: <input id="team-name-form" required placeholder="Enter team name">
         <br>
-        Shortcut: <input id="team-shortcut-form" required pattern="[A-Za-z0-9]+">
+        Shortcut: <input id="team-shortcut-form" required pattern="[A-Za-z0-9]+" placeholder="Enter shortcut for url">
         <br>
-        <input type="submit" value="Create team" required>
+        <input class="btn" type="submit" value="Create team" required>
     </form>
 </div>
 
@@ -90,18 +92,18 @@
 
         </select>
         <br>
-        Name: <input id="player-name-form">
+        Name: <input id="player-name-form" required placeholder="Enter player name">
         <br>
         Age: <input id="player-age-form" type="number" min="0" max="200" required>
         <br>
-        <input type="submit" value="Create player" required>
+        <input class="btn" type="submit" value="Create player" required>
     </form>
 </div>
 
 <div class="add_menu" id="add-team-to-league-menu">
     <h3>Add team to league</h3>
     <img class="close" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <form action="/fifa/create_player/" method="post" id="create-team-to-league-form">
+    <form action="/fifa/add_team_to_league/" method="post" id="create-team-to-league-form">
         {% csrf_token %}
         Team:
         <select id="team-to-league-team-form">
@@ -115,16 +117,16 @@
             {% endfor%}
         </select>
         <br>
-        <input type="submit" value="Add team to league">
+        <input class="btn" type="submit" value="Add team to league">
     </form>
 </div>
 
 <div class="main_menu">
-    <button id="add-league-menu-button">Add league</button>
-    <button id="add-match-menu-button">Add match</button>
-    <button id="add-team-menu-button">Add team</button>
-    <button id="add-player-menu-button">Add player</button>
-    <button id="add-team-to-league-menu-button">Add team to league</button>
+    <button class="btn" id="add-league-menu-button">Add league</button>
+    <button class="btn" id="add-match-menu-button">Add match</button>
+    <button class="btn" id="add-team-menu-button">Add team</button>
+    <button class="btn" id="add-player-menu-button">Add player</button>
+    <button class="btn" id="add-team-to-league-menu-button">Add team to league</button>
 </div>
 
 <div>

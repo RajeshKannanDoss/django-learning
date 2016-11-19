@@ -20,6 +20,17 @@ var UI = {
         var createPlayerForm = $("#create-player-form");
         var createTeamToLeagueForm = $("#create-team-to-league-form");
 
+        // showAlert
+        // START
+        var alertDiv = $("#alert-div");
+        var alertDivMes = $("#alert-div-mes");
+        function showAlert(mes)
+        {
+            alertDivMes.html(mes);
+            alertDiv.fadeIn(100).delay(2000).fadeOut(500);
+        }
+        // END
+
         // Menus open
         // START
         leagueMenuButton.on("click", function(){
@@ -64,12 +75,42 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/create_league/")
                 .done(function (response) {
-                    alert(response);
+                    showAlert(response);
                 })
                 .fail(function (response) {
-                    alert(response.responseText);
+                    showAlert(response);
                 })
             })
+        // END
+
+        // first get all teams request | need refactory
+        // START
+         var obj = {
+                    action: "get_teams_list_from_league",
+                    league_shortcut: $("#match-league-form").val(),
+                }
+                Ajax.send(obj, "/fifa/get_data/")
+                .done(function (response) {
+                   teams_names_list = response['teams_names']
+                   $("#match-home-form").empty();
+                   $("#match-guest-form").empty();
+                   for(i=0; i < teams_names_list.length; i++)
+                   {
+                   new_option = $("<option>");
+                   new_option.attr("value", teams_names_list[i]);
+                   new_option.html(teams_names_list[i]);
+                   $("#match-home-form").append(new_option);
+
+                   new_option = $("<option>");
+                   new_option.attr("value", teams_names_list[i]);
+                   new_option.html(teams_names_list[i]);
+
+                   $("#match-guest-form").append(new_option);
+                   }
+                })
+                .fail(function (response) {
+                    showAlert(response);
+                })
         // END
 
         // get all teams for league
@@ -99,7 +140,7 @@ var UI = {
                    }
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
         })
         // END
@@ -117,10 +158,10 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/create_match/")
                 .done(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
             })
         // END
@@ -136,10 +177,10 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/create_team/")
                 .done(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
             })
         // END
@@ -156,10 +197,10 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/create_player/")
                 .done(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
             })
         // END
@@ -186,7 +227,7 @@ var UI = {
                    }
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
         }
         // END
@@ -202,10 +243,10 @@ var UI = {
                 }
                 Ajax.send(obj, "/fifa/add_team_to_league/")
                 .done(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
                 .fail(function (response) {
-                    console.log(response);
+                    showAlert(response);
                 })
             })
         // END

@@ -61,9 +61,11 @@ class CreateLeague(View):
         try:
             league_name = str(request.POST['name'])
             league_shortcut = str(request.POST['shortcut'])
+            if League.objects.filter(name=league_name, shortcut=league_shortcut):
+                return HttpResponse("League " + league_name + " already exist!")
             league = League.objects.create(name=league_name, shortcut=league_shortcut)
             league.save()
-            return HttpResponse("League" + league_name)
+            return HttpResponse("League " + league_name + " is create!")
         except:
             return HttpResponse("[!] Error")
 
@@ -72,44 +74,57 @@ class CreateMatch(View):
     def post(self, request, *args, **kwargs):
         win_point = 3
         draw_point = 1
-        league = League.objects.get(shortcut=request.POST['league'])
-        home_team = Team.objects.get(name=request.POST['home_team'])
-        guest_team = Team.objects.get(name=request.POST['guest_team'])
+        try:
+            league = League.objects.get(shortcut=request.POST['league'])
+            home_team = Team.objects.get(name=request.POST['home_team'])
+            guest_team = Team.objects.get(name=request.POST['guest_team'])
 
-        if home_team == guest_team:
-            return HttpResponse("[!] Error")
+            if home_team == guest_team:
+                return HttpResponse("[!] Error - same team cannot play with each other!")
 
-        home_score = int(request.POST['home_score'])
-        guest_score = int(request.POST['guest_score'])
+            home_stat = TeamStat.objects.get(team=home_team, league=league)
+            guest_stat = TeamStat.objects.get(team=guest_team, league=league)
+        except:
+            return HttpResponse("[!] Object get error!")
 
-        home_stat = TeamStat.objects.get(team=home_team, league=league)
-        guest_stat = TeamStat.objects.get(team=guest_team, league=league)
-        if home_score > guest_score:
-            home_stat.points += win_point
-            home_stat.wins += 1
-            guest_stat.loses += 1
-        elif home_score < guest_score:
-            guest_stat.points += win_point
-            guest_stat.wins += 1
-            home_stat.loses += 1
-        else:
-            guest_stat.draws += draw_point
-            home_stat.draws += draw_point
-            guest_stat.points += 1
-            home_stat.points += 1
+        try:
+            home_score = int(request.POST['home_score'])
+            guest_score = int(request.POST['guest_score'])
+        except:
+            return HttpResponse("[!] Score handle error!")
 
-        home_stat.match_count += 1
-        guest_stat.match_count += 1
-        home_stat.goals_scored += home_score
-        guest_stat.goals_scored += guest_score
-        home_stat.goals_conceded += guest_score
-        guest_stat.goals_conceded += home_score
+        try:
+            if home_score > guest_score:
+                home_stat.points += win_point
+                home_stat.wins += 1
+                guest_stat.loses += 1
+            elif home_score < guest_score:
+                guest_stat.points += win_point
+                guest_stat.wins += 1
+                home_stat.loses += 1
+            else:
+                guest_stat.draws += draw_point
+                home_stat.draws += draw_point
+                guest_stat.points += 1
+                home_stat.points += 1
 
-        match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score, team_guest_goals=guest_score)
-        match.save()
-        home_stat.save()
-        guest_stat.save()
-        return HttpResponse("All work!")
+            home_stat.match_count += 1
+            guest_stat.match_count += 1
+            home_stat.goals_scored += home_score
+            guest_stat.goals_scored += guest_score
+            home_stat.goals_conceded += guest_score
+            guest_stat.goals_conceded += home_score
+        except:
+            return HttpResponse("[!] Score process error!")
+
+        try:
+            match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score, team_guest_goals=guest_score)
+            match.save()
+            home_stat.save()
+            guest_stat.save()
+        except:
+            return HttpResponse("[!] Save or create objects error!")
+        return HttpResponse("Match between " + home_team.name + " and " + guest_team.name + " is created")
 
 
 # create team AJAX handle
@@ -118,11 +133,13 @@ class CreateTeam(View):
         try:
             team_name = request.POST['team_name']
             team_shortcut = request.POST['team_shortcut']
+            if Team.objects.filter(name=team_name, shortcut=team_shortcut):
+                return HttpResponse("Team " + team_name + " already exist!")
             team = Team.objects.create(name=team_name, shortcut=team_shortcut)
             team.save()
-            return HttpResponse('Team is created!')
+            return HttpResponse('Team ' + team_name + ' is created!')
         except:
-            return HttpResponse('[!] Error while team creation!')
+            return HttpResponse('[!] Team creation error!')
 
 
 class CreatePlayer(View):
@@ -132,11 +149,13 @@ class CreatePlayer(View):
             player_age = request.POST['player_age']
             player_team = request.POST['player_team']
             team = Team.objects.get(name=player_team)
+            if Player.objects.filter(team=team, name=player_name):
+                return HttpResponse("[!] Player " + player_name + " already exist in " + player_team + "!")
             player = Player.objects.create(team=team, name=player_name, age=player_age)
             player.save()
-            return HttpResponse('Player is created!')
+            return HttpResponse('Player ' + player_name + ' is created!')
         except:
-            return HttpResponse('[!] Error in player create!')
+            return HttpResponse('[!] Player create - error')
 
 
 class AddTeamToLeague(View):
@@ -155,6 +174,6 @@ class AddTeamToLeague(View):
             return HttpResponse("[!] Error")
 
 
-
+# need to refact
 def url_to_id(url, model):
     return model.objects.get(shortcut=url)
