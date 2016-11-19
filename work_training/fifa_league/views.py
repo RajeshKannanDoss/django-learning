@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from .models import League, Team, Match, TeamStat, Player
+from .models import *
 from django.views import generic, View
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from .functions import url_to_id
 
 
 class IndexView(generic.ListView):
@@ -15,7 +16,7 @@ class IndexView(generic.ListView):
         return render(request, 'leagues/leagues_list.html', {'leagues_list': leagues_list, 'teams': teams})
 
 
-class TeamsView(View):
+class TeamsListView(View):
     """
     Render teams list for specific league
     """
@@ -197,7 +198,3 @@ class AddTeamToLeague(View):
             return HttpResponse("Team " + str(team_name) + " now in " + str(league_name))
         except:
             return HttpResponse("[!] Error")
-
-
-def url_to_id(url, model):
-    return model.objects.get(shortcut=url)
