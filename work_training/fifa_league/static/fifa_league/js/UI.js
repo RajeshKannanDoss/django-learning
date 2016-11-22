@@ -26,6 +26,10 @@ var UI = {
         var alertDivMes = $("#alert-div-mes");
         function showAlert(mes)
         {
+            if(mes == "")
+            {
+                mes = "[!] Unknown error";
+            }
             alertDivMes.html(mes);
             alertDiv.fadeIn(100).delay(2000).fadeOut(500);
         }
@@ -78,7 +82,7 @@ var UI = {
                     showAlert(response);
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
             })
         // END
@@ -109,7 +113,7 @@ var UI = {
                    }
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
         // END
 
@@ -140,7 +144,7 @@ var UI = {
                    }
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
         })
         // END
@@ -161,7 +165,7 @@ var UI = {
                     showAlert(response);
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
             })
         // END
@@ -180,7 +184,7 @@ var UI = {
                     showAlert(response);
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
             })
         // END
@@ -200,7 +204,7 @@ var UI = {
                     showAlert(response);
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
             })
         // END
@@ -227,7 +231,7 @@ var UI = {
                    }
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
         }
         // END
@@ -246,7 +250,7 @@ var UI = {
                     showAlert(response);
                 })
                 .fail(function (response) {
-                    showAlert(response);
+                    showAlert(response.responseText);
                 })
             })
         // END

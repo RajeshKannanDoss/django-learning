@@ -41,30 +41,38 @@ class TeamView(View):
                       {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
 
 
-def get_data(request):
-    if request.is_ajax:
-        action = request.POST['action']
-        response = []
-        response_data = {}
-        if action == 'get_teams_list_from_league':
-            try:
-                league_shortcut = request.POST['league_shortcut']
-                teams_stat_list = League.objects.get(shortcut=league_shortcut).teams_stat.all()
-                for team_stat in teams_stat_list:
-                    response.append(team_stat.team.name)
-                response_data['teams_names'] = response
-                return JsonResponse(response_data)
-            except:
-                return HttpResponse("[!] Error")
-        elif action == 'get_teams_list':
-            try:
-                teams = Team.objects.all()
-                for team in teams:
-                    response.append(team.name)
-                response_data['teams_names'] = response
-                return JsonResponse(response_data)
-            except:
-                return HttpResponse("[!] Error while data getting")
+class GetData(View):
+    """
+    Response AJAX requests from client
+    """
+    def post(self, request):
+        if request.is_ajax:
+            action = request.POST['action']
+            response = []
+            response_data = {}
+            if action == 'get_teams_list_from_league':
+                try:
+                    league_shortcut = request.POST['league_shortcut']
+                    teams_stat_list = League.objects.get(shortcut=league_shortcut).teams_stat.all()
+                    for team_stat in teams_stat_list:
+                        response.append(team_stat.team.name)
+                    response_data['teams_names'] = response
+                    return JsonResponse(response_data)
+                except:
+                    return HttpResponse("[!] Error")
+            elif action == 'get_teams_list':
+                try:
+                    teams = Team.objects.all()
+                    for team in teams:
+                        response.append(team.name)
+                    response_data['teams_names'] = response
+                    return JsonResponse(response_data)
+                except:
+                    return HttpResponse("[!] Error while data getting")
+            else:
+                return HttpResponse("No requested action find on server!", status=400)
+        else:
+            return HttpResponse("AJAX request is required!", status=400)
 
 
 class CreateLeague(View):
