@@ -13,7 +13,7 @@ class IndexView(generic.ListView):
     def get(self, request, *args, **kwargs):
         leagues_list = League.objects.all()
         teams = Team.objects.all()
-        return render(request, 'leagues/leagues_list.html', {'leagues_list': leagues_list, 'teams': teams})
+        return render(request, 'leagues/leagues_list_view.html', {'leagues_list': leagues_list, 'teams': teams})
 
 
 class TeamsListView(View):
@@ -21,10 +21,10 @@ class TeamsListView(View):
     Render teams list for specific league
     """
     def get(self, request, *args, **kwargs):
-        teams = url_to_id(str(self.kwargs['league_id']), League).league.order_by("points").reverse()
+        teams = url_to_id(str(self.kwargs['league_id']), League).teams_stat.order_by("points").reverse()
         league = url_to_id(str(self.kwargs['league_id']), League)
         leagues_list = League.objects.all()
-        return render(request, 'leagues/team_list.html',
+        return render(request, 'leagues/teams_list_view.html',
                       {'teams': teams, 'leagues_list': leagues_list, 'league': league})
 
 
@@ -36,7 +36,7 @@ class TeamView(View):
         league = League.objects.get(shortcut=self.kwargs['league_id'])
         leagues_list = League.objects.all()
         team = Team.objects.get(shortcut=self.kwargs['team_id'])
-        team_stat = team.team.get(team=team, league=league)
+        team_stat = team.leagues_stat.get(team=team, league=league)
         return render(request, 'teams/team_view.html',
                       {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
 
@@ -49,9 +49,9 @@ def get_data(request):
         if action == 'get_teams_list_from_league':
             try:
                 league_shortcut = request.POST['league_shortcut']
-                teams = League.objects.get(shortcut=league_shortcut).league.all()
-                for team in teams:
-                    response.append(team.team.name)
+                teams_stat_list = League.objects.get(shortcut=league_shortcut).teams_stat.all()
+                for team_stat in teams_stat_list:
+                    response.append(team_stat.team.name)
                 response_data['teams_names'] = response
                 return JsonResponse(response_data)
             except:
