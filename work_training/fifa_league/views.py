@@ -3,7 +3,7 @@ from .models import *
 from django.views import generic, View
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from .functions import url_to_id
+from .functions import url_to_id, add_points_to_team
 
 
 class IndexView(generic.ListView):
@@ -97,12 +97,19 @@ class CreateMatch(View):
     Handle AJAX request create new match and add points to related teams
     """
     def post(self, request):
-        win_point = 3
-        draw_point = 1
         try:
-            league = League.objects.get(shortcut=request.POST['league'])
-            home_team = Team.objects.get(name=request.POST['home_team'])
-            guest_team = Team.objects.get(name=request.POST['guest_team'])
+            league_request = str(request.POST['league'])
+            home_team_request = str(request.POST['home_team'])
+            guest_team_request = str(request.POST['guest_team'])
+            home_score = int(request.POST['home_score'])
+            guest_score = int(request.POST['guest_score'])
+        except:
+            return HttpResponse("[!] Error")
+
+        try:
+            league = League.objects.get(shortcut=league_request)
+            home_team = Team.objects.get(name=home_team_request)
+            guest_team = Team.objects.get(name=guest_team_request)
 
             if home_team == guest_team:
                 return HttpResponse("[!] Error - same team cannot play with each other!")
@@ -113,34 +120,10 @@ class CreateMatch(View):
             return HttpResponse("[!] Object get error!")
 
         try:
-            home_score = int(request.POST['home_score'])
-            guest_score = int(request.POST['guest_score'])
-        except:
-            return HttpResponse("[!] Score handle error!")
-
-        try:
-            if home_score > guest_score:
-                home_stat.points += win_point
-                home_stat.wins += 1
-                guest_stat.loses += 1
-            elif home_score < guest_score:
-                guest_stat.points += win_point
-                guest_stat.wins += 1
-                home_stat.loses += 1
-            else:
-                guest_stat.draws += draw_point
-                home_stat.draws += draw_point
-                guest_stat.points += 1
-                home_stat.points += 1
-
-            home_stat.match_count += 1
-            guest_stat.match_count += 1
-            home_stat.goals_scored += home_score
-            guest_stat.goals_scored += guest_score
-            home_stat.goals_conceded += guest_score
-            guest_stat.goals_conceded += home_score
-        except:
-            return HttpResponse("[!] Score process error!")
+            add_points_to_team(home_stat, home_score, guest_score)
+            add_points_to_team(guest_stat, guest_score, home_score)
+        except Exception as e:
+            return HttpResponse("[!] Score process error! " + e.args[0])
 
         try:
             match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score,

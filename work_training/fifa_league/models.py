@@ -41,6 +41,7 @@ class TeamStat(models.Model):
     """
     class Meta:
         verbose_name = 'Teams statistics'
+        verbose_name_plural = 'Teams statistics'
 
     league = models.ForeignKey(League, related_name="teams_stat")
     team = models.ForeignKey(Team, related_name="leagues_stat")
