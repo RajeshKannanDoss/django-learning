@@ -11,7 +11,10 @@ def url_to_id(link, model):
     :param model: django model
     :return: django model where shortcut = link
     """
-    return model.objects.get(shortcut=link)
+    try:
+        return model.objects.get(shortcut=link)
+    except model.DoesNotExist:
+        return None
 
 
 def add_points_to_team(team, goals_scored, goals_conceded):
