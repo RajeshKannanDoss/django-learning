@@ -28,8 +28,8 @@ def add_points_to_team(team, goals_scored, goals_conceded):
     team.goals_scored += goals_scored
     team.goals_conceded += goals_conceded
     if goals_scored > goals_conceded:
-        team.wins += win_point
-        team.points += 3
+        team.wins += 1
+        team.points += win_point
     elif goals_scored < goals_conceded:
         team.loses += 1
     else:
