@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    {% load i18n %}
     <meta charset="UTF-8">
-    <title>Leagues - Main</title>
+    <title>{% trans 'Leagues - Main' %}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="All FIFA leagues">
     <meta name="keywords" content="FIFA, football">
@@ -122,15 +123,15 @@
 </div>
 
 <div class="main_menu">
-    <button class="btn" id="add-league-menu-button">Add league</button>
-    <button class="btn" id="add-match-menu-button">Add match</button>
-    <button class="btn" id="add-team-menu-button">Add team</button>
-    <button class="btn" id="add-player-menu-button">Add player</button>
-    <button class="btn" id="add-team-to-league-menu-button">Add team to league</button>
+    <button class="btn" id="add-league-menu-button">{% trans 'Add league' %}</button>
+    <button class="btn" id="add-match-menu-button">{% trans 'Add match' %}</button>
+    <button class="btn" id="add-team-menu-button">{% trans 'Add team' %}</button>
+    <button class="btn" id="add-player-menu-button">{% trans 'Add player' %}</button>
+    <button class="btn" id="add-team-to-league-menu-button">{% trans 'Add team to league' %}</button>
 </div>
 
 <div>
-    <h2>Leagues:</h2>
+    <h2>{% trans 'Leagues:' %}</h2>
     {% if leagues_list %}
         <ul class="league_list">
             {% for league in leagues_list %}
@@ -138,7 +139,7 @@
             {% endfor%}
         </ul>
     {% else %}
-        <h2>No leagues available</h2>
+        <h2>{% trans 'No leagues available' %}</h2>
     {% endif %}
 </div>
 </body>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load i18n %}
     <meta charset="UTF-8">
-    <title>Leagues - Main</title>
+    <title>{% trans 'Team' %} - {{ team.name }}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="All FIFA leagues">
     <meta name="keywords" content="FIFA, football">
@@ -15,9 +16,9 @@
 <div class="main_menu">
 
 </div>
-<h1> Team name: {{ team.name }} </h1>
+<h1>{% trans 'Team name:' %} {{ team.name }}</h1>
 <div class="matches_div">
-    <h2>Matches:</h2>
+    <h2>{% trans 'Matches:' %}</h2>
     {% if team_stat.home_matches.all and team_stat.guest_matches.all %}
         {% for match in team_stat.home_matches.all %}
             <div class="match">
@@ -50,15 +51,15 @@
              </div>
         {% endfor%}
     {% else %}
-        <h2>No matches</h2>
+        <h2>{% trans 'No matches' %}</h2>
     {% endif %}
 </div>
 <div class="players_div">
-    <h2>Players:</h2>
+    <h2>{% trans 'Players:' %}</h2>
     {% for player in team.player_set.all %}
              <div class="player">
-                 Name: {{ player.name }} <br>
-                 Age: {{ player.age }}
+                 {% trans 'Name:' %} {{ player.name }} <br>
+                 {% trans 'Age:' %} {{ player.age }}
              </div>
         {% endfor%}
 </div>

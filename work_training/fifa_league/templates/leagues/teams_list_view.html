@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load i18n %}
     <meta charset="UTF-8">
-    <title>{{ league.name }} - League</title>
+    <title>{% trans 'League' %} - {{ league.name }}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="All FIFA leagues">
     <meta name="keywords" content="FIFA, football">
@@ -122,11 +123,11 @@
 </div>
 
 <div class="main_menu">
-    <button class="btn" id="add-league-menu-button">Add league</button>
-    <button class="btn" id="add-match-menu-button">Add match</button>
-    <button class="btn" id="add-team-menu-button">Add team</button>
-    <button class="btn" id="add-player-menu-button">Add player</button>
-    <button class="btn" id="add-team-to-league-menu-button">Add team to league</button>
+    <button class="btn" id="add-league-menu-button">{% trans 'Add league' %}</button>
+    <button class="btn" id="add-match-menu-button">{% trans 'Add match' %}</button>
+    <button class="btn" id="add-team-menu-button">{% trans 'Add team' %}</button>
+    <button class="btn" id="add-player-menu-button">{% trans 'Add player' %}</button>
+    <button class="btn" id="add-team-to-league-menu-button">{% trans 'Add team to league' %}</button>
 </div>
 
 
@@ -134,14 +135,14 @@
     {% if teams %}
         <table class="teams_table">
             <tr>
-                <td>Team</td>
-                <td>Count</td>
-                <td>Wins</td>
-                <td>Loses</td>
-                <td>Draws</td>
-                <td>Goals SC</td>
-                <td>Goals CN</td>
-                <td>Points</td>
+                <td>{% trans 'Team' %}</td>
+                <td>{% trans 'Count' %}</td>
+                <td>{% trans 'Wins' %}</td>
+                <td>{% trans 'Loses' %}</td>
+                <td>{% trans 'Draws' %}</td>
+                <td>{% trans 'Goals SC' %}</td>
+                <td>{% trans 'Goals CN' %}</td>
+                <td>{% trans 'Points' %}</td>
             </tr>
             {% for team in teams %}
             <tr>
@@ -157,7 +158,7 @@
             {% endfor%}
         </table>
     {% else %}
-        <h2>No teams available</h2>
+        <h2>{% trans 'No teams available' %}</h2>
     {% endif %}
 </div>
 </body>
