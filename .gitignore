@@ -32,3 +32,6 @@ tramp
 # Windows
 Thumbs.db
 Desktop.ini
+
+# locales binary file
+*.mo

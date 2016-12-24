@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-
 # points variable
-win_point = 3
-draw_point = 1
+WIN_POINT = 3
+DRAW_POINT = 1
 
 
 def url_to_id(link, model):
@@ -29,9 +27,9 @@ def add_points_to_team(team, goals_scored, goals_conceded):
     team.goals_conceded += goals_conceded
     if goals_scored > goals_conceded:
         team.wins += 1
-        team.points += win_point
+        team.points += WIN_POINT
     elif goals_scored < goals_conceded:
         team.loses += 1
     else:
-        team.draws += draw_point
+        team.draws += DRAW_POINT
         team.points += 1
