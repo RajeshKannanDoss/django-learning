@@ -5,7 +5,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
-from .models import *
+from .models import Team, TeamStat, Match, League, Player
 from .functions import url_to_id, add_points_to_team
 
 
@@ -16,7 +16,8 @@ class IndexView(View):
     def get(self, request):
         leagues_list = League.objects.all()
         teams = Team.objects.all()
-        return render(request, 'leagues/leagues_list_view.html', {'leagues_list': leagues_list, 'teams': teams})
+        return render(request, 'leagues/leagues_list_view.html',
+                      {'leagues_list': leagues_list, 'teams': teams})
 
 
 class TeamsListView(View):
@@ -133,7 +134,7 @@ class CreateLeagueView(View):
         except MultiValueDictKeyError as e:
             return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
 
-        if League.objects.filter(name=league_name) or League.objects.filter(shortcut=league_shortcut):
+        if League.objects.filter(name=league_name).exists() or League.objects.filter(shortcut=league_shortcut).exists():
             return HttpResponse('League {} already exist!'.format(league_name))
 
         try:
@@ -214,7 +215,7 @@ class CreateTeamView(View):
         except MultiValueDictKeyError as e:
             return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
 
-        if Team.objects.filter(name=team_name) or Team.objects.filter(shortcut=team_shortcut):
+        if Team.objects.filter(name=team_name).exists() or Team.objects.filter(shortcut=team_shortcut).exists():
             return HttpResponse('Team {} already exist!'.format(team_name), status=400)
 
         try:
@@ -248,7 +249,7 @@ class CreatePlayerView(View):
         except Team.DoesNotExist as e:
             return HttpResponse(e.args[0], status=500)
 
-        if Player.objects.filter(team=team, name=player_name):
+        if Player.objects.filter(team=team, name=player_name).exists():
             return HttpResponse('[!] Player {} already exist in {}!'.format(player_name, player_team), status=400)
 
         try:
@@ -270,7 +271,7 @@ class AddTeamToLeagueView(View):
             league_name = str(request.POST['league_name'])
             if not team_name or not league_name:
                 return HttpResponse('[!] Some of the request variables is empty', status=400)
-            
+
         except MultiValueDictKeyError as e:
             return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
 
@@ -282,7 +283,7 @@ class AddTeamToLeagueView(View):
         except Team.DoesNotExist as e:
             return HttpResponse(e.args[0], status=500)
 
-        if TeamStat.objects.filter(team=team, league=league):
+        if TeamStat.objects.filter(team=team, league=league).exists():
             return HttpResponse('Team already play in this league!')
 
         try:
