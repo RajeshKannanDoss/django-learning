@@ -7,6 +7,8 @@ from .functions import url_to_id, add_points_to_team
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import DatabaseError
 
+from django.utils.translation import ugettext as _
+
 
 class IndexView(View):
     """
@@ -74,7 +76,7 @@ class GetData(View):
             try:
                 action = str(request.POST['action'])
                 if not action:
-                    return HttpResponse("[!] Error! action is empty!", status=400)
+                    return HttpResponse(_("[!] Error! action is empty!"), status=400)
             except MultiValueDictKeyError as e:
                 return HttpResponse("[!] Value key error in " + e.args[0] + " while request!", status=400)
 
@@ -84,7 +86,7 @@ class GetData(View):
                 try:
                     league_shortcut = request.POST['league_shortcut']
                     if not league_shortcut:
-                        return HttpResponse("[!] Error! league_shortcut is empty!", status=400)
+                        return HttpResponse(_("[!] Error! league_shortcut is empty!"), status=400)
                 except MultiValueDictKeyError as e:
                     return HttpResponse("[!] Value key error in " + e.args[0] + " while request!", status=400)
 
@@ -119,7 +121,7 @@ class CreateLeague(View):
             league_name = str(request.POST['name'])
             league_shortcut = str(request.POST['shortcut'])
             if not league_name or not league_shortcut:
-                return HttpResponse("[!] Error! Empty value in AJAX request!", status=400)
+                return HttpResponse(_("[!] Some of the request variables is empty"), status=400)
         except MultiValueDictKeyError as e:
             return HttpResponse("[!] Value key error in " + e.args[0] + " while request!", status=400)
 
@@ -147,12 +149,12 @@ class CreateMatch(View):
             guest_score = int(request.POST['guest_score'])
             if not league_request or not home_team_request or not guest_team_request \
                     or not home_score or not guest_score:
-                return HttpResponse("[!] Some of the request variables is empty", status=400)
+                return HttpResponse(_("[!] Some of the request variables is empty"), status=400)
 
         except MultiValueDictKeyError as e:
             return HttpResponse("[!] Value key error in " + e.args[0] + " while request!", status=400)
         except ValueError as e:
-            return HttpResponse(e.args[0] + " Please enter send number via request!", status=400)
+            return HttpResponse(e.args[0] + _("[!] Please enter number!"), status=400)
 
         try:
             league = League.objects.get(shortcut=league_request)
@@ -160,7 +162,7 @@ class CreateMatch(View):
             guest_team = Team.objects.get(name=guest_team_request)
 
             if home_team == guest_team:
-                return HttpResponse("[!] Error - same team cannot play with each other!")
+                return HttpResponse(_("[!] Choose different teams!"))
 
             home_stat = TeamStat.objects.get(team=home_team, league=league)
             guest_stat = TeamStat.objects.get(team=guest_team, league=league)
@@ -229,7 +231,7 @@ class CreatePlayer(View):
         except MultiValueDictKeyError as e:
             return HttpResponse("[!] Value key error in " + e.args[0] + " while request!", status=400)
         except ValueError as e:
-            return HttpResponse(e.args[0] + " Please enter send number via request!", status=400)
+            return HttpResponse(e.args[0] + _("[!] Please enter number!"), status=400)
 
         try:
             team = Team.objects.get(name=player_team)
