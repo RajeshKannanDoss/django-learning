@@ -77,7 +77,7 @@ class GetDataView(View):
     def post(self, request):
         if request.is_ajax:
             try:
-                action = str(request.POST['action'])
+                action = str(request.POST.get('action', ''))
                 if not action:
                     return HttpResponse(_('[!] Error! action is empty!'), status=400)
             except MultiValueDictKeyError as e:
@@ -126,8 +126,8 @@ class CreateLeagueView(View):
     """
     def post(self, request):
         try:
-            league_name = str(request.POST['name'])
-            league_shortcut = str(request.POST['shortcut'])
+            league_name = str(request.POST.get('name', ''))
+            league_shortcut = str(request.POST.get('shortcut', ''))
             if not league_name or not league_shortcut:
                 return HttpResponse(_('[!] Some of the request variables is empty'), status=400)
 
@@ -152,11 +152,11 @@ class CreateMatchView(View):
     """
     def post(self, request):
         try:
-            league_request = str(request.POST['league'])
-            home_team_request = str(request.POST['home_team'])
-            guest_team_request = str(request.POST['guest_team'])
-            home_score = int(request.POST['home_score'])
-            guest_score = int(request.POST['guest_score'])
+            league_request = str(request.POST.get('league', ''))
+            home_team_request = str(request.get('home_team', ''))
+            guest_team_request = str(request.POST.get('guest_team', ''))
+            home_score = int(request.POST.get('home_score', 0))
+            guest_score = int(request.POST.get('guest_score', 0))
             if not league_request or not home_team_request or not guest_team_request \
                     or not home_score or not guest_score:
                 return HttpResponse(_('[!] Some of the request variables is empty'), status=400)
@@ -207,8 +207,8 @@ class CreateTeamView(View):
     """
     def post(self, request):
         try:
-            team_name = str(request.POST['team_name'])
-            team_shortcut = str(request.POST['team_shortcut'])
+            team_name = str(request.POST.get('team_name', ''))
+            team_shortcut = str(request.POST.get('team_shortcut', ''))
             if not team_name or not team_shortcut:
                 return HttpResponse('[!] Some of the request variables is empty', status=400)
 
@@ -233,9 +233,9 @@ class CreatePlayerView(View):
     """
     def post(self, request):
         try:
-            player_name = str(request.POST['player_name'])
-            player_age = int(request.POST['player_age'])
-            player_team = str(request.POST['player_team'])
+            player_name = str(request.POST.get('player_name', ''))
+            player_age = int(request.POST.get('player_age', 0))
+            player_team = str(request.POST.get('player_team', ''))
             if not player_name or not player_age or not player_team:
                 return HttpResponse('[!] Some of the request variables is empty', status=400)
 
@@ -267,8 +267,8 @@ class AddTeamToLeagueView(View):
     """
     def post(self, request):
         try:
-            team_name = str(request.POST['team_name'])
-            league_name = str(request.POST['league_name'])
+            team_name = str(request.POST.get('team_name', ''))
+            league_name = str(request.POST.get('league_name', ''))
             if not team_name or not league_name:
                 return HttpResponse('[!] Some of the request variables is empty', status=400)
 
