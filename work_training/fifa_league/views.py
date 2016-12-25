@@ -1,12 +1,12 @@
 from django.views import View
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
 from .models import Team, TeamStat, Match, League, Player
-from .functions import url_to_id
+from .functions import post_save, add_points_to_teams
 
 
 class IndexView(View):
@@ -30,13 +30,10 @@ class TeamsListView(View):
         except KeyError as e:
             return HttpResponse('[!] Bad key! {}'.format(e.args[0]), status=400)
 
-        league = url_to_id(league_id, League)
+        league = get_object_or_404(League, shortcut=league_id)
 
-        if league:
-            teams = league.teams_stat.order_by('points').reverse()
-            leagues_list = League.objects.all()
-        else:
-            return HttpResponse("Requested object doesn't exist!", status=500)
+        teams = league.teams_stat.order_by('points').reverse()
+        leagues_list = League.objects.all()
 
         return render(request, 'leagues/teams_list_view.html',
                       {'teams': teams, 'leagues_list': leagues_list, 'league': league})
@@ -53,16 +50,9 @@ class TeamView(View):
         except KeyError as e:
             return HttpResponse('[!] Bad key! {}'.format(e.args[0]), status=400)
 
-        try:
-            league = League.objects.get(shortcut=league_id)
-            team = Team.objects.get(shortcut=team_id)
-            team_stat = team.leagues_stat.get(team=team, league=league)
-        except League.DoesNotExist:
-            return HttpResponse("League requested object doesn't exist!", status=500)
-        except Team.DoesNotExist:
-            return HttpResponse("Team requested object doesn't exist!", status=500)
-        except TeamStat.DoesNotExist:
-            return HttpResponse("TeamStat requested object doesn't exist!", status=500)
+        league = get_object_or_404(League, shortcut=league_id)
+        team = get_object_or_404(Team, shortcut=team_id)
+        team_stat = get_object_or_404(team.leagues_stat, team=team, league=league)
 
         leagues_list = League.objects.all()
 

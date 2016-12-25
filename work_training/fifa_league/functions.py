@@ -6,18 +6,6 @@ WIN_POINT = 3
 DRAW_POINT = 1
 
 
-def url_to_id(link, model):
-    """
-    :param link: string, shortcut for django model
-    :param model: django model
-    :return: django model where shortcut = link
-    """
-    try:
-        return model.objects.get(shortcut=link)
-    except model.DoesNotExist:
-        return None
-
-
 def add_points_to_teams(sender, instance, **kwargs):
     """
     :param instance: Match object
