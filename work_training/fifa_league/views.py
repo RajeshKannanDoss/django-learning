@@ -6,12 +6,12 @@ from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
 from .models import Team, TeamStat, Match, League, Player
-from .functions import url_to_id, add_points_to_team
+from .functions import url_to_id
 
 
 class IndexView(View):
     """
-    Render all leagues
+    Render all leagues view
     """
     def get(self, request):
         leagues_list = League.objects.all()
@@ -153,7 +153,7 @@ class CreateMatchView(View):
     def post(self, request):
         try:
             league_request = str(request.POST.get('league', ''))
-            home_team_request = str(request.get('home_team', ''))
+            home_team_request = str(request.POST.get('home_team', ''))
             guest_team_request = str(request.POST.get('guest_team', ''))
             home_score = int(request.POST.get('home_score', 0))
             guest_score = int(request.POST.get('guest_score', 0))
@@ -184,17 +184,9 @@ class CreateMatchView(View):
             return HttpResponse(e.args[0], status=500)
 
         try:
-            add_points_to_team(home_stat, home_score, guest_score)
-            add_points_to_team(guest_stat, guest_score, home_score)
-        except Exception as e:
-            return HttpResponse('[!] Score process error! {}'.format(e.args[0]), status=500)
-
-        try:
             match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score,
                                          team_guest_goals=guest_score)
             match.save()
-            home_stat.save()
-            guest_stat.save()
         except DatabaseError as e:
             return HttpResponse('[!] Database error! {}'.format(e.args[0]), status=500)
 
