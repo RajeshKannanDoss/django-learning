@@ -4,6 +4,7 @@ from . import views
 
 app_name = "fifa_league"
 urlpatterns = [
+    url(r'^api/leagues/$', views.LeagueList.as_view()),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^create_league/', views.CreateLeagueView.as_view(), name='create_league'),
     url(r'^get_data/', views.GetDataView.as_view(), name='get_data'),
@@ -14,5 +15,3 @@ urlpatterns = [
     url(r'^(?P<league_id>[0-9a-zA-Z]+)/$', views.TeamsListView.as_view(), name='league'),
     url(r'^(?P<league_id>[0-9a-zA-Z]+)/(?P<team_id>[0-9a-zA-Z]+)/$', views.TeamView.as_view(), name='team'),
 ]
-
-

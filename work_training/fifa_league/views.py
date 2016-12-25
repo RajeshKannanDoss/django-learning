@@ -5,6 +5,9 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
+from rest_framework import  generics
+from .serializers import LeagueSerializer
+
 from .models import Team, TeamStat, Match, League, Player
 from .functions import post_save, add_points_to_teams
 
@@ -275,3 +278,8 @@ class AddTeamToLeagueView(View):
             return HttpResponse('[!] Database error! {}'.format(e.args[0]), status=500)
 
         return HttpResponse('Team {} now in {}!'.format(team_name, league_name), status=200)
+
+
+class LeagueList(generics.ListCreateAPIView):
+    queryset = League.objects.all()
+    serializer_class = LeagueSerializer
