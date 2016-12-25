@@ -1,21 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load i18n %}
-    <meta charset="UTF-8">
-    <title>{% trans 'Team' %} - {{ team.name }}</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="All FIFA leagues">
-    <meta name="keywords" content="FIFA, football">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all">
-    {% load static %}
-    <link href="{% static 'fifa_league/css/team_view.css'%}" rel="stylesheet"/>
-</head>
-<body>
-<div class="main_menu">
+{% extends 'base.html' %}
 
-</div>
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+<title>{% trans 'Team' %} - {{ team.name }}</title>
+{% endblock %}
+
+{% block static %}
+<link href="{% static 'fifa_league/css/team_view.css'%}" rel="stylesheet"/>
+{% endblock %}
+
+{% block body %}
 <h1>{% trans 'Team name:' %} {{ team.name }}</h1>
 <div class="matches_div">
     <h2>{% trans 'Matches:' %}</h2>
@@ -63,5 +59,4 @@
              </div>
         {% endfor%}
 </div>
-</body>
-</html>
+{% endblock %}
