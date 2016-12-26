@@ -16,6 +16,6 @@ urlpatterns = [
     url(r'^create_team/', views.CreateTeamView.as_view(), name='create_team'),
     url(r'^create_player/', views.CreatePlayerView.as_view(), name='create_player'),
     url(r'^add_team_to_league/', views.AddTeamToLeagueView.as_view(), name='add_team_to_league'),
-    url(r'^(?P<league_id>[0-9a-zA-Z]+)/$', views.TeamsListView.as_view(), name='league'),
-    url(r'^(?P<league_id>[0-9a-zA-Z]+)/(?P<team_id>[0-9a-zA-Z]+)/$', views.TeamView.as_view(), name='team'),
+    url(r'^(?P<league_shortcut>[0-9a-zA-Z]+)/$', views.TeamsListView.as_view(), name='league'),
+    url(r'^(?P<league_shortcut>[0-9a-zA-Z]+)/(?P<team_shortcut>[0-9a-zA-Z]+)/$', views.TeamView.as_view(), name='team'),
 ]

@@ -1,4 +1,5 @@
 from django.views import View
+from django.views.generic import TemplateView, ListView
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
@@ -12,51 +13,56 @@ from .models import Team, TeamStat, Match, League, Player
 from .functions import post_save, add_points_to_teams
 
 
-class IndexView(View):
+class IndexView(ListView):
     """
-    Render all leagues view
+    Render list of all Leagues
     """
-    def get(self, request):
-        leagues_list = League.objects.all()
-        return render(request, 'leagues/leagues_list_view.html',
-                      {'leagues_list': leagues_list})
+    template_name = 'leagues/leagues_list_view.html'
+    context_object_name = 'leagues_list'
+
+    def get_queryset(self):
+        """Return Leagues list."""
+        return League.objects.all()
 
 
-class TeamsListView(View):
+class TeamsListView(TemplateView):
     """
-    Render teams list for specific league
+    Render table of teams with statistic for specific League
+    league_id - shortcut for League
     """
-    def get(self, request, **kwargs):
-        try:
-            league_id = str(self.kwargs['league_id'])
-        except KeyError as e:
-            return HttpResponse('[!] Bad key! {}'.format(e.args[0]), status=400)
+    template_name = 'leagues/teams_list_view.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        :return: list of TeamStat models object, order by points (best on top)
+        """
+        league_id = str(self.kwargs['league_shortcut'])
 
         league = get_object_or_404(League, shortcut=league_id)
 
         teams = league.teams_stat.order_by('points').reverse()
 
-        return render(request, 'leagues/teams_list_view.html',
-                      {'teams': teams, 'league': league})
+        return {'teams': teams}
 
 
-class TeamView(View):
+class TeamView(TemplateView):
     """
-    Render team view for specific league
+    Render Team statistic for specific League
     """
-    def get(self, request, **kwargs):
-        try:
-            league_id = str(self.kwargs['league_id'])
-            team_id = str(self.kwargs['team_id'])
-        except KeyError as e:
-            return HttpResponse('[!] Bad key! {}'.format(e.args[0]), status=400)
+    template_name = 'teams/team_view.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        get league_shortcut and team_shortcut from URL, get specific team_stat then return
+        :return: single TeamStat model object for template
+        """
+        league_id = str(self.kwargs['league_shortcut'])
+        team_id = str(self.kwargs['team_shortcut'])
 
         league = get_object_or_404(League, shortcut=league_id)
         team = get_object_or_404(Team, shortcut=team_id)
         team_stat = get_object_or_404(team.leagues_stat, team=team, league=league)
-
-        return render(request, 'teams/team_view.html',
-                      {'team_stat': team_stat})
+        return {'team_stat': team_stat}
 
 
 class CreateLeagueView(View):
