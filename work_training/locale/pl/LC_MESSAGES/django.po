@@ -93,6 +93,21 @@ msgstr "Nie ma zespołów"
 msgid "League"
 msgstr "Liga"
 
+msgid "League {} is create!"
+msgstr "Liga {} jest stworzona!"
+
+msgid "Match between {} and {} is created!"
+msgstr "Mecz między {} i {} został stworzony!"
+
+msgid "Team {} is created!"
+msgstr "Zespół {} został stworzony!"
+
+msgid "Player {} is created!"
+msgstr "Gracz {} został stworzony!"
+
+msgid "Team {} now in {}!"
+msgstr "Zespół {} teraz jest w {}!"
+
 # team view
 msgid "Matches:"
 msgstr "Mecze:"
@@ -121,12 +136,47 @@ msgstr "[!] Błąd! league_shortcut jest pusty!"
 msgid "[!] Error! action is empty!"
 msgstr "[!] Błąd! action jest pusty!"
 
-msgid "[!] Some of the request variables is empty"
-msgstr "[!] Niektóre elementy w ządaniu są puste"
+msgid "Some of the request variables is empty"
+msgstr "Niektóre elementy w ządaniu są puste"
 
-msgid "[!] Please enter number!"
-msgstr "[!] Proszę podać liczbę!"
+msgid "Please enter number!"
+msgstr "Proszę podać liczbę!"
 
 msgid "[!] Choose different teams!"
 msgstr "[!] Wybierz różne zespoły!"
+
+msgid "League {} already exist!"
+msgstr "Liga {} już istnieje!"
+
+msgid "Database error! {}"
+msgstr "Błąd bazy danych! {}"
+
+msgid "Value key error in {} while request!"
+msgstr "Błąd klucza w {} podczas żądania!"
+
+msgid "Team {} already exist!"
+msgstr "Zespół {} już istnieje!"
+
+msgid "Player {} already exist in {}!"
+msgstr "Gracz {} już isnieje w {}!"
+
+msgid "Team already play in this league!"
+msgstr "Ten zespół już gra w tej lidze!"
+
+# model translate
+
+msgid "Leagues"
+msgstr "Ligi"
+
+msgid "Teams"
+msgstr "Zespoły"
+
+msgid "Club: {}"
+msgstr "Zespół: {}"
+
+msgid "Statistic: {} in {} league"
+msgstr "Statystyka: {} w ligi {}"
+
+msgid "{} | Club: {}"
+msgstr "{} | Zespół: {}"
 # END

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 
 
 class League(models.Model):
@@ -10,8 +11,8 @@ class League(models.Model):
     shortcut = models.CharField(max_length=50)
 
     class Meta:
-        verbose_name = 'League'
-        verbose_name_plural = 'Leagues'
+        verbose_name = _('League')
+        verbose_name_plural = _('Leagues')
 
     def __str__(self):
         return str(self.name)
@@ -26,11 +27,11 @@ class Team(models.Model):
     shortcut = models.CharField(max_length=50)
 
     class Meta:
-        verbose_name = 'Team'
-        verbose_name_plural = 'Teams'
+        verbose_name = _('Team')
+        verbose_name_plural = _('Teams')
 
     def __str__(self):
-        return "Club: {}".format(self.name)
+        return _('Club: {}').format(self.name)
 
 
 class TeamStat(models.Model):
@@ -49,11 +50,11 @@ class TeamStat(models.Model):
     points = models.IntegerField(default=0)
 
     class Meta:
-        verbose_name = 'Teams statistics'
-        verbose_name_plural = 'Teams statistics'
+        verbose_name = _('Team statistic')
+        verbose_name_plural = _('Teams statistics')
 
     def __str__(self):
-        return "Stat: {} in {} league".format(self.team.name, self.league.name)
+        return _('Statistic: {} in {} league').format(self.team.name, self.league.name)
 
 
 class Player(models.Model):
@@ -66,16 +67,17 @@ class Player(models.Model):
     age = models.IntegerField(default=0)
 
     class Meta:
-        verbose_name = 'Player'
+        verbose_name = _('Player')
 
     def __str__(self):
-        return '{} | Club: {}'.format(self.name, self.team.name)
+        return _('{} | Club: {}').format(self.name, self.team.name)
 
 
 class Match(models.Model):
     """
     Match model
-    - one match related to two TeamStat (home and guest teams in specific league)
+    - one match related to two TeamStat
+    (home and guest teams in specific league)
     """
     team_home = models.ForeignKey(TeamStat, related_name="home_matches")
     team_guest = models.ForeignKey(TeamStat, related_name="guest_matches")
@@ -83,9 +85,11 @@ class Match(models.Model):
     team_guest_goals = models.IntegerField(default=0)
 
     class Meta:
-        verbose_name = 'Match'
-        verbose_name_plural = 'Matches'
+        verbose_name = _('Match')
+        verbose_name_plural = _('Matches')
 
     def __str__(self):
-        return '{} vs {} ( {}:{})'.format(self.team_home.team.name, self.team_guest.team.name,
-                                          self.team_home_goals, self.team_guest_goals)
+        return _('{} vs {} ( {}:{})').format(self.team_home.team.name,
+                                             self.team_guest.team.name,
+                                             self.team_home_goals,
+                                             self.team_guest_goals)
