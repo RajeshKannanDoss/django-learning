@@ -1,12 +1,12 @@
 from django.views import View
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
-from rest_framework import  generics
-from .serializers import LeagueSerializer
+from rest_framework import generics
+from .serializers import LeagueSerializer, TeamSerializer
 
 from .models import Team, TeamStat, Match, League, Player
 from .functions import post_save, add_points_to_teams
@@ -18,9 +18,8 @@ class IndexView(View):
     """
     def get(self, request):
         leagues_list = League.objects.all()
-        teams = Team.objects.all()
         return render(request, 'leagues/leagues_list_view.html',
-                      {'leagues_list': leagues_list, 'teams': teams})
+                      {'leagues_list': leagues_list})
 
 
 class TeamsListView(View):
@@ -36,10 +35,9 @@ class TeamsListView(View):
         league = get_object_or_404(League, shortcut=league_id)
 
         teams = league.teams_stat.order_by('points').reverse()
-        leagues_list = League.objects.all()
 
         return render(request, 'leagues/teams_list_view.html',
-                      {'teams': teams, 'leagues_list': leagues_list, 'league': league})
+                      {'teams': teams, 'league': league})
 
 
 class TeamView(View):
@@ -57,60 +55,8 @@ class TeamView(View):
         team = get_object_or_404(Team, shortcut=team_id)
         team_stat = get_object_or_404(team.leagues_stat, team=team, league=league)
 
-        leagues_list = League.objects.all()
-
         return render(request, 'teams/team_view.html',
-                      {'team': team, 'team_stat': team_stat, 'leagues_list': leagues_list})
-
-
-class GetDataView(View):
-    """
-    Response AJAX requests from client
-    """
-    def post(self, request):
-        if request.is_ajax:
-            try:
-                action = str(request.POST.get('action', ''))
-                if not action:
-                    return HttpResponse(_('[!] Error! action is empty!'), status=400)
-            except MultiValueDictKeyError as e:
-                return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
-
-            response = []
-            response_data = {}
-
-            if action == 'get_teams_list_from_league':
-                try:
-                    league_shortcut = request.POST['league_shortcut']
-                    if not league_shortcut:
-                        return HttpResponse(_("[!] Error! league_shortcut is empty!"), status=400)
-                except MultiValueDictKeyError as e:
-                    return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
-
-                try:
-                    teams_stat_list = League.objects.get(shortcut=league_shortcut).teams_stat.all()
-                except League.DoesNotExist as e:
-                    return HttpResponse(e.args[0], status=500)
-
-                for team_stat in teams_stat_list:
-                    response.append(team_stat.team.name)
-                response_data['teams_names'] = response
-
-                return JsonResponse(response_data)
-
-            elif action == 'get_teams_list':
-                teams = Team.objects.all()
-
-                for team in teams:
-                    response.append(team.name)
-                response_data['teams_names'] = response
-
-                return JsonResponse(response_data)
-
-            else:
-                return HttpResponse('No requested action find on server!', status=400)
-        else:
-            return HttpResponse('AJAX request is required!', status=400)
+                      {'team_stat': team_stat})
 
 
 class CreateLeagueView(View):
@@ -161,8 +107,8 @@ class CreateMatchView(View):
 
         try:
             league = League.objects.get(shortcut=league_request)
-            home_team = Team.objects.get(name=home_team_request)
-            guest_team = Team.objects.get(name=guest_team_request)
+            home_team = Team.objects.get(shortcut=home_team_request)
+            guest_team = Team.objects.get(shortcut=guest_team_request)
 
             if home_team == guest_team:
                 return HttpResponse(_('[!] Choose different teams!'))
@@ -230,7 +176,7 @@ class CreatePlayerView(View):
             return HttpResponse(e.args[0] + _('[!] Please enter number!'), status=400)
 
         try:
-            team = Team.objects.get(name=player_team)
+            team = Team.objects.get(shortcut=player_team)
         except Team.DoesNotExist as e:
             return HttpResponse(e.args[0], status=500)
 
@@ -261,7 +207,7 @@ class AddTeamToLeagueView(View):
             return HttpResponse('[!] Value key error in {} while request!'.format(e.args[0]), status=400)
 
         try:
-            team = Team.objects.get(name=team_name)
+            team = Team.objects.get(shortcut=team_name)
             league = League.objects.get(shortcut=league_name)
         except League.DoesNotExist as e:
             return HttpResponse(e.args[0], status=500)
@@ -281,5 +227,43 @@ class AddTeamToLeagueView(View):
 
 
 class LeagueList(generics.ListCreateAPIView):
+    """
+    REST API View | generates list of all Leagues and send
+    """
     queryset = League.objects.all()
     serializer_class = LeagueSerializer
+
+
+class TeamListFromLeague(generics.ListAPIView):
+    """
+    REST API View | get league_shortcut from urls,
+    then send all teams object related to specific League
+    """
+    serializer_class = TeamSerializer
+    lookup_url_kwarg = 'league_shortcut'
+
+    def get_queryset(self):
+        """
+        :return: if find League and all teams_stat - send list of all teams
+        else send None
+        """
+        teams_list = []
+        shortcut = self.kwargs.get(self.lookup_url_kwarg)
+
+        try:
+            teams_stat_list = League.objects.get(shortcut=shortcut).teams_stat.all()
+        except League.DoesNotExist:
+            return None
+
+        for team_stat in teams_stat_list:
+            teams_list.append(team_stat.team)
+
+        return teams_list
+
+
+class TeamList(generics.ListCreateAPIView):
+    """
+    REST API | generates list of all teams and send
+    """
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer

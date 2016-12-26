@@ -56,6 +56,19 @@ var UI = {
 
         teamToLeagueMenuButton.on("click", function(){
             get_all_teams("team-to-league-team-form");
+
+            Ajax.sendGET("/fifa/api/leagues/")
+                .done(function (response) {
+                    $.each(response, function(key, value) {
+                        $("#team-to-league-league-form")
+                            .append($("<option></option>")
+                            .attr("value", value['shortcut']).text(value['name']));
+                    });
+                })
+                .fail(function (response) {
+                    console.log(response.responseText);
+                })
+
             teamToLeagueMenu.fadeIn(250);
         })
         // END
@@ -87,65 +100,54 @@ var UI = {
             })
         // END
 
-        // first get all teams request | need refactory
+        // function to get all teams related to specific League
         // START
-         var obj = {
-                    action: "get_teams_list_from_league",
-                    league_shortcut: $("#match-league-form").val(),
-                }
-                Ajax.send(obj, "/fifa/get_data/")
+        function get_all_teams_from_league(league_shortcut)
+        {
+            Ajax.sendGET("/fifa/api/league/getteamlist/" + league_shortcut)
                 .done(function (response) {
-                   teams_names_list = response['teams_names']
-                   $("#match-home-form").empty();
-                   $("#match-guest-form").empty();
-                   for(i=0; i < teams_names_list.length; i++)
-                   {
-                   new_option = $("<option>");
-                   new_option.attr("value", teams_names_list[i]);
-                   new_option.html(teams_names_list[i]);
-                   $("#match-home-form").append(new_option);
-
-                   new_option = $("<option>");
-                   new_option.attr("value", teams_names_list[i]);
-                   new_option.html(teams_names_list[i]);
-
-                   $("#match-guest-form").append(new_option);
-                   }
+                    $("#match-home-form").empty();
+                    $("#match-guest-form").empty();
+                    $.each(response, function(key, value) {
+                        $("#match-home-form")
+                            .append($("<option></option>")
+                            .attr("value", value['shortcut']).text(value['name']));
+                    });
+                    $.each(response, function(key, value) {
+                        $("#match-guest-form")
+                            .append($("<option></option>")
+                            .attr("value", value['shortcut']).text(value['name']));
+                    });
                 })
                 .fail(function (response) {
                     showAlert(response.responseText);
+                })
+         }
+
+
+        // END
+
+        // get all leagues names and shortcut and add to options
+        // START
+        select_field = $("#match-league-form");
+        Ajax.sendGET("/fifa/api/leagues/")
+                .done(function (response) {
+                    $.each(response, function(key, value) {
+                        select_field
+                            .append($("<option></option>")
+                            .attr("value", value['shortcut']).text(value['name']));
+                    });
+                    get_all_teams_from_league(response[0]['shortcut']);
+                })
+                .fail(function (response) {
+                    console.log(response.responseText);
                 })
         // END
 
         // get all teams for league
         // START
         $("#match-league-form").on("change", function(){
-                var obj = {
-                    action: "get_teams_list_from_league",
-                    league_shortcut: $("#match-league-form").val(),
-                }
-                Ajax.send(obj, "/fifa/get_data/")
-                .done(function (response) {
-                   teams_names_list = response['teams_names']
-                   $("#match-home-form").empty();
-                   $("#match-guest-form").empty();
-                   for(i=0; i < teams_names_list.length; i++)
-                   {
-                   new_option = $("<option>");
-                   new_option.attr("value", teams_names_list[i]);
-                   new_option.html(teams_names_list[i]);
-                   $("#match-home-form").append(new_option);
-
-                   new_option = $("<option>");
-                   new_option.attr("value", teams_names_list[i]);
-                   new_option.html(teams_names_list[i]);
-
-                   $("#match-guest-form").append(new_option);
-                   }
-                })
-                .fail(function (response) {
-                    showAlert(response.responseText);
-                })
+                get_all_teams_from_league($("#match-league-form").val());
         })
         // END
 
@@ -213,25 +215,16 @@ var UI = {
         // START
         function get_all_teams(id){
                 element = $("#" + id)
-                var obj = {
-                    action: "get_teams_list",
-                    team: element.val(),
-                }
-                Ajax.send(obj, "/fifa/get_data/")
+                Ajax.sendGET("/fifa/api/teams/")
                 .done(function (response) {
-                   teams_names_list = response['teams_names']
-                   element.empty();
-                   for(i=0; i < teams_names_list.length; i++)
-                   {
-                   new_option = $("<option>");
-                   new_option.attr("value", teams_names_list[i]);
-                   new_option.html(teams_names_list[i]);
-
-                   element.append(new_option);
-                   }
+                    $.each(response, function(key, value) {
+                        element
+                            .append($("<option></option>")
+                            .attr("value", value['shortcut']).text(value['name']));
+                    });
                 })
                 .fail(function (response) {
-                    showAlert(response.responseText);
+                    console.log(response.responseText);
                 })
         }
         // END

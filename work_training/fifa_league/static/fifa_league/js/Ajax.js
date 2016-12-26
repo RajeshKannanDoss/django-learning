@@ -7,6 +7,15 @@
             dataType: dataType,
 
         })
+    },
+    sendGET: function (url, dataType)
+    {
+       return $.ajax({
+            type: "GET",
+            url: url,
+            dataType: dataType,
+
+        })
     }
 }
 

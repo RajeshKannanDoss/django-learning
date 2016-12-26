@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block title %}
-<title>{% trans 'Team' %} - {{ team.name }}</title>
+<title>{% trans 'Team' %} - {{ team_stat.team.name }}</title>
 {% endblock %}
 
 {% block static %}
@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-<h1>{% trans 'Team name:' %} {{ team.name }}</h1>
+<h1>{% trans 'Team name:' %} {{ team_stat.team.name }}</h1>
 <div class="matches_div">
     <h2>{% trans 'Matches:' %}</h2>
     {% if team_stat.home_matches.all and team_stat.guest_matches.all %}
@@ -52,7 +52,7 @@
 </div>
 <div class="players_div">
     <h2>{% trans 'Players:' %}</h2>
-    {% for player in team.player_set.all %}
+    {% for player in team_stat.team.player_set.all %}
              <div class="player">
                  {% trans 'Name:' %} {{ player.name }} <br>
                  {% trans 'Age:' %} {{ player.age }}

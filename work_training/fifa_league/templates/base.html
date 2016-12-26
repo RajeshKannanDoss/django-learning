@@ -53,9 +53,8 @@
         {% csrf_token %}
         League:
         <select id="match-league-form">
-            {% for league in leagues_list %}
-                <option value="{{league.shortcut}}"> {{ league.name }}</option>
-            {% endfor%}
+
+
         </select>
         <br>
         Home:
@@ -116,11 +115,7 @@
         </select>
         <br>
         League:
-        <select id="team-to-league-league-form">
-            {% for league in leagues_list %}
-                <option value="{{league.shortcut}}"> {{ league.name }}</option>
-            {% endfor%}
-        </select>
+        <select id="team-to-league-league-form"></select>
         <br>
         <input class="btn" type="submit" value="Add team to league">
     </form>
