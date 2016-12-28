@@ -74,6 +74,9 @@ msgstr "Punkty"
 
 msgid "Goals SC"
 msgstr "Goli"
+
+msgid "Goals CN"
+msgstr "Goli straconych"
 # END
 
 ## Other interface translation
