@@ -12,14 +12,14 @@
 {% endblock %}
 
 {% block body %}
- <h2>{% trans 'Leagues:' %}</h2>
     {% if leagues_list %}
-        <ul class="league_list">
+    <h1 class="title">{% trans 'Leagues' %}</h1>
+        <ul class="league_list" id="leagues-list">
             {% for league in leagues_list %}
             <li><a href='{{league.shortcut}}'> {{ league.name }} </a></li>
             {% endfor%}
         </ul>
     {% else %}
-        <h2>{% trans 'No leagues available' %}</h2>
+        <h1>{% trans 'No leagues available' %}</h1>
     {% endif %}
 {% endblock %}

@@ -14,16 +14,19 @@
 {% block body %}
 {% if teams %}
         <table class="teams_table">
+            <thead>
             <tr>
-                <td>{% trans 'Team' %}</td>
-                <td>{% trans 'Count' %}</td>
-                <td>{% trans 'Wins' %}</td>
-                <td>{% trans 'Loses' %}</td>
-                <td>{% trans 'Draws' %}</td>
-                <td>{% trans 'Goals SC' %}</td>
-                <td>{% trans 'Goals CN' %}</td>
-                <td>{% trans 'Points' %}</td>
+                <th>{% trans 'Team' %}</th>
+                <th>{% trans 'Count' %}</th>
+                <th>{% trans 'Wins' %}</th>
+                <th>{% trans 'Loses' %}</th>
+                <th>{% trans 'Draws' %}</th>
+                <th>{% trans 'Goals SC' %}</th>
+                <th>{% trans 'Goals CN' %}</th>
+                <th>{% trans 'Points' %}</th>
             </tr>
+            </thead>
+            <tbody>
             {% for team in teams %}
             <tr>
                 <td><a href='{{team.team.shortcut}}'> {{ team.team.name }} </a></td>
@@ -36,8 +39,9 @@
                 <td> {{ team.points }} </td>
             </tr>
             {% endfor%}
+            </tbody>
         </table>
     {% else %}
-        <h2>{% trans 'No teams available' %}</h2>
+        <h1>{% trans 'No teams available' %}</h1>
 {% endif %}
 {% endblock %}

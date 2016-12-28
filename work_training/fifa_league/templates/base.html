@@ -12,10 +12,12 @@
     <meta name="robots" content="all">
 
     {% load static %}
-
+    <!-- Favicon ico -->
     <link rel="icon" href="{% static 'fifa_league/gfx/favicon.ico' %}">
+
     <!-- CSS and JS -->
-    <link href="{% static 'fifa_league/css/addmenu.css'%}" rel="stylesheet" />
+    <link href="{% static 'fifa_league/css/base.css'%}" rel="stylesheet" />
+
     {% block static %}
     {% endblock %}
 
@@ -38,11 +40,13 @@
     <h3>Create new league</h3>
     <form action="/fifa/create_league/" method="post" id="create-league-form">
         {% csrf_token %}
-        Name: <input id="league-name-form" required>
+        <label>Name:</label>
+        <input type="text" id="league-name-form" placeholder="League name*" required>
         <br>
-        Shortcut: <input id="league-shortcut-form" required pattern="[A-Za-z0-9]+">
+        <label>Shortcut:</label>
+        <input type="text" id="league-shortcut-form" placeholder="League shortcut*" required pattern="[A-Za-z0-9]+">
         <br>
-        <input class="btn" type="submit" value="Create league">
+        <input class="addmenu_btn" type="submit" value="Create league">
     </form>
 </div>
 
@@ -51,38 +55,38 @@
     <h3>Create new match</h3>
     <form action="/fifa/create_match/" method="post" id="create-match-form">
         {% csrf_token %}
-        League:
-        <select id="match-league-form">
-
-
-        </select>
+        <label>League:</label>
+        <select class="select_style" id="match-league-form"></select>
         <br>
-        Home:
-        <select id="match-home-form">
 
-        </select>
-        Score: <input type="number" id="match-home-score-form" min="0" max="999" required autocomplete="off">
+        <label>Home:</label>
+        <select class="select_style" id="match-home-form"></select>
+        <label>Score:</label>
+        <input type="number" id="match-home-score-form" min="0" max="999" required autocomplete="off">
         <br>
-        Guest:
-        <select id="match-guest-form">
 
-        </select>
+        <label>Guest:</label>
+        <select class="select_style" id="match-guest-form"></select>
         Score: <input type="number" id="match-guest-score-form" min="0" max="999" required autocomplete="off">
         <br>
-        <input class="btn" type="submit" value="Create league">
+
+        <input class="addmenu_btn" type="submit" value="Create match">
     </form>
 </div>
 
 <div class="add_menu" id="add-team-menu">
-    <h3>Create team</h3>
+    <h3>Create new team</h3>
     <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
     <form action="/fifa/create_team/" method="post" id="create-team-form">
         {% csrf_token %}
-        Name: <input id="team-name-form" required placeholder="Enter team name">
+        <label>Name:</label>
+        <input type="text" id="team-name-form" required placeholder="Team name*">
         <br>
-        Shortcut: <input id="team-shortcut-form" required pattern="[A-Za-z0-9]+" placeholder="Enter shortcut for url">
+
+        <label>Shortcut:</label>
+        <input type="text" id="team-shortcut-form" required pattern="[A-Za-z0-9]+" placeholder="Team shortcut*">
         <br>
-        <input class="btn" type="submit" value="Create team">
+        <input class="addmenu_btn" type="submit" value="Create team">
     </form>
 </div>
 
@@ -91,14 +95,16 @@
     <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
     <form action="/fifa/create_player/" method="post" id="create-player-form">
         {% csrf_token %}
-        Team:
-        <select id="player-team-form">
+        <label>Team:</label>
+        <select class="select_style" id="player-team-form"></select>
+        <br>
 
-        </select>
+        <label>Name:</label>
+        <input type="text" id="player-name-form" required placeholder="Player name*">
         <br>
-        Name: <input id="player-name-form" required placeholder="Enter player name">
-        <br>
-        Age: <input id="player-age-form" type="number" min="0" max="200" required>
+
+        <label>Age:</label>
+        <input id="player-age-form" type="number" min="0" max="200" required>
         <br>
         <input class="btn" type="submit" value="Create player">
     </form>
@@ -109,27 +115,33 @@
     <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
     <form action="/fifa/add_team_to_league/" method="post" id="create-team-to-league-form">
         {% csrf_token %}
-        Team:
-        <select id="team-to-league-team-form">
+        <label>Team:</label>
+        <select class="select_style" id="team-to-league-team-form"></select>
+        <br>
 
-        </select>
+        <label>League:</label>
+        <select class="select_style" id="team-to-league-league-form"></select>
         <br>
-        League:
-        <select id="team-to-league-league-form"></select>
-        <br>
-        <input class="btn" type="submit" value="Add team to league">
+        <input class="addmenu_btn" type="submit" value="Add team to league">
     </form>
 </div>
 
-<div class="main_menu">
-    <button class="btn" id="add-league-menu-button">{% trans 'Add league' %}</button>
-    <button class="btn" id="add-match-menu-button">{% trans 'Add match' %}</button>
-    <button class="btn" id="add-team-menu-button">{% trans 'Add team' %}</button>
-    <button class="btn" id="add-player-menu-button">{% trans 'Add player' %}</button>
-    <button class="btn" id="add-team-to-league-menu-button">{% trans 'Add team to league' %}</button>
+<div class="main_top">
+    <div class="user_div">
+        <img class="user_photo" src="{% static 'fifa_league/gfx/test_user.jpg' %}">
+        <h3 class="username">Test User</h3>
+    </div>
+    <div class="menu_div">
+        <div class="btn" id="add-league-menu-button">{% trans 'Add league' %}</div>
+        <div class="btn" id="add-match-menu-button">{% trans 'Add match' %}</div>
+        <div class="btn" id="add-team-menu-button">{% trans 'Add team' %}</div>
+        <div class="btn" id="add-player-menu-button">{% trans 'Add player' %}</div>
+        <div class="btn" id="add-team-to-league-menu-button">{% trans 'Add team to league' %}</div>
+    </div>
 </div>
-
+<div class="main">
 {% block body %}
 {% endblock %}
+</div>
 </body>
 </html>

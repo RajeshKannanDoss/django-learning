@@ -93,6 +93,21 @@ var UI = {
                 Ajax.send(obj, "/fifa/create_league/")
                 .done(function (response) {
                     showAlert(response);
+                    if($("#leagues-list") != undefined)
+                    $("#leagues-list").empty();
+                    {
+                    Ajax.sendGET("/fifa/api/leagues/")
+                    .done(function (response) {
+                    $.each(response, function(key, value) {
+                        $("#leagues-list")
+                            .append($("<li></li>")
+                            .append($("<a></a>").attr("href", value['shortcut']).text(value['name'])));
+                    });
+                    })
+                    .fail(function (response) {
+                        showAlert(response.responseText);
+                    })
+                    }
                 })
                 .fail(function (response) {
                     showAlert(response.responseText);
