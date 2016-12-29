@@ -1,6 +1,3 @@
-from django.db.models.signals import post_save
-from .models import Match
-
 # points variable
 WIN_POINT = 3
 DRAW_POINT = 1
@@ -11,11 +8,6 @@ def add_points_to_teams(sender, instance, **kwargs):
     :param instance: Match object
     :return: if kwargs['created'] is True, return None
     """
-    
-    # problem solution for twice signal triggering
-    if 'created' in kwargs:
-        if kwargs['created']:
-            return None
     
     home = instance.team_home
     guest = instance.team_guest
@@ -44,5 +36,3 @@ def add_points_to_teams(sender, instance, **kwargs):
 
     home.save()
     guest.save()
-
-post_save.connect(add_points_to_teams, Match)

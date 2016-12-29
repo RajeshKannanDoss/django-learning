@@ -10,7 +10,10 @@ from rest_framework import generics
 from .serializers import LeagueSerializer, TeamSerializer
 
 from .models import Team, TeamStat, Match, League, Player
-from .functions import post_save, add_points_to_teams
+
+from .functions import add_points_to_teams
+from django.db.models.signals import post_save
+post_save.connect(add_points_to_teams, Match)
 
 
 class IndexView(ListView):
@@ -131,7 +134,7 @@ class CreateMatchView(View):
         try:
             match = Match.objects.create(team_home=home_stat, team_guest=guest_stat, team_home_goals=home_score,
                                          team_guest_goals=guest_score)
-            match.save()
+            #match.save()
         except DatabaseError as e:
             return HttpResponse(_('Database error! {}').format(e.args[0]), status=500)
 
