@@ -2,7 +2,7 @@
 Serializer file | Contains serializers class for Django REST API framework
 """
 from rest_framework import serializers
-from .models import League, Team, TeamStat
+from .models import League, Team
 
 
 class LeagueSerializer(serializers.ModelSerializer):

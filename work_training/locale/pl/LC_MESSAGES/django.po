@@ -139,8 +139,8 @@ msgstr "[!] Błąd! league_shortcut jest pusty!"
 msgid "[!] Error! action is empty!"
 msgstr "[!] Błąd! action jest pusty!"
 
-msgid "Some of the request variables is empty"
-msgstr "Niektóre elementy w ządaniu są puste"
+msgid "Some of the fields are empty!"
+msgstr "Niektóre pola są puste!"
 
 msgid "Please enter number!"
 msgstr "Proszę podać liczbę!"

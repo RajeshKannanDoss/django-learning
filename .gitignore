@@ -13,6 +13,9 @@ db.*
 # PyCharm
 .idea
 
+# locales binary files
+*.mo
+
 # Linux Editors
 *~
 \#*\#
@@ -32,6 +35,3 @@ tramp
 # Windows
 Thumbs.db
 Desktop.ini
-
-# locales binary file
-*.mo

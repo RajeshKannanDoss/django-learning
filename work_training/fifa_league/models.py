@@ -54,7 +54,8 @@ class TeamStat(models.Model):
         verbose_name_plural = _('Teams statistics')
 
     def __str__(self):
-        return _('Statistic: {} in {} league').format(self.team.name, self.league.name)
+        return _('Statistic: {} in {} league')\
+            .format(self.team.name, self.league.name)
 
 
 class Player(models.Model):

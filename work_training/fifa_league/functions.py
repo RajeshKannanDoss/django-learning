@@ -8,7 +8,7 @@ def add_points_to_teams(sender, instance, **kwargs):
     :param instance: Match object
     :return: if kwargs['created'] is True, return None
     """
-    
+
     home = instance.team_home
     guest = instance.team_guest
 
