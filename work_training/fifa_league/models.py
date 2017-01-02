@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from django.db.models.signals import post_save
+from .functions import add_points_to_teams
+
 
 class League(models.Model):
     """
@@ -94,3 +97,6 @@ class Match(models.Model):
                                              self.team_guest.team.name,
                                              self.team_home_goals,
                                              self.team_guest_goals)
+
+
+post_save.connect(add_points_to_teams, Match)

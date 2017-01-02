@@ -4,10 +4,6 @@ tests.py | File that contains tests for fifa_league app
 from django.test import TestCase
 from .models import Match, League, Team, TeamStat
 
-# imports for Match create test
-from django.db.models.signals import post_save
-from .functions import add_points_to_teams
-
 
 class MatchCreateTestCase(TestCase):
     """
@@ -25,8 +21,6 @@ class MatchCreateTestCase(TestCase):
 
         self.team_stat1 = TeamStat.objects.create(league=league, team=team1)
         self.team_stat2 = TeamStat.objects.create(league=league, team=team2)
-
-        post_save.connect(add_points_to_teams, Match)
 
     def clean_teams_statistic(self):
         """
