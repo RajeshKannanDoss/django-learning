@@ -1,18 +1,18 @@
 """
 URL pattern file for fifa_league app
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from . import views
+from rest_framework.routers import SimpleRouter
 
-
+router = SimpleRouter()
+router.register(r'teams', views.TeamViewSet, base_name='teams')
+router.register(r'leagues', views.LeagueList.as_view(), base_name='leagues')
 app_name = "fifa_league"
 urlpatterns = [
     # API url
-    url(r'^api/teams/$', views.TeamList.as_view()),
-    url(r'^api/leagues/$', views.LeagueList.as_view()),
-    url(r'^api/league/getteamlist/(?P<league_shortcut>[0-9a-zA-Z]+)$',
-        views.TeamListFromLeague.as_view()),
-
+    url(r'api/leagues/$', views.LeagueList.as_view()),
+    url(r'api/', include(router.urls)),
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^create_league/', views.CreateLeagueView.as_view()),
     url(r'^create_match/', views.CreateMatchView.as_view()),

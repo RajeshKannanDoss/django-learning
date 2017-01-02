@@ -119,7 +119,7 @@ var UI = {
         // START
         function get_all_teams_from_league(league_shortcut)
         {
-            Ajax.sendGET("/fifa/api/league/getteamlist/" + league_shortcut)
+            Ajax.sendGET("/fifa/api/teams/get_teams_from_league/" + league_shortcut + "/")
                 .done(function (response) {
                     $("#match-home-form").empty();
                     $("#match-guest-form").empty();

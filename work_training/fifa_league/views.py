@@ -5,15 +5,12 @@ from django.shortcuts import get_object_or_404
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 
-from rest_framework import generics
+from rest_framework import generics, viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import list_route
 from .serializers import LeagueSerializer, TeamSerializer
 
 from .models import Team, TeamStat, Match, League, Player
-
-from django.db.models.signals import post_save
-from .functions import add_points_to_teams
-
-post_save.connect(add_points_to_teams, Match)
 
 
 class IndexView(ListView):
@@ -255,37 +252,30 @@ class LeagueList(generics.ListCreateAPIView):
     serializer_class = LeagueSerializer
 
 
-class TeamListFromLeague(generics.ListAPIView):
+class TeamViewSet(viewsets.ViewSet):
     """
-    REST API View | get league_shortcut from urls,
-    then send all teams object related to specific League
+    Simple viewset for Team API
     """
-    serializer_class = TeamSerializer
-    lookup_url_kwarg = 'league_shortcut'
 
-    def get_queryset(self):
+    def list(self, request):
         """
-        :return: if find League and all teams_stat - send list of all teams
-        else send None
+        :param request:
+        :return: List of all teams
         """
-        teams_list = []
-        shortcut = self.kwargs.get(self.lookup_url_kwarg)
+        queryset = Team.objects.all()
+        serializer = TeamSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-        try:
-            teams_stat_list = League.objects.get(shortcut=shortcut)\
-                .teams_stat.all()
-        except League.DoesNotExist:
-            return None
-
-        for team_stat in teams_stat_list:
-            teams_list.append(team_stat.team)
-
-        return teams_list
-
-
-class TeamList(generics.ListCreateAPIView):
-    """
-    REST API | generates list of all teams and send
-    """
-    queryset = Team.objects.all()
-    serializer_class = TeamSerializer
+    @list_route(methods=['get'],
+                url_path='get_teams_from_league/'
+                         '(?P<league_shortcut>[0-9a-zA-Z]+)')
+    def get_teams_from_league(self, request, *args, **kwargs):
+        """
+        :param kwargs: contains league_shortcut
+        :return: list of team related to league
+        """
+        shortcut = self.kwargs.get('league_shortcut')
+        queryset = Team.objects.filter(leagues_stat__in=TeamStat.objects
+                                       .filter(league__shortcut=shortcut))
+        serializer = TeamSerializer(queryset, many=True)
+        return Response(serializer.data)
