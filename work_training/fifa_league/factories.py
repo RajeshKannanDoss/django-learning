@@ -25,8 +25,8 @@ class TeamStatFactory(factory.DjangoModelFactory):
     class Meta:
         model = TeamStat
 
-    league = LeagueFactory()
-    team = TeamFactory()
+    league = factory.SubFactory(LeagueFactory)
+    team = factory.SubFactory(TeamFactory)
     match_count = 0
     wins = 0
     loses = 0
@@ -40,8 +40,8 @@ class MatchFactory(factory.DjangoModelFactory):
     class Meta:
         model = Match
 
-    team_home = TeamStatFactory()
-    team_guest = TeamStatFactory()
+    team_home = factory.SubFactory(TeamStatFactory)
+    team_guest = factory.SubFactory(TeamStatFactory)
     team_home_goals = 0
     team_guest_goals = 0
 
@@ -50,6 +50,6 @@ class PlayerFactory(factory.DjangoModelFactory):
     class Meta:
         model = Player
 
-    team = TeamFactory()
+    team = factory.SubFactory(TeamFactory)
     name = 'Rocko Pocko'
     age = 21
