@@ -16,6 +16,9 @@ db.*
 # locales binary files
 *.mo
 
+# coverage file
+.coverage
+
 # Linux Editors
 *~
 \#*\#
