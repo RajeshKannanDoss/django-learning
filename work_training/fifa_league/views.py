@@ -82,7 +82,7 @@ class CreateLeagueView(View):
         if League.objects.filter(name=league_name).exists() \
                 or League.objects.filter(shortcut=league_shortcut).exists():
             return HttpResponse(_('League {} already exist!')
-                                .format(league_name))
+                                .format(league_name), status=400)
 
         try:
             league = League.objects.create(name=league_name,
@@ -155,7 +155,7 @@ class CreateTeamView(View):
         team_name = str(request.POST.get('team_name', ''))
         team_shortcut = str(request.POST.get('team_shortcut', ''))
         if not team_name or not team_shortcut:
-            return HttpResponse(_('Some of the fields are empty'),
+            return HttpResponse(_('Some of the fields are empty!'),
                                 status=400)
 
         if Team.objects.filter(name=team_name).exists() \
@@ -185,18 +185,18 @@ class CreatePlayerView(View):
             if not player_name or not player_age or not player_team:
                 return HttpResponse(_('Some of the fields are empty!'),
                                     status=400)
-        except ValueError as e:
-            return HttpResponse(e.args[0] + _('[!] Please enter number!'),
+        except ValueError:
+            return HttpResponse(_('[!] Please enter number!'),
                                 status=400)
 
         try:
             team = Team.objects.get(shortcut=player_team)
         except Team.DoesNotExist as e:
-            return HttpResponse(e.args[0], status=500)
+            return HttpResponse(e.args[0], status=400)
 
         if Player.objects.filter(team=team, name=player_name).exists():
             return HttpResponse(_('Player {} already exist in {}!')
-                                .format(player_name, player_team), status=400)
+                                .format(player_name, team.name), status=400)
 
         try:
             player = Player.objects.create(team=team,
@@ -241,7 +241,7 @@ class AddTeamToLeagueView(View):
                                 status=500)
 
         return HttpResponse(_('Team {} now in {}!')
-                            .format(team_name, league_name), status=200)
+                            .format(team.name, league.name), status=200)
 
 
 class LeagueList(generics.ListCreateAPIView):

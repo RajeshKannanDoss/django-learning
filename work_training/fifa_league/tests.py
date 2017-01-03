@@ -1,9 +1,11 @@
 """
 tests.py | File that contains tests for fifa_league app
 """
-from django.test import TestCase
+from django.test import TestCase, Client
 from .factories import TeamFactory, LeagueFactory, TeamStatFactory, \
     PlayerFactory, MatchFactory
+from .serializers import LeagueSerializer, TeamSerializer
+from .models import League, Team, Player, TeamStat
 
 
 class MatchCreateTestCase(TestCase):
@@ -67,11 +69,9 @@ class LeagueModelCreateTestCase(TestCase):
         self.league = LeagueFactory()
 
     def test_league_create(self):
-        league = self.league
-
-        self.assertEqual(league.__str__(), 'TESTLEAGUE')
-        self.assertEqual(league.name, 'TESTLEAGUE')
-        self.assertEqual(league.shortcut, 'testleague')
+        self.assertEqual(self.league.__str__(), 'TESTLEAGUE')
+        self.assertEqual(self.league.name, 'TESTLEAGUE')
+        self.assertEqual(self.league.shortcut, 'testleague')
 
 
 class TeamModelCreateTestCase(TestCase):
@@ -79,11 +79,10 @@ class TeamModelCreateTestCase(TestCase):
         self.team = TeamFactory()
 
     def test_team_create(self):
-        team = self.team
-
-        self.assertEqual(team.__str__(), 'Club: {}'.format(team.name))
-        self.assertEqual(team.name, '{}'.format(team.name))
-        self.assertEqual(team.shortcut, '{}'.format(team.shortcut))
+        self.assertEqual(self.team.__str__(), 'Club: {}'
+                         .format(self.team.name))
+        self.assertEqual(self.team.name, '{}'.format(self.team.name))
+        self.assertEqual(self.team.shortcut, '{}'.format(self.team.shortcut))
 
 
 class TeamStatModelCreateTestCase(TestCase):
@@ -116,3 +115,274 @@ class PlayerModelCreateTestCase(TestCase):
                          .format(self.player.name, self.player.team.name))
 
 
+class SerializersTestCase(TestCase):
+    def setUp(self):
+        self.league = LeagueFactory()
+        self.team = TeamFactory()
+
+    def test_league_serializer(self):
+        league = self.league
+        serializer = LeagueSerializer(league)
+        self.assertEqual(serializer.data,
+                         {'name': league.name, 'shortcut': league.shortcut})
+
+    def test_team_serializer(self):
+        team = self.team
+        serializer = TeamSerializer(team)
+        self.assertEqual(serializer.data,
+                         {'name': team.name, 'shortcut': team.shortcut})
+
+
+class APITestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.league2 = LeagueFactory(name='TESTLEAGUE2',
+                                     shortcut='testleague2')
+        self.teamstat1 = TeamStatFactory()
+        self.teamstat2 = TeamStatFactory()
+
+    def test_teams_list(self):
+        response = self.client.get('/fifa/api/teams/')
+
+        test_serializers = []
+        valid_keys = ('name', 'shortcut')
+
+        teams_list = Team.objects.all()
+        for team in teams_list:
+            test_serializers.append(TeamSerializer(team).data)
+
+        response_data = response.json()
+        data_key_list = list(response_data[0].keys())
+        for key in data_key_list:
+            self.assertIn(key, valid_keys)
+
+        for test in test_serializers:
+            self.assertIn(test, response_data)
+
+        self.assertEqual(len(response_data), len(test_serializers))
+
+    def test_get_teams_from_league(self):
+        league = self.teamstat1.league
+        response = self.client.get('/fifa/api/teams/get_teams_from_league/{}/'
+                                   .format(league.shortcut))
+        test_serializers = []
+        valid_keys = ('name', 'shortcut')
+
+        teams_list = TeamStat.objects.filter(league__shortcut=league.shortcut)
+        for teamstat in teams_list:
+            test_serializers.append(TeamSerializer(teamstat.team).data)
+
+        response_data = response.json()
+        data_key_list = list(response_data[0].keys())
+        for key in data_key_list:
+            self.assertIn(key, valid_keys)
+
+        for test in test_serializers:
+            self.assertIn(test, response_data)
+        self.assertEqual(len(response_data), len(test_serializers))
+
+    def test_league_list(self):
+        response = self.client.get('/fifa/api/leagues/')
+        test_serializers = []
+        valid_keys = ('name', 'shortcut')
+
+        leagues_list = League.objects.all()
+        for league in leagues_list:
+            test_serializers.append(LeagueSerializer(league).data)
+
+        response_data = response.json()
+        data_key_list = list(response_data[0].keys())
+        for key in data_key_list:
+            self.assertIn(key, valid_keys)
+
+        for test in test_serializers:
+            self.assertIn(test, response_data)
+        self.assertEqual(len(response_data), len(test_serializers))
+
+
+class TestCreateLeagueViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/create_league/',
+                                    {'name': 'TESTLEAGUE1',
+                                     'shortcut': 'testleague1'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'League TESTLEAGUE1 is create!')
+
+        league = League.objects.get(name='TESTLEAGUE1', shortcut='testleague1')
+        self.assertEqual(league.name, 'TESTLEAGUE1')
+        self.assertEqual(league.shortcut, 'testleague1')
+
+    def test_create_with_empty_fields(self):
+        response = self.client.post('/fifa/create_league/',
+                                    {'name': '',
+                                     'shortcut': ''},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Some of the fields are empty!')
+
+    def test_create_two_equal(self):
+        self.client.post('/fifa/create_league/',
+                         {'name': 'TESTLEAGUE1',
+                          'shortcut': 'testleague1'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.post('/fifa/create_league/',
+                                    {'name': 'TESTLEAGUE1',
+                                     'shortcut': 'testleagues1'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'League TESTLEAGUE1 already exist!')
+
+
+class TestCreateTeamViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/create_team/',
+                                    {'team_name': 'TESTTEAM1',
+                                     'team_shortcut': 'testteam1'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Team TESTTEAM1 is created!')
+
+        team = Team.objects.get(name='TESTTEAM1', shortcut='testteam1')
+        self.assertEqual(team.name, 'TESTTEAM1')
+        self.assertEqual(team.shortcut, 'testteam1')
+
+    def test_create_with_empty_fields(self):
+        response = self.client.post('/fifa/create_team/',
+                                    {'team_name': '',
+                                     'team_shortcut': ''},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Some of the fields are empty!')
+
+    def test_create_two_equal(self):
+        self.client.post('/fifa/create_team/',
+                         {'team_name': 'TESTTEAM1',
+                          'team_shortcut': 'testteam1'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.post('/fifa/create_team/',
+                                    {'team_name': 'TESTTEAM1',
+                                     'team_shortcut': 'testteam1'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Team TESTTEAM1 already exist!')
+
+
+# not all possibilities in test
+class TestCreatePlayerViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.team = TeamFactory()
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/create_player/',
+                                    {'player_name': 'TESTPLAYER1',
+                                     'player_age': 19,
+                                     'player_team': self.team.shortcut},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Player TESTPLAYER1 is created!')
+
+        player = Player.objects.get(name='TESTPLAYER1', team=self.team)
+        self.assertEqual(player.name, 'TESTPLAYER1')
+        self.assertEqual(player.age, 19)
+        self.assertEqual(player.team.name, self.team.name)
+
+    def test_create_with_few_empty_fields(self):
+        response = self.client.post('/fifa/create_player/',
+                                    {'player_name': '',
+                                     'player_age': 0,
+                                     'player_team': ''},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Some of the fields are empty!')
+
+    def test_create_age_not_number(self):
+        response = self.client.post('/fifa/create_player/',
+                                    {'player_name': 'TESTPLAYER1',
+                                     'player_age': 'not number',
+                                     'player_team': self.team.shortcut},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         '[!] Please enter number!')
+
+    def test_create_two_equal(self):
+        self.client.post('/fifa/create_player/',
+                         {'player_name': 'TESTPLAYER1',
+                          'player_age': 19,
+                          'player_team': self.team.shortcut},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        response = self.client.post('/fifa/create_player/',
+                                    {'player_name': 'TESTPLAYER1',
+                                     'player_age': 19,
+                                     'player_team': self.team.shortcut},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Player TESTPLAYER1 already exist in {}!'
+                         .format(self.team.name))
+
+
+class TestAddTeamToLeagueViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.team = TeamFactory()
+        self.league = LeagueFactory()
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/add_team_to_league/',
+                                    {'team_name': self.team.shortcut,
+                                     'league_name': self.league.shortcut},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Team {} now in {}!'.format(self.team.name,
+                                                     self.league.name))
+
+    def test_create_with_empty_fields(self):
+        response = self.client.post('/fifa/add_team_to_league/',
+                                    {'team_name': '',
+                                     'league_name': ''},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Some of the fields are empty!')
+
+
+class TestCreateMatchViewTestCase(TestCase):
+    def setUp(self):
+        self.league = LeagueFactory()
+        self.team_home = TeamStatFactory(league=self.league)
+        self.team_guest = TeamStatFactory(league=self.league)
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/create_match/',
+                                    {'league': self.league.shortcut,
+                                     'home_team': self.team_home.team.shortcut,
+                                     'guest_team': self.team_guest
+                                     .team.shortcut,
+                                     'home_score': 2,
+                                     'guest_score': 1},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Match between {} and {} is created!'
+                         .format(self.team_home.team.name,
+                                 self.team_guest.team.name))
