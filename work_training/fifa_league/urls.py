@@ -8,6 +8,7 @@ from rest_framework.routers import SimpleRouter
 router = SimpleRouter()
 router.register(r'teams', views.TeamViewSet, base_name='teams')
 router.register(r'leagues', views.LeagueList.as_view(), base_name='leagues')
+
 app_name = "fifa_league"
 urlpatterns = [
     # API url

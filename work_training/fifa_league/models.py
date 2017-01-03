@@ -93,10 +93,10 @@ class Match(models.Model):
         verbose_name_plural = _('Matches')
 
     def __str__(self):
-        return _('{} vs {} ( {}:{})').format(self.team_home.team.name,
-                                             self.team_guest.team.name,
-                                             self.team_home_goals,
-                                             self.team_guest_goals)
+        return _('{} vs {} ({}:{})').format(self.team_home.team.name,
+                                            self.team_guest.team.name,
+                                            self.team_home_goals,
+                                            self.team_guest_goals)
 
 
 post_save.connect(add_points_to_teams, Match)
