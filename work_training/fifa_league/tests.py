@@ -141,63 +141,60 @@ class APITestCase(TestCase):
         self.teamstat1 = TeamStatFactory()
         self.teamstat2 = TeamStatFactory()
 
+    def is_lists_equals(self, valid_list, test_list):
+        # length list test
+        if len(valid_list) != len(test_list):
+            return False
+
+        # JSON keys list test
+        valid_list_keys = list(valid_list[0].keys())
+        test_list_keys = list(test_list[0].keys())
+        for key in valid_list_keys:
+            if key not in test_list_keys:
+                return False
+
+        # if lists equal test
+        if valid_list != test_list:
+            return False
+
+        return True
+
     def test_teams_list(self):
         response = self.client.get('/fifa/api/teams/')
 
         test_serializers = []
-        valid_keys = ('name', 'shortcut')
 
         teams_list = Team.objects.all()
         for team in teams_list:
             test_serializers.append(TeamSerializer(team).data)
 
         response_data = response.json()
-        data_key_list = list(response_data[0].keys())
-        for key in data_key_list:
-            self.assertIn(key, valid_keys)
 
-        for test in test_serializers:
-            self.assertIn(test, response_data)
-
-        self.assertEqual(len(response_data), len(test_serializers))
+        self.assertTrue(self.is_lists_equals(test_serializers, response_data))
 
     def test_get_teams_from_league(self):
         league = self.teamstat1.league
         response = self.client.get('/fifa/api/teams/get_teams_from_league/{}/'
                                    .format(league.shortcut))
         test_serializers = []
-        valid_keys = ('name', 'shortcut')
 
         teams_list = TeamStat.objects.filter(league__shortcut=league.shortcut)
         for teamstat in teams_list:
             test_serializers.append(TeamSerializer(teamstat.team).data)
 
         response_data = response.json()
-        data_key_list = list(response_data[0].keys())
-        for key in data_key_list:
-            self.assertIn(key, valid_keys)
-
-        for test in test_serializers:
-            self.assertIn(test, response_data)
-        self.assertEqual(len(response_data), len(test_serializers))
+        self.assertTrue(self.is_lists_equals(test_serializers, response_data))
 
     def test_league_list(self):
         response = self.client.get('/fifa/api/leagues/')
         test_serializers = []
-        valid_keys = ('name', 'shortcut')
 
         leagues_list = League.objects.all()
         for league in leagues_list:
             test_serializers.append(LeagueSerializer(league).data)
 
         response_data = response.json()
-        data_key_list = list(response_data[0].keys())
-        for key in data_key_list:
-            self.assertIn(key, valid_keys)
-
-        for test in test_serializers:
-            self.assertIn(test, response_data)
-        self.assertEqual(len(response_data), len(test_serializers))
+        self.assertTrue(self.is_lists_equals(test_serializers, response_data))
 
 
 class TestCreateLeagueViewTestCase(TestCase):
