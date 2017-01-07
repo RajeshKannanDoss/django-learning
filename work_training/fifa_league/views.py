@@ -308,6 +308,11 @@ class CreateUserView(View):
     form_class = UserCreateForm
 
     def post(self, request):
+        """
+        Handle POST request for user registration with UserCreateForm
+        :param request:
+        :return:
+        """
         form = self.form_class(request.POST)
 
         if not form.is_valid():
@@ -364,7 +369,7 @@ class LoginUserView(View):
                     login(request, user)
                     return redirect('fifa_league:index')
             else:
-                return HttpResponse('Bad login or password', status=400)
+                return HttpResponse('Bad login or password!', status=400)
         else:
             return HttpResponse('Not AJAX!', status=400)
 

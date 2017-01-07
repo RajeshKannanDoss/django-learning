@@ -467,6 +467,7 @@ class TestCreateMatchViewTestCase(TestCase):
                           password=self.user_password)
 
     def test_create_with_valid_data(self):
+        # TODO: Ask about post_save signals in tests
         response = self.client.post('/fifa/create_match/',
                                     {'league': self.league.shortcut,
                                      'team_home': self.team_home.team.shortcut,
@@ -506,3 +507,136 @@ class TestCreateMatchViewTestCase(TestCase):
                                 'team_guest_goals': 1},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
+
+
+class TestCreateUserViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_create_with_valid_data(self):
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser',
+                                     'password': '12345678',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        user = User.objects.get(username='testuser')
+        self.assertEqual(user.username, 'testuser')
+        self.assertRedirects(response, '/fifa/')
+        self.assertIn('_auth_user_id', self.client.session)
+        self.assertEqual('1', self.client.session['_auth_user_id'])
+
+    def test_create_two_equal_user(self):
+        self.client.post('/fifa/create_user/',
+                         {'username': 'testuser',
+                          'password': '12345678',
+                          'email': 'testuser@mail.com'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser',
+                                     'password': '12345678',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Please enter correct data!')
+
+    def test_create_two_users_with_equal_username(self):
+        self.client.post('/fifa/create_user/',
+                         {'username': 'testuser',
+                          'password': '1234',
+                          'email': 'testuser@mail.com'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser',
+                                     'password': '5678',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Please enter correct data!')
+
+    # TODO: Do i need this test
+    def test_create_two_users_with_equal_passwords(self):
+        self.client.post('/fifa/create_user/',
+                         {'username': 'testuser1',
+                          'password': '12345678',
+                          'email': 'testuser@mail.com'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser2',
+                                     'password': '12345678',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertRedirects(response, '/fifa/')
+        self.assertEqual('2', self.client.session['_auth_user_id'])
+
+    def test_create_user_with_empty_data(self):
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': '',
+                                     'password': '',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Please enter correct data!')
+
+    def test_create_user_with_empty_password(self):
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser',
+                                     'password': '',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Please enter correct data!')
+
+
+class TestLoginUserViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.password = '12345678'
+        self.user = UserFactory(username='testuser', password=self.password)
+
+    def test_login_with_valid_data(self):
+        response = self.client.post('/fifa/login_user/',
+                                    {'username': 'testuser',
+                                     'password': self.password},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertRedirects(response, '/fifa/')
+        self.assertIn('_auth_user_id', self.client.session)
+        self.assertEqual('1', self.client.session['_auth_user_id'])
+
+    def test_login_with_bad_username(self):
+        response = self.client.post('/fifa/login_user/',
+                                    {'username': 'badtestuser',
+                                     'password': self.password},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Bad login or password!')
+
+    def test_login_with_bad_password(self):
+        response = self.client.post('/fifa/login_user/',
+                                    {'username': 'testuser',
+                                     'password': 'badpassword'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Bad login or password!')
+
+
+class TestLogOutUserViewTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.password = '12345678'
+        self.user = UserFactory(username='tetsuser', password=self.password)
+
+    def test_logout_authenticated_user(self):
+        self.client.login(username='testuser', password=self.password)
+        response = self.client.get('/fifa/logout_user/')
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertRedirects(response, '/fifa/')
+
+    def test_logout_unauthenticated_user(self):
+        response = self.client.get('/fifa/logout_user/')
+        self.assertRedirects(response, '/fifa/')
