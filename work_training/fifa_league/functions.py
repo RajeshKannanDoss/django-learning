@@ -1,6 +1,20 @@
+"""
+Set of custom developed functions for fifa_league app
+"""
+from django.contrib.auth.models import Permission
+
 # points variable
 WIN_POINT = 3
 DRAW_POINT = 1
+
+# default list of permissions fo user
+DEFAULT_PERMISSIONS = [
+        'add_league',
+        'add_team',
+        'add_player',
+        'add_match',
+        'add_teamstat'
+    ]
 
 
 def add_points_to_teams(sender, instance, **kwargs):
@@ -36,3 +50,18 @@ def add_points_to_teams(sender, instance, **kwargs):
 
     home.save()
     guest.save()
+
+
+def add_permissions_to_user(user, perm_list=DEFAULT_PERMISSIONS):
+    """
+    Add to new user default permissions.
+    :param user: User model object
+    :param perm_list: list of permissions name
+    :return:
+    """
+    for perm_name in perm_list:
+        try:
+            perm_obj = Permission.objects.get(codename=perm_name)
+            user.user_permissions.add(perm_obj)
+        except Permission.DoesNotExist:
+            pass

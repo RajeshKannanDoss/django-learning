@@ -12,14 +12,27 @@ router.register(r'leagues', views.LeagueList.as_view(), base_name='leagues')
 app_name = "fifa_league"
 urlpatterns = [
     # API url
-    url(r'api/leagues/$', views.LeagueList.as_view()),
-    url(r'api/', include(router.urls)),
+    url(r'^api/leagues/$', views.LeagueList.as_view()),
+    url(r'^api/', include(router.urls)),
+
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^create_league/', views.CreateLeagueView.as_view()),
-    url(r'^create_match/', views.CreateMatchView.as_view()),
-    url(r'^create_team/', views.CreateTeamView.as_view()),
-    url(r'^create_player/', views.CreatePlayerView.as_view()),
-    url(r'^add_team_to_league/', views.AddTeamToLeagueView.as_view()),
+
+    # user views urls
+    url(r'^logout_user', views.LogOutUserView.as_view(), name='logout_user'),
+    url(r'^login_user/', views.LoginUserView.as_view(), name='login_user'),
+    url(r'^create_user/', views.CreateUserView.as_view(), name='create_user'),
+
+
+    url(r'^create_league/', views.CreateLeagueView.as_view(),
+        name='create_league'),
+    url(r'^create_match/', views.CreateMatchView.as_view(),
+        name='create_match'),
+    url(r'^create_team/', views.CreateTeamView.as_view(),
+        name='create_team'),
+    url(r'^create_player/', views.CreatePlayerView.as_view(),
+        name='create_player'),
+    url(r'^create_teamstat/', views.CreateTeamStatView.as_view(),
+        name='create_teamstat'),
     url(r'^(?P<league_shortcut>[0-9a-zA-Z]+)/$',
         views.TeamsListView.as_view()),
 

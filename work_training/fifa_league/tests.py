@@ -2,8 +2,9 @@
 tests.py | File that contains tests for fifa_league app
 """
 from django.test import TestCase, Client
+from django.contrib.auth.models import User
 from .factories import TeamFactory, LeagueFactory, TeamStatFactory, \
-    PlayerFactory, MatchFactory
+    PlayerFactory, MatchFactory, UserFactory
 from .serializers import LeagueSerializer, TeamSerializer
 from .models import League, Team, Player, TeamStat
 
@@ -199,7 +200,11 @@ class APITestCase(TestCase):
 
 class TestCreateLeagueViewTestCase(TestCase):
     def setUp(self):
+        self.user_password = '1234'
+        self.user = UserFactory(password=self.user_password)
         self.client = Client()
+        self.client.login(username=self.user.username,
+                          password=self.user_password)
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/create_league/',
@@ -221,7 +226,7 @@ class TestCreateLeagueViewTestCase(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Some of the fields are empty!')
+                         'Please enter correct data!')
 
     def test_create_two_equal(self):
         self.client.post('/fifa/create_league/',
@@ -231,21 +236,43 @@ class TestCreateLeagueViewTestCase(TestCase):
 
         response = self.client.post('/fifa/create_league/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleagues1'},
+                                     'shortcut': 'testleague1'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'League TESTLEAGUE1 already exist!')
 
+    def test_unauthenticated_user(self):
+        client = Client()
+        response = client.post('/fifa/create_league/',
+                               {'name': 'TESTLEAGUE1',
+                                'shortcut': 'testleague1'},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 401)
+
+    def test_authenticated_user_without_permissions(self):
+        client = Client()
+        User.objects.create_user(username='testuser', password='12345678')
+        client.login(username='testuser', password='12345678')
+        response = client.post('/fifa/create_league/',
+                               {'name': 'TESTLEAGUE1',
+                                'shortcut': 'testleague1'},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 403)
+
 
 class TestCreateTeamViewTestCase(TestCase):
     def setUp(self):
+        self.user_password = '1234'
+        self.user = UserFactory(password=self.user_password)
         self.client = Client()
+        self.client.login(username=self.user.username,
+                          password=self.user_password)
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/create_team/',
-                                    {'team_name': 'TESTTEAM1',
-                                     'team_shortcut': 'testteam1'},
+                                    {'name': 'TESTTEAM1',
+                                     'shortcut': 'testteam1'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
@@ -257,17 +284,17 @@ class TestCreateTeamViewTestCase(TestCase):
 
     def test_create_with_empty_fields(self):
         response = self.client.post('/fifa/create_team/',
-                                    {'team_name': '',
-                                     'team_shortcut': ''},
+                                    {'name': '',
+                                     'shortcut': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Some of the fields are empty!')
+                         'Please enter correct data!')
 
     def test_create_two_equal(self):
         self.client.post('/fifa/create_team/',
-                         {'team_name': 'TESTTEAM1',
-                          'team_shortcut': 'testteam1'},
+                         {'name': 'TESTTEAM1',
+                          'shortcut': 'testteam1'},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         response = self.client.post('/fifa/create_team/',
@@ -276,20 +303,41 @@ class TestCreateTeamViewTestCase(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Team TESTTEAM1 already exist!')
+                         'Please enter correct data!')
+
+    def test_unauthenticated_user(self):
+        client = Client()
+        response = client.post('/fifa/create_team/',
+                               {'name': 'TESTTEAM1',
+                                'shortcut': 'testteam1'},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 401)
+
+    def test_authenticated_user_without_permissions(self):
+        client = Client()
+        User.objects.create_user(username='testuser', password='12345678')
+        client.login(username='testuser', password='12345678')
+        response = client.post('/fifa/create_team/',
+                               {'name': 'TESTTEAM1',
+                                'shortcut': 'testteam1'},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 403)
 
 
-# not all possibilities in test
 class TestCreatePlayerViewTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
         self.team = TeamFactory()
+        self.user_password = '1234'
+        self.user = UserFactory(password=self.user_password)
+        self.client = Client()
+        self.client.login(username=self.user.username,
+                          password=self.user_password)
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/create_player/',
-                                    {'player_name': 'TESTPLAYER1',
-                                     'player_age': 19,
-                                     'player_team': self.team.shortcut},
+                                    {'name': 'TESTPLAYER1',
+                                     'age': 19,
+                                     'team': self.team.shortcut},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
@@ -302,51 +350,76 @@ class TestCreatePlayerViewTestCase(TestCase):
 
     def test_create_with_few_empty_fields(self):
         response = self.client.post('/fifa/create_player/',
-                                    {'player_name': '',
-                                     'player_age': 0,
-                                     'player_team': ''},
+                                    {'name': '',
+                                     'age': 0,
+                                     'team': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Some of the fields are empty!')
+                         'Please enter correct data!')
 
     def test_create_age_not_number(self):
         response = self.client.post('/fifa/create_player/',
-                                    {'player_name': 'TESTPLAYER1',
-                                     'player_age': 'not number',
-                                     'player_team': self.team.shortcut},
+                                    {'name': 'TESTPLAYER1',
+                                     'age': 'not number',
+                                     'team': self.team.shortcut},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         '[!] Please enter number!')
+                         'Please enter correct data!')
 
     def test_create_two_equal(self):
         self.client.post('/fifa/create_player/',
-                         {'player_name': 'TESTPLAYER1',
-                          'player_age': 19,
-                          'player_team': self.team.shortcut},
+                         {'name': 'TESTPLAYER1',
+                          'age': 19,
+                          'team': self.team.shortcut},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         response = self.client.post('/fifa/create_player/',
-                                    {'player_name': 'TESTPLAYER1',
-                                     'player_age': 19,
-                                     'player_team': self.team.shortcut},
+                                    {'name': 'TESTPLAYER1',
+                                     'age': 19,
+                                     'team': self.team.shortcut},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Player TESTPLAYER1 already exist in {}!'
                          .format(self.team.name))
 
+    def test_unauthenticated_user(self):
+        client = Client()
+        response = client.post('/fifa/create_player/',
+                               {'name': 'TESTPLAYER1',
+                                'age': 19,
+                                'team': self.team.shortcut},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 401)
 
-class TestAddTeamToLeagueViewTestCase(TestCase):
+    def test_authenticated_user_without_permissions(self):
+        client = Client()
+        User.objects.create_user(username='testuser', password='12345678')
+        client.login(username='testuser', password='12345678')
+        response = client.post('/fifa/create_league/',
+                               {'name': 'TESTPLAYER1',
+                                'age': 19,
+                                'team': self.team.shortcut},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 403)
+
+
+class TestCreateTeamStatViewTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
         self.team = TeamFactory()
         self.league = LeagueFactory()
+        self.user_password = '1234'
+        self.user = UserFactory(password=self.user_password)
+        self.client = Client()
+        self.client.login(username=self.user.username,
+                          password=self.user_password)
 
     def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/add_team_to_league/',
-                                    {'team_name': self.team.shortcut,
-                                     'league_name': self.league.shortcut},
+        response = self.client.post('/fifa/create_teamstat/',
+                                    {'team': self.team.shortcut,
+                                     'league': self.league.shortcut},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
@@ -354,32 +427,82 @@ class TestAddTeamToLeagueViewTestCase(TestCase):
                                                      self.league.name))
 
     def test_create_with_empty_fields(self):
-        response = self.client.post('/fifa/add_team_to_league/',
-                                    {'team_name': '',
-                                     'league_name': ''},
+        response = self.client.post('/fifa/create_teamstat/',
+                                    {'team': '',
+                                     'league': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Some of the fields are empty!')
+                         'Please enter correct data!')
+
+    def test_unauthenticated_user(self):
+        client = Client()
+        response = client.post('/fifa/create_teamstat/',
+                               {'team': '',
+                                'league': ''},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 401)
+
+    def test_authenticated_user_without_permissions(self):
+        client = Client()
+        User.objects.create_user(username='testuser', password='12345678')
+        client.login(username='testuser', password='12345678')
+        response = client.post('/fifa/create_teamstat/',
+                               {'team': '',
+                                'league': ''},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 403)
 
 
 class TestCreateMatchViewTestCase(TestCase):
+
     def setUp(self):
         self.league = LeagueFactory()
         self.team_home = TeamStatFactory(league=self.league)
         self.team_guest = TeamStatFactory(league=self.league)
+        self.user_password = '1234'
+        self.user = UserFactory(password=self.user_password)
+        self.client = Client()
+        self.client.login(username=self.user.username,
+                          password=self.user_password)
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/create_match/',
                                     {'league': self.league.shortcut,
-                                     'home_team': self.team_home.team.shortcut,
-                                     'guest_team': self.team_guest
+                                     'team_home': self.team_home.team.shortcut,
+                                     'team_guest': self.team_guest
                                      .team.shortcut,
-                                     'home_score': 2,
-                                     'guest_score': 1},
+                                     'team_home_goals': 2,
+                                     'team_guest_goals': 1},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
                          'Match between {} and {} is created!'
                          .format(self.team_home.team.name,
                                  self.team_guest.team.name))
+
+    def test_unauthenticated_user(self):
+        client = Client()
+        response = client.post('/fifa/create_match/',
+                               {'league': self.league.shortcut,
+                                'team_home': self.team_home.team.shortcut,
+                                'team_guest': self.team_guest
+                                .team.shortcut,
+                                'team_home_goals': 2,
+                                'team_guest_goals': 1},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 401)
+
+    def test_authenticated_user_without_permissions(self):
+        client = Client()
+        User.objects.create_user(username='testuser', password='12345678')
+        client.login(username='testuser', password='12345678')
+        response = client.post('/fifa/create_match/',
+                               {'league': self.league.shortcut,
+                                'team_home': self.team_home.team.shortcut,
+                                'team_guest': self.team_guest
+                                .team.shortcut,
+                                'team_home_goals': 2,
+                                'team_guest_goals': 1},
+                               HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 403)

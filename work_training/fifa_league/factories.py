@@ -2,7 +2,9 @@
 factories.py - file that contains factory classes for tests
 """
 import factory
+from django.contrib.auth.models import User
 from .models import Match, League, Team, TeamStat, Player
+from .functions import add_permissions_to_user
 
 
 class LeagueFactory(factory.DjangoModelFactory):
@@ -53,3 +55,25 @@ class PlayerFactory(factory.DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
     name = 'Rocko Pocko'
     age = 21
+
+
+class UserFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: 'TESTUSER%d' % n)
+    password = '12345678'
+    email = 'test_user@mail.com'
+
+    # TODO: Ask if it is good solution
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        password = kwargs.pop('password', None)
+        user = super(UserFactory, cls)._prepare(create, **kwargs)
+        if password:
+            user.set_password(password)
+            if create:
+                user.save()
+                # add DEFAULT PERMISSIONS to user
+                add_permissions_to_user(user)
+        return user

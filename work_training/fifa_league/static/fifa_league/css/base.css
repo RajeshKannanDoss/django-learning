@@ -3,6 +3,13 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    text-decoration: none;
+}
+
+html, body
+{
+    width: 100%;
+    height: 100%;
 }
 
 .main_top
@@ -17,7 +24,6 @@
 }
 
 .main_top,
-.user_photo,
 .username
 {
     -webkit-user-select: none;
@@ -32,17 +38,6 @@
 
     width: 15%;
     height: 100%;
-}
-
-.user_photo
-{
-    display: block;
-
-    width: 50%;
-    height: 75%;
-    margin: 0 auto;
-
-    border-radius: 50%;
 }
 
 .username
@@ -60,6 +55,11 @@
 
     width: 85%;
     height: 100%;
+}
+
+.menu_div a
+{
+    color: white;
 }
 
 .main
@@ -124,7 +124,7 @@
 .alert
 {
     position: fixed;
-    z-index: 10;
+    z-index: 15;
     top: 2.5em;
     right: 0;
 
@@ -162,40 +162,113 @@
 .addmenu_btn
 {
     font-size: 1.2em;
-
+    text-align: center;
+    padding: 1em;
     bottom: 0;
 
     width: 100%;
     height: 3em;
+    border: none;
 
     color: white;
     background-color: #3a95d6;
 }
 
-.add_menu input[type=text]
+.addmenu_btn:hover
+{
+  background-color: #3a7ed6;
+}
+
+.fullscreen_div
+{
+    display: none;
+    position: absolute;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+}
+
+.forms_container
+{
+    margin: 20vh auto;
+    width: 70vw;
+    height: 60vh;
+    background-color: white;
+    border: 0.2em solid skyblue;
+}
+
+#user-login-form
+{
+    display: block;
+}
+
+.menus_choose_buttons_div
 {
     width: 100%;
-    padding: .2em;
+    height: 10%;
+    display: table;
 }
 
-.add_menu input[type=number]
+.menus_choose_button
 {
-    padding: .2em;
-}
+    font-size: 1.2em;
+    text-align: center;
+    padding: 1em;
+    bottom: 0;
+    display: table-cell;
 
-.add_menu form
-{
-    margin-top: 2em;
-}
-
-.select_style
-{
-    font-size: 1em;
-    line-height: 1;
-
-    padding: .1em;
+    width: auto;
+    height: 100%;
+    border: none;
 
     color: white;
-    border: 0;
-    background-color: #9b95da;
+    background-color: #3a95d6;
+}
+
+.menus_choose_button:hover
+{
+  background-color: #3a7ed6;
+}
+
+.menu_form
+{
+  background-color: white;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 1px 0;
+  -moz-box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 1px 0;
+  box-shadow: rgba(000,000,000,0.9) 0 1px 2px, inset rgba(255,255,255,0.4) 0 1px 0;
+  font-family: 'Helvetica Neue',Helvetica,sans-serif;
+  text-decoration: none;
+  vertical-align: middle;
+  padding: 1em;
+  padding-top: 1.5em;
+  height: 100%;
+  display: none;
+}
+
+.menu_form input
+{
+    width: 100%;
+    margin-bottom: 1em;
+    padding: 0.5em;
+}
+
+.menu_form label
+{
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.menus_forms_div
+{
+    height: 90%;
+    width: 100%;
+}
+
+.focus_form
+{
+    display: block;
 }

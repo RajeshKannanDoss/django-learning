@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="All FIFA leagues">
     <meta name="keywords" content="FIFA, football">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="all">
 
     {% load static %}
@@ -22,121 +22,154 @@
     {% endblock %}
 
     <script src="{% static 'fifa_league/libs/jquery-3.1.0.min.js' %}"></script>
-    <script src="{% static 'fifa_league/js/Ajax.js' %}"></script>
-    <script src="{% static 'fifa_league/js/UI.js' %}"></script>
+
+    {% if not request.user.is_authenticated %}
+    <script src="{% static 'fifa_league/js/base_UI.js' %}"></script>
     <script>
         $(document).ready(function (){
-            UI.init();
+            base_UI.init();
         })
     </script>
+    {% else %}
+    <script src="{% static 'fifa_league/js/user_UI.js' %}"></script>
+    <script>
+        $(document).ready(function (){
+            user_UI.init();
+        })
+    </script>
+    {% endif %}
 </head>
 <body>
 <div class="alert" id="alert-div">
     <h4 id="alert-div-mes"></h4>
 </div>
 
-<div class="add_menu" id="add-league-menu">
+{% if not request.user.is_authenticated %}
+<div class="fullscreen_div" id="user-form-div">
     <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <h3>Create new league</h3>
-    <form action="/fifa/create_league/" method="post" id="create-league-form">
-        {% csrf_token %}
-        <label>Name:</label>
-        <input type="text" id="league-name-form" placeholder="League name*" required>
-        <br>
-        <label>Shortcut:</label>
-        <input type="text" id="league-shortcut-form" placeholder="League shortcut*" required pattern="[A-Za-z0-9]+">
-        <br>
-        <input class="addmenu_btn" type="submit" value="Create league">
-    </form>
-</div>
 
-<div class="add_menu" id="add-match-menu">
+    <div class="forms_container">
+        <div class="menus_choose_buttons_div">
+            <div class="menus_choose_button" id="user-signup-open-button">Sign up</div>
+            <div class="menus_choose_button" id="user-login-open-button">Log in</div>
+        </div>
+        <div class="menus_forms_div">
+            <form class='menu_form' id="user-registration-form" action="{% url 'fifa_league:create_user' %}" method="post">
+                {% csrf_token %}
+                {{ user_create_form }}
+                <button type="submit" class="addmenu_btn" id="user-create-submit-button">Create Account</button>
+            </form>
+            <form class='menu_form' id="user-login-form" action="{% url 'fifa_league:login_user' %}" method="post">
+                {% csrf_token %}
+                <tr><th><label for="id_username">Username:</label></th>
+                    <td><input id="id_username" name="username" type="text" required /></td>
+                </tr>
+                <tr><th><label for="id_password">Password:</label></th><td>
+                    <input id="id_password" name="password" type="password" required /></td>
+                </tr>
+                <button type="submit" class="addmenu_btn" id="user-login-submit-button">Log in</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="fullscreen_div" id="fullscreen-add-menus-div">
     <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <h3>Create new match</h3>
-    <form action="/fifa/create_match/" method="post" id="create-match-form">
-        {% csrf_token %}
-        <label>League:</label>
-        <select class="select_style" id="match-league-form"></select>
-        <br>
+    <div class="forms_container">
+        <div class="menus_choose_buttons_div">
+            {% if perms.fifa_league.add_league %}
+                <div class="menus_choose_button" id="league-create-form-open-button">Create league</div>
+            {% endif %}
+            {% if perms.fifa_league.add_team %}
+                <div class="menus_choose_button" id="team-create-form-open-button">Create team</div>
+            {% endif %}
+            {% if perms.fifa_league.add_player %}
+                <div class="menus_choose_button" id="player-create-form-open-button">Create player</div>
+            {% endif %}
+            {% if perms.fifa_league.add_teamstat %}
+                <div class="menus_choose_button" id="teamstat-create-form-open-button">Add team to league</div>
+            {% endif %}
+            {% if perms.fifa_league.add_match %}
+                <div class="menus_choose_button" id="match-create-form-open-button">Add match</div>
+            {% endif %}
+        </div>
+        <div class="menus_forms_div">
+            {% if perms.fifa_league.add_league %}
+            <form class="menu_form focus_form" action="{% url 'fifa_league:create_league' %}" method="post" id="create-league-form">
+                <fieldset>
+                    <legend>Create league</legend>
+                    {% csrf_token %}
+                    {{ league_create_form }}
+                    <button class="addmenu_btn" type="submit">Create league</button>
+                </fieldset>
+            </form>
+            {% endif %}
 
-        <label>Home:</label>
-        <select class="select_style" id="match-home-form"></select>
-        <label>Score:</label>
-        <input type="number" id="match-home-score-form" min="0" max="999" required autocomplete="off">
-        <br>
+            {% if perms.fifa_league.add_team %}
+            <form class="menu_form" action="{% url 'fifa_league:create_team' %}" method="post" id="create-team-form">
+                <fieldset>
+                    <legend>Create team</legend>
+                    {% csrf_token %}
+                    {{ team_create_form }}
+                    <button class="addmenu_btn" type="submit">Create team</button>
+                </fieldset>
+            </form>
+            {% endif %}
 
-        <label>Guest:</label>
-        <select class="select_style" id="match-guest-form"></select>
-        Score: <input type="number" id="match-guest-score-form" min="0" max="999" required autocomplete="off">
-        <br>
+            {% if perms.fifa_league.add_player %}
+            <form class="menu_form" action="{% url 'fifa_league:create_player' %}" method="post" id="create-player-form">
+                <fieldset>
+                    <legend>Create player</legend>
+                    {% csrf_token %}
+                    {{ player_create_form }}
+                    <button class="addmenu_btn" type="submit">Create player</button>
+                </fieldset>
+            </form>
+            {% endif %}
 
-        <input class="addmenu_btn" type="submit" value="Create match">
-    </form>
+            {% if perms.fifa_league.add_teamstat %}
+            <form class="menu_form" action="{% url 'fifa_league:create_teamstat' %}" method="post" id="create-teamstat-form">
+                <fieldset>
+                    <legend>Add team to league</legend>
+                    {% csrf_token %}
+                    {{ teamstat_create_form }}
+                    <button class="addmenu_btn" type="submit">Add team to league</button>
+                </fieldset>
+            </form>
+            {% endif %}
+
+            {% if perms.fifa_league.add_match %}
+            <form class="menu_form" action="{% url 'fifa_league:create_match' %}" method="post" id="create-match-form">
+                <fieldset>
+                    <legend>Create match</legend>
+                    {% csrf_token %}
+                    {{ match_create_form }}
+                    <button class="addmenu_btn" type="submit">Create match</button>
+                </fieldset>
+            </form>
+            {% endif %}
+        </div>
+    </div>
 </div>
+{% endif %}
 
-<div class="add_menu" id="add-team-menu">
-    <h3>Create new team</h3>
-    <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <form action="/fifa/create_team/" method="post" id="create-team-form">
-        {% csrf_token %}
-        <label>Name:</label>
-        <input type="text" id="team-name-form" required placeholder="Team name*">
-        <br>
-
-        <label>Shortcut:</label>
-        <input type="text" id="team-shortcut-form" required pattern="[A-Za-z0-9]+" placeholder="Team shortcut*">
-        <br>
-        <input class="addmenu_btn" type="submit" value="Create team">
-    </form>
-</div>
-
-<div class="add_menu" id="add-player-menu">
-    <h3>Add player</h3>
-    <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <form action="/fifa/create_player/" method="post" id="create-player-form">
-        {% csrf_token %}
-        <label>Team:</label>
-        <select class="select_style" id="player-team-form"></select>
-        <br>
-
-        <label>Name:</label>
-        <input type="text" id="player-name-form" required placeholder="Player name*">
-        <br>
-
-        <label>Age:</label>
-        <input id="player-age-form" type="number" min="0" max="200" required>
-        <br>
-        <input class="btn" type="submit" value="Create player">
-    </form>
-</div>
-
-<div class="add_menu" id="add-team-to-league-menu">
-    <h3>Add team to league</h3>
-    <img class="close" alt="close button" src="{% static 'fifa_league/gfx/X.svg' %}">
-    <form action="/fifa/add_team_to_league/" method="post" id="create-team-to-league-form">
-        {% csrf_token %}
-        <label>Team:</label>
-        <select class="select_style" id="team-to-league-team-form"></select>
-        <br>
-
-        <label>League:</label>
-        <select class="select_style" id="team-to-league-league-form"></select>
-        <br>
-        <input class="addmenu_btn" type="submit" value="Add team to league">
-    </form>
-</div>
 
 <div class="main_top">
     <div class="user_div">
-        <img class="user_photo" src="{% static 'fifa_league/gfx/test_user.jpg' %}">
-        <h3 class="username">Test User</h3>
+        {% if request.user.is_authenticated %}
+        <h3 class="username">Welcome, {{ request.user.username }}!</h3>
+        <a href="{% url 'fifa_league:logout_user' %}">Logout</a>
+        {% else %}
+        <div class="btn" style="width:100%; padding-top: 25%;" id="user-form-div-button">Log in / Sign up</div>
+        {% endif %}
     </div>
     <div class="menu_div">
-        <div class="btn" id="add-league-menu-button">{% trans 'Add league' %}</div>
-        <div class="btn" id="add-match-menu-button">{% trans 'Add match' %}</div>
-        <div class="btn" id="add-team-menu-button">{% trans 'Add team' %}</div>
-        <div class="btn" id="add-player-menu-button">{% trans 'Add player' %}</div>
-        <div class="btn" id="add-team-to-league-menu-button">{% trans 'Add team to league' %}</div>
+        <a href="{% url 'fifa_league:index' %}">
+            <div class="btn">Main</div>
+        </a>
+        {% if request.user.is_authenticated %}
+        <div class="btn" id="menus-open-button">Add new items</div>
+        {% endif %}
     </div>
 </div>
 <div class="main">
