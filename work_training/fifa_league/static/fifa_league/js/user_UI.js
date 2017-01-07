@@ -97,11 +97,11 @@ var user_UI = {
                 Ajax.send(obj, "/fifa/create_league/")
                 .done(function (response) {
                     showAlert(response);
-                    if($("#leagues-list") != undefined)
-                    {
-                        $("#leagues-list").empty();
+                    $(".title").html('Leagues');
+                    $("#leagues-list").empty();
                     Ajax.sendGET("/fifa/api/leagues/")
                     .done(function (response) {
+
                         $.each(response, function(key, value) {
                             $("#leagues-list")
                                 .append($("<li></li>")
@@ -111,7 +111,6 @@ var user_UI = {
                     .fail(function (response) {
                         showAlert(response.responseText);
                     })
-                    }
                 })
                 .fail(function (response) {
                     showAlert(response.responseText);

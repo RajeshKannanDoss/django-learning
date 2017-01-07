@@ -1,15 +1,15 @@
-.league_list {
+.leagues_list {
 margin-left:2em;
 list-style:none;
 }
 
-.league_list li a {
+.leagues_list li a {
 font-size:1.5em;
 text-decoration:none;
 color:#000;
 }
 
-.league_list li a:hover {
+.leagues_list li a:hover {
 color:grey;
 }
 
