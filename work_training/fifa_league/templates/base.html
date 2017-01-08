@@ -61,12 +61,7 @@
             </form>
             <form class='menu_form' id="user-login-form" action="{% url 'fifa_league:login_user' %}" method="post">
                 {% csrf_token %}
-                <tr><th><label for="id_username">Username:</label></th>
-                    <td><input id="id_username" name="username" type="text" required /></td>
-                </tr>
-                <tr><th><label for="id_password">Password:</label></th><td>
-                    <input id="id_password" name="password" type="password" required /></td>
-                </tr>
+                {{ user_login_form }}
                 <button type="submit" class="addmenu_btn" id="user-login-submit-button">Log in</button>
             </form>
         </div>

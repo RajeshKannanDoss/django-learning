@@ -21,6 +21,14 @@ class UserCreateForm(forms.ModelForm):
         fields = ('username', 'email', 'password',)
 
 
+class UserLoginForm(forms.Form):
+    """
+    Form for login user
+    """
+    username = forms.SlugField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
 class LeagueCreateForm(forms.ModelForm):
     """
     Form for League create

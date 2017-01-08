@@ -13,7 +13,7 @@ from .serializers import LeagueSerializer, TeamSerializer
 
 from .models import Team, TeamStat, League, Player
 from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
-    PlayerCreateForm, TeamStatCreateForm, MatchCreateForm
+    PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
 
@@ -30,6 +30,7 @@ class UserFormsMixin:
         ctx.update(
             {
              'user_create_form': UserCreateForm(),
+             'user_login_form': UserLoginForm(),
              'league_create_form': LeagueCreateForm(),
              'team_create_form': TeamCreateForm(),
              'player_create_form': PlayerCreateForm(),
@@ -352,26 +353,28 @@ class LoginUserView(View):
     """
     View for user log in
     """
+    form_class = UserLoginForm
 
     def post(self, request):
-        if request.is_ajax:
-            username = str(request.POST.get('username', ''))
-            password = str(request.POST.get('password', ''))
-            if not username or not password:
-                return HttpResponse(_('Some of the fields are empty!'),
-                                    status=400)
-
-            # log in user
-            user = authenticate(username=username, password=password)
-
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return redirect('fifa_league:index')
-            else:
-                return HttpResponse('Bad login or password!', status=400)
-        else:
+        if not request.is_ajax:
             return HttpResponse('Not AJAX!', status=400)
+
+        form = UserLoginForm(request.POST)
+        if not form.is_valid():
+            return HttpResponse('Please enter correct data!', status=400)
+
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            return HttpResponse('Bad login or password!', status=400)
+
+        if not user.is_active:
+            return HttpResponse('Your account is disabled!', status=400)
+
+        login(request, user)
+        return redirect('fifa_league:index')
 
 
 class LogOutUserView(View):
