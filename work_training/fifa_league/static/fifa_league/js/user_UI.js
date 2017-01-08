@@ -5,11 +5,6 @@ var user_UI = {
     init: function ()
     {
         var menusOpenButton = $("#menus-open-button");
-        var userCreateFormSubmitButton = $("#user-create-submit-button");
-        var userLoginFormSubmitButton = $("#user-login-submit-button");
-        var userOpenCreateFormButton = $("#user-signup-open-button");
-        var userOpenLoginFormButton = $("#user-login-open-button");
-
         var leagueCreateFormOpenButton = $("#league-create-form-open-button");
         var teamCreateFormOpenButton = $("#team-create-form-open-button");
         var playerCreateFormOpenButton = $("#player-create-form-open-button");
@@ -30,6 +25,10 @@ var user_UI = {
         var createTeamForm = $("#create-team-form");
         var createPlayerForm = $("#create-player-form");
         var createTeamStatForm = $("#create-teamstat-form");
+
+        // menus sequence set up (need to refactor)
+        $(".menus_choose_buttons_div div:first").addClass('focus_button');
+        $(".menus_forms_div form:first").addClass('focus_form');
 
         // showAlert function
         var alertDiv = $("#alert-div");
@@ -53,28 +52,28 @@ var user_UI = {
         // Menus open
         // START
         leagueCreateFormOpenButton.on("click", function(){
-            $(".menus_form").removeClass("focus_form");
+            $(".menu_form").removeClass("focus_form");
             createLeagueForm.addClass("focus_form");
         });
 
         teamCreateFormOpenButton.on("click", function(){
-            $(".menus_form").removeClass("focus_form");
+            $(".menu_form").removeClass("focus_form");
             createTeamForm.addClass("focus_form");
         });
 
         playerCreateFormOpenButton.on("click", function(){
-            $(".menus_form").removeClass("focus_form");
+            $(".menu_form").removeClass("focus_form");
             createPlayerForm.addClass("focus_form");
         });
 
         teamstatCreateFormOpenButton.on("click", function(){
-            $(".menus_form").removeClass("focus_form");
+            $(".menu_form").removeClass("focus_form");
             createTeamStatForm.addClass("focus_form");
         });
 
         matchCreateFormOpenButton.on("click", function()
         {
-            $(".menus_form").removeClass('focus_form');
+            $(".menu_form").removeClass('focus_form');
             createMatchForm.addClass("focus_form");
         })
 

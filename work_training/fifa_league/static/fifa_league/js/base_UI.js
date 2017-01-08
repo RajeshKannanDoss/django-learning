@@ -19,6 +19,10 @@ var base_UI = {
         var createUserForm = $("#user-registration-form");
         var loginUserForm = $("#user-login-form");
 
+        // menus sequence setup
+        $(".menus_choose_buttons_div div:first").addClass('focus_button');
+        $(".menus_forms_div form:first").addClass('focus_form');
+
         // showAlert
         var alertDiv = $("#alert-div");
         var alertDivMes = $("#alert-div-mes");
@@ -41,19 +45,19 @@ var base_UI = {
         // open form to create user
         userOpenCreateFormButton.on("click", function()
         {
-            userOpenCreateFormButton.css('background-color', '#3a7ed6');
-            userOpenLoginFormButton.css('background-color', '#3a95d6');
-            loginUserForm.css('display', 'none');
-            createUserForm.css('display', 'block');
+            userOpenCreateFormButton.addClass('focus_button');
+            userOpenLoginFormButton.removeClass('focus_button');
+            loginUserForm.removeClass('focus_form');
+            createUserForm.addClass('focus_form');
         });
 
         // open form to login user
         userOpenLoginFormButton.on("click", function()
         {
-            userOpenLoginFormButton.css('background-color', '#3a7ed6');
-            userOpenCreateFormButton.css('background-color', '#3a95d6');
-            createUserForm.css('display', 'none');
-            loginUserForm.css('display', 'block');
+            userOpenLoginFormButton.addClass('focus_button');
+            userOpenCreateFormButton.removeClass('focus_button');
+            createUserForm.removeClass('focus_form');
+            loginUserForm.addClass('focus_form');
         });
 
         // close menu button

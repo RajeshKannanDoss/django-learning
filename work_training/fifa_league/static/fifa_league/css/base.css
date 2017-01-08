@@ -198,11 +198,6 @@ html, body
     border: 0.2em solid skyblue;
 }
 
-#user-login-form
-{
-    display: block;
-}
-
 .menus_choose_buttons_div
 {
     width: 100%;
@@ -271,4 +266,9 @@ html, body
 .focus_form
 {
     display: block;
+}
+
+.focus_button
+{
+    background-color: #3a7ed6;
 }
