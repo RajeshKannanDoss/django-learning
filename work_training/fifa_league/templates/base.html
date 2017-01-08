@@ -158,7 +158,7 @@
     <div class="user_div">
         {% if request.user.is_authenticated %}
         <h3 class="username">Welcome, {{ request.user.username }}!</h3>
-        <a href="{% url 'fifa_league:logout_user' %}"><div class="addmenu_btn">Logout</div></a>
+        <a href="{% url 'fifa_league:logout_user' %}"><img class="logout_img" src="{% static 'fifa_league/gfx/logout_icon.svg'%}"></a>
         {% else %}
         <div class="btn" style="width:100%; padding-top: 25%;" id="user-form-div-button">Log in / Sign up</div>
         {% endif %}

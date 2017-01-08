@@ -38,6 +38,7 @@ html, body
 
     width: 15%;
     height: 100%;
+    border-right: 0.15em solid white;
 }
 
 .username
@@ -271,4 +272,18 @@ html, body
 .focus_button
 {
     background-color: #3a7ed6;
+}
+
+.logout_img
+{
+    width: 4em;
+    height: 4em;
+    display: block;
+    margin: 1em auto;
+}
+
+.logout_img:hover
+{
+    width: 4.1em;
+    height: 4.1em;
 }
