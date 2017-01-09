@@ -17,29 +17,8 @@ from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
     PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
-
-class UserFormsMixin:
-    """
-    Mixin for forms variables in template
-    """
-    def get_context_data(self, **kwargs):
-        """
-        :param kwargs:
-        :return: forms for template
-        """
-        ctx = super().get_context_data(**kwargs)
-        ctx.update(
-            {
-             'user_create_form': UserCreateForm(),
-             'user_login_form': UserLoginForm(),
-             'league_create_form': LeagueCreateForm(),
-             'team_create_form': TeamCreateForm(),
-             'player_create_form': PlayerCreateForm(),
-             'teamstat_create_form': TeamStatCreateForm(),
-             'match_create_form': MatchCreateForm()
-            }
-        )
-        return ctx
+from .mixins import UserFormsMixin, UserPermissionsCheckMixin, AjaxCheckMixin,\
+    UserAuthenticationCheckMixin
 
 
 class IndexView(UserFormsMixin, TemplateView):
@@ -105,22 +84,15 @@ class TeamView(UserFormsMixin, TemplateView):
         return ctx
 
 
-class CreateLeagueView(View):
+class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
+                       UserPermissionsCheckMixin, View):
     """
     Handle AJAX request and create new league
     """
     form_class = LeagueCreateForm
+    permissions_required = ['add_league']
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized request!', status=401)
-
-        if not request.user.has_perm('fifa_league.add_league'):
-            return HttpResponseForbidden('Forbidden!')
-
         form = self.form_class(request.POST)
 
         if not form.is_valid():
@@ -149,22 +121,15 @@ class CreateLeagueView(View):
                             .format(league.name))
 
 
-class CreateMatchView(View):
+class CreateMatchView(AjaxCheckMixin, UserAuthenticationCheckMixin,
+                      UserPermissionsCheckMixin, View):
     """
     Handle AJAX request create new match and add points to related teams
     """
     form_class = MatchCreateForm
+    permissions_required = ['add_match']
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized request!', status=401)
-
-        if not request.user.has_perm('fifa_league.add_match'):
-            return HttpResponseForbidden('Forbidden!')
-
         form = self.form_class(request.POST)
 
         if not form.is_valid():
@@ -183,22 +148,15 @@ class CreateMatchView(View):
                                     match.team_guest.team.name))
 
 
-class CreateTeamView(View):
+class CreateTeamView(AjaxCheckMixin, UserAuthenticationCheckMixin,
+                     UserPermissionsCheckMixin, View):
     """
     Handle AJAX request and create new team
     """
     form_class = TeamCreateForm
+    permissions_required = ['add_team']
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized request!', status=401)
-
-        if not request.user.has_perm('fifa_league.add_team'):
-            return HttpResponseForbidden('Forbidden!')
-
         form = self.form_class(request.POST)
 
         if not form.is_valid():
@@ -226,23 +184,17 @@ class CreateTeamView(View):
                             .format(team.name))
 
 
-class CreatePlayerView(View):
+class CreatePlayerView(AjaxCheckMixin, UserAuthenticationCheckMixin,
+                       UserPermissionsCheckMixin, View):
     """
     Handle AJAX request and create new player for specific team
     """
     form_class = PlayerCreateForm
+    permissions_required = ['add_player']
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized request!', status=401)
-
-        if not request.user.has_perm('fifa_league.add_player'):
-            return HttpResponseForbidden('Forbidden!')
-
         form = self.form_class(request.POST)
+
         if not form.is_valid():
             return HttpResponseBadRequest('Please enter correct data!')
 
@@ -269,22 +221,15 @@ class CreatePlayerView(View):
                             .format(player.name))
 
 
-class CreateTeamStatView(View):
+class CreateTeamStatView(AjaxCheckMixin, UserAuthenticationCheckMixin,
+                         UserPermissionsCheckMixin, View):
     """
     Handle AJAX request and add specific team to league
     """
     form_class = TeamStatCreateForm
+    permissions_required = ['add_teamstat']
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse('Unauthorized request!', status=401)
-
-        if not request.user.has_perm('fifa_league.add_teamstat'):
-            return HttpResponseForbidden('Forbidden!')
-
         form = self.form_class(request.POST)
 
         if not form.is_valid():
@@ -314,7 +259,7 @@ class CreateTeamStatView(View):
                                     teamstat.league.name))
 
 
-class CreateUserView(View):
+class CreateUserView(AjaxCheckMixin, View):
     """
     View for new user registration and than log in new user
     """
@@ -326,8 +271,6 @@ class CreateUserView(View):
         :param request:
         :return:
         """
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required')
 
         form = self.form_class(request.POST)
 
@@ -361,16 +304,13 @@ class CreateUserView(View):
             return redirect('fifa_league:index')
 
 
-class LoginUserView(View):
+class LoginUserView(AjaxCheckMixin, View):
     """
     View for user log in
     """
     form_class = UserLoginForm
 
     def post(self, request):
-        if not request.is_ajax:
-            return HttpResponseBadRequest('AJAX is required!')
-
         form = UserLoginForm(request.POST)
 
         if not form.is_valid():
