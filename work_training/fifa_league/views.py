@@ -1,6 +1,7 @@
 from django.views import View
 from django.views.generic import TemplateView
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden, \
+    HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
@@ -111,39 +112,41 @@ class CreateLeagueView(View):
     form_class = LeagueCreateForm
 
     def post(self, request):
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required!')
 
         if not request.user.is_authenticated:
             return HttpResponse('Unauthorized request!', status=401)
 
         if not request.user.has_perm('fifa_league.add_league'):
-            return HttpResponse('Forbidden!', status=403)
+            return HttpResponseForbidden('Forbidden!')
 
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             league = form.save(commit=False)
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
 
         league.name = form.cleaned_data['name']
         league.shortcut = form.cleaned_data['shortcut']
 
         if League.objects.filter(name=league.name).exists() or \
                 League.objects.filter(shortcut=league.shortcut).exists():
-            return HttpResponse(_('League {} already exist!')
-                                .format(league.name), status=400)
+            return HttpResponseBadRequest(_('League {} already exist!')
+                                          .format(league.name))
         # TODO: Ask if this exception is good
         try:
             league.save()
         except DatabaseError as e:
-            return HttpResponse(_('Database error! {}')
-                                .format(e.args[0]), status=500)
+            return HttpResponseServerError(_('Database error! {}')
+                                           .format(e.args[0]))
 
         return HttpResponse(_('League {} is create!')
-                            .format(league.name), status=200)
+                            .format(league.name))
 
 
 class CreateMatchView(View):
@@ -153,28 +156,31 @@ class CreateMatchView(View):
     form_class = MatchCreateForm
 
     def post(self, request):
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required!')
+
         if not request.user.is_authenticated:
             return HttpResponse('Unauthorized request!', status=401)
 
         if not request.user.has_perm('fifa_league.add_match'):
-            return HttpResponse('Forbidden!', status=403)
+            return HttpResponseForbidden('Forbidden!')
 
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             match = form.create()
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
         except DatabaseError as e:
-            return HttpResponse(_('Database error! {}')
-                                .format(e.args[0]), status=500)
+            return HttpResponseServerError(_('Database error! {}')
+                                           .format(e.args[0]))
 
         return HttpResponse(_('Match between {} and {} is created!')
                             .format(match.team_home.team.name,
-                                    match.team_guest.team.name), status=200)
+                                    match.team_guest.team.name))
 
 
 class CreateTeamView(View):
@@ -184,39 +190,40 @@ class CreateTeamView(View):
     form_class = TeamCreateForm
 
     def post(self, request):
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required!')
+
         if not request.user.is_authenticated:
             return HttpResponse('Unauthorized request!', status=401)
 
         if not request.user.has_perm('fifa_league.add_team'):
-            return HttpResponse('Forbidden!', status=403)
+            return HttpResponseForbidden('Forbidden!')
 
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             team = form.save(commit=False)
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
 
-        # clean data
         team.name = form.cleaned_data['name']
         team.shortcut = form.cleaned_data['shortcut']
 
-        # check if the same objects exists
         if Team.objects.filter(name=team.name).exists() or \
                 Team.objects.filter(shortcut=team.shortcut).exists():
-            return HttpResponse(_('Team {} already exist!')
-                                .format(team.name), status=400)
+            return HttpResponseBadRequest(_('Team {} already exist!')
+                                          .format(team.name))
         try:
             team.save()
         except DatabaseError as e:
-            return HttpResponse(_('Database error! {}')
-                                .format(e.args[0]), status=500)
+            return HttpResponseBadRequest(_('Database error! {}')
+                                          .format(e.args[0]))
 
         return HttpResponse(_('Team {} is created!')
-                            .format(team.name), status=200)
+                            .format(team.name))
 
 
 class CreatePlayerView(View):
@@ -226,39 +233,40 @@ class CreatePlayerView(View):
     form_class = PlayerCreateForm
 
     def post(self, request):
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required!')
+
         if not request.user.is_authenticated:
             return HttpResponse('Unauthorized request!', status=401)
 
         if not request.user.has_perm('fifa_league.add_player'):
-            return HttpResponse('Forbidden!', status=403)
+            return HttpResponseForbidden('Forbidden!')
 
         form = self.form_class(request.POST)
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             player = form.save(commit=False)
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
 
-        # clean data
         player.name = form.cleaned_data['name']
         player.age = form.cleaned_data['age']
         player.team = form.cleaned_data['team']
 
-        # check if the same objects exists
         if Player.objects.filter(name=player.name).exists():
-            return HttpResponse(_('Player {} already exist in {}!')
-                                .format(player.name, player.team.name),
-                                status=400)
+            return HttpResponseBadRequest(_('Player {} already exist in {}!')
+                                          .format(player.name,
+                                                  player.team.name))
         try:
             player.save()
         except DatabaseError as e:
-            return HttpResponse(_('Database error! {}')
-                                .format(e.args[0]), status=500)
+            return HttpResponseServerError(_('Database error! {}')
+                                           .format(e.args[0]))
 
         return HttpResponse(_('Player {} is created!')
-                            .format(player.name), status=200)
+                            .format(player.name))
 
 
 class CreateTeamStatView(View):
@@ -268,38 +276,42 @@ class CreateTeamStatView(View):
     form_class = TeamStatCreateForm
 
     def post(self, request):
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required!')
+
         if not request.user.is_authenticated:
             return HttpResponse('Unauthorized request!', status=401)
 
         if not request.user.has_perm('fifa_league.add_teamstat'):
-            return HttpResponse('Forbidden!', status=403)
+            return HttpResponseForbidden('Forbidden!')
 
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             teamstat = form.save(commit=False)
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
 
         teamstat.team = form.cleaned_data['team']
         teamstat.league = form.cleaned_data['league']
 
         if TeamStat.objects.filter(team=teamstat.team,
                                    league=teamstat.league).exists():
-            return HttpResponse(_('Team already play in this league!'))
+            return HttpResponseBadRequest(
+                _('Team already play in this league!'))
 
         try:
             teamstat.save()
         except DatabaseError as e:
-            return HttpResponse(_('Database error! {}')
-                                .format(e.args[0]), status=500)
+            return HttpResponseServerError(_('Database error! {}')
+                                           .format(e.args[0]))
 
         return HttpResponse(_('Team {} now in {}!')
                             .format(teamstat.team.name,
-                                    teamstat.league.name), status=200)
+                                    teamstat.league.name))
 
 
 class CreateUserView(View):
@@ -314,22 +326,23 @@ class CreateUserView(View):
         :param request:
         :return:
         """
+        if not request.is_ajax:
+            return HttpResponseBadRequest('AJAX is required')
+
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         try:
             user = form.save(commit=False)
         except ValueError as e:
-            return HttpResponse(e.args[0], status=400)
+            return HttpResponseBadRequest(e.args[0])
 
-        # clean (normalize) data
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
         email = form.cleaned_data['email']
 
-        # set user credential and information
         user.username = username
         user.email = email
         user.set_password(password)
@@ -338,15 +351,14 @@ class CreateUserView(View):
         # add default permission to user
         add_permissions_to_user(user, DEFAULT_PERMISSIONS)
 
-        # login user
         user = authenticate(username=username, password=password)
 
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('fifa_league:index')
+        if user is None:
+            return HttpResponseServerError("User didn't exist after saving!")
 
-        return HttpResponse("User didn't exist after saving!", status=500)
+        if user.is_active:
+            login(request, user)
+            return redirect('fifa_league:index')
 
 
 class LoginUserView(View):
@@ -357,21 +369,23 @@ class LoginUserView(View):
 
     def post(self, request):
         if not request.is_ajax:
-            return HttpResponse('Not AJAX!', status=400)
+            return HttpResponseBadRequest('AJAX is required!')
 
         form = UserLoginForm(request.POST)
+
         if not form.is_valid():
-            return HttpResponse('Please enter correct data!', status=400)
+            return HttpResponseBadRequest('Please enter correct data!')
 
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
+
         user = authenticate(username=username, password=password)
 
         if user is None:
-            return HttpResponse('Bad login or password!', status=400)
+            return HttpResponseBadRequest('Bad login or password!')
 
         if not user.is_active:
-            return HttpResponse('Your account is disabled!', status=400)
+            return HttpResponseForbidden('Your account is disabled!')
 
         login(request, user)
         return redirect('fifa_league:index')
