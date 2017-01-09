@@ -398,7 +398,7 @@ class TestCreatePlayerViewTestCase(TestCase):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_league/',
+        response = client.post('/fifa/create_player/',
                                {'name': 'TESTPLAYER1',
                                 'age': 19,
                                 'team': self.team.shortcut},
