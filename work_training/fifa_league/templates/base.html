@@ -153,7 +153,6 @@
     <div class="user_div">
         {% if request.user.is_authenticated %}
         <h3 class="username">Welcome, {{ request.user.username }}!</h3>
-        <a href="{% url 'fifa_league:logout_user' %}"><img class="logout_img" src="{% static 'fifa_league/gfx/logout_icon.svg'%}"></a>
         {% else %}
         <div class="btn" style="width:100%; padding-top: 25%;" id="user-form-div-button">Log in / Sign up</div>
         {% endif %}
@@ -163,6 +162,8 @@
         {% if request.user.is_authenticated %}
         <div class="btn" id="menus-open-button">Add new items</div>
         <a href="{% url 'fifa_league:user_settings' username=request.user.username %}"><div class="btn">Settings</div></a>
+        <a href=""><div class="btn">Later Menu...</div></a>
+        <a href=""><img class="logout_img" src="{% static 'fifa_league/gfx/logout_icon.svg'%}"></a>
         {% endif %}
     </div>
 </div>
