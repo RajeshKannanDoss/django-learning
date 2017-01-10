@@ -65,7 +65,6 @@ class UserFactory(factory.DjangoModelFactory):
     password = '12345678'
     email = 'test_user@mail.com'
 
-    # TODO: Ask if it is good solution
     @classmethod
     def _prepare(cls, create, **kwargs):
         password = kwargs.pop('password', None)

@@ -43,7 +43,7 @@ class AjaxCheckMixin:
         """
         Handle mixin functionality
         """
-        if not request.is_ajax():
+        if not request.is_ajax:
             return HttpResponseBadRequest('AJAX is required!')
 
         return super(AjaxCheckMixin, self).dispatch(request,
@@ -63,7 +63,7 @@ class UserAuthenticationCheckMixin:
         """
         Handle mixin functionality
         """
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             return HttpResponse(status=401)
 
         return super(UserAuthenticationCheckMixin, self).dispatch(request,

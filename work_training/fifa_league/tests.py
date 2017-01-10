@@ -467,7 +467,6 @@ class TestCreateMatchViewTestCase(TestCase):
                           password=self.user_password)
 
     def test_create_with_valid_data(self):
-        # TODO: Ask about post_save signals in tests
         response = self.client.post('/fifa/create_match/',
                                     {'league': self.league.shortcut,
                                      'team_home': self.team_home.team.shortcut,
@@ -555,7 +554,6 @@ class TestCreateUserViewTestCase(TestCase):
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
 
-    # TODO: Do i need this test
     def test_create_two_users_with_equal_passwords(self):
         self.client.post('/fifa/create_user/',
                          {'username': 'testuser1',
