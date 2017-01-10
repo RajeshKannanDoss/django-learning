@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
@@ -305,6 +306,10 @@ class CreateUserView(AjaxCheckMixin, View):
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
         email = form.cleaned_data['email']
+
+
+        if User.objects.filter(email=email).exists():
+            return HttpResponseBadRequest('This email already exists!')
 
         user.username = username
         user.email = email

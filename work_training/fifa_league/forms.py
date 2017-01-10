@@ -12,7 +12,7 @@ class UserCreateForm(forms.ModelForm):
     """
     User Form for registration and next login new user
     """
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput, label='Password')
     username = forms.SlugField()
     email = forms.EmailField()
 
