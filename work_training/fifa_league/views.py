@@ -131,7 +131,6 @@ class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
                 League.objects.filter(shortcut=league.shortcut).exists():
             return HttpResponseBadRequest(_('League {} already exist!')
                                           .format(league.name))
-        # TODO: Ask if this exception is good
         try:
             league.save()
         except DatabaseError as e:
