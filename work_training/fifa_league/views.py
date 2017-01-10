@@ -326,9 +326,12 @@ class CreateUserView(AjaxCheckMixin, View):
         if user is None:
             return HttpResponseServerError("User didn't exist after saving!")
 
-        if user.is_active:
-            login(request, user)
-            return redirect('fifa_league:index')
+        if not user.is_active:
+            return HttpResponseForbidden('Your account is disabled!')
+
+        login(request, user)
+        return HttpResponse('User {} is created! Welcome!'
+                            .format(user.username))
 
 
 class LoginUserView(AjaxCheckMixin, View):
@@ -355,7 +358,8 @@ class LoginUserView(AjaxCheckMixin, View):
             return HttpResponseForbidden('Your account is disabled!')
 
         login(request, user)
-        return redirect('fifa_league:index')
+        return HttpResponse('Welcome {}!'
+                            .format(user.username))
 
 
 class LogOutUserView(View):
