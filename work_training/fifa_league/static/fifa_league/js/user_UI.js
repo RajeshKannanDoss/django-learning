@@ -56,28 +56,38 @@ var user_UI = {
         // START
         leagueCreateFormOpenButton.on("click", function(){
             $(".menu_form").removeClass("focus_form");
+            $(".focus_button").removeClass('focus_button')
             createLeagueForm.addClass("focus_form");
+            leagueCreateFormOpenButton.addClass('focus_button');
         });
 
         teamCreateFormOpenButton.on("click", function(){
             $(".menu_form").removeClass("focus_form");
+            $(".focus_button").removeClass('focus_button');
             createTeamForm.addClass("focus_form");
+            teamCreateFormOpenButton.addClass('focus_button');
         });
 
         playerCreateFormOpenButton.on("click", function(){
             $(".menu_form").removeClass("focus_form");
+            $(".focus_button").removeClass('focus_button');
             createPlayerForm.addClass("focus_form");
+            playerCreateFormOpenButton.addClass('focus_button');
         });
 
         teamstatCreateFormOpenButton.on("click", function(){
             $(".menu_form").removeClass("focus_form");
+            $(".focus_button").removeClass('focus_button');
             createTeamStatForm.addClass("focus_form");
+            teamstatCreateFormOpenButton.addClass('focus_button');
         });
 
         matchCreateFormOpenButton.on("click", function()
         {
             $(".menu_form").removeClass('focus_form');
+            $(".focus_button").removeClass('focus_button');
             createMatchForm.addClass("focus_form");
+            matchCreateFormOpenButton.addClass('focus_button');
         })
 
         // open list of menus 'Add new item'
