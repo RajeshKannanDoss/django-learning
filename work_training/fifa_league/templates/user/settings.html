@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+<title>{% trans 'Settings' %} - {{ request.user.username }}</title>
+{% endblock %}
+
+{% block static %}
+<link href="{% static 'fifa_league/css/user_settings.css'%}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <h1>{% trans 'Settings' %} - {{ request.user.username }}</h1>
+    <form class="page_form" action="/fifa/api/user/{{ request.user.pk}}/change_password/" method="post" id="user-change-password-form">
+                    <h2>Change password</h2>
+                    {% csrf_token %}
+                    {{ user_change_password_form }}
+                    <button class="addmenu_btn" type="submit">Change password</button>
+    </form>
+    <br>
+    <hr class="separate_line">
+    <br>
+    <form class="page_form" method="post" action='/fifa/api/user/{{ request.user.pk}}/change_email/'id="user-change-email-form">
+                    <h2>Change email</h2>
+                    <h3>Current email:
+                        {% if request.user.email %}
+                            {{ request.user.email }}
+                        {% else %}
+                            none
+                        {% endif %}
+                    </h3>
+                    {% csrf_token %}
+                    {{ user_change_email_form }}
+                    <button class="addmenu_btn" type="submit">Change email</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,33 @@
+.page_form
+{
+    width: 80%;
+    margin: 1em auto;
+}
+
+.page_form h2
+{
+    text-align: center;
+}
+
+.page_form input[type=password], input[type=email]
+{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.page_form label
+{
+    font-size: 1.1em;
+}
+
+.separate_line
+{
+  height: 10px;
+  border: 0;
+  box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}

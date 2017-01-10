@@ -25,8 +25,11 @@ var user_UI = {
         var createTeamForm = $("#create-team-form");
         var createPlayerForm = $("#create-player-form");
         var createTeamStatForm = $("#create-teamstat-form");
+        var changePasswordForm = $("#user-change-password-form");
+        var changeEmailForm = $("#user-change-email-form");
 
-        // menus sequence set up (need to refactor)
+        // menus sequence set up
+        // TODO: Refactor this part of code
         $(".menus_choose_buttons_div div:first").addClass('focus_button');
         $(".menus_forms_div form:first").addClass('focus_form');
 
@@ -252,5 +255,49 @@ var user_UI = {
                 })
             })
         // END
+
+        changePasswordForm.on("submit", function(event)
+        {
+            event.preventDefault();
+            url = changePasswordForm.attr('action');
+            var obj = {
+                    old_password: $("#user-change-password-form input[name=old_password]").val(),
+                    new_password1: $("#user-change-password-form input[name=new_password1]").val(),
+                    new_password2: $("#user-change-password-form input[name=new_password2]").val(),
+                }
+                Ajax.send(obj, url)
+                .done(function (response) {
+                    showAlert(response);
+                    $(':input','#user-change-password-form')
+                        .removeAttr('checked')
+                        .removeAttr('selected')
+                        .not(':button, :submit, :reset, :hidden, :radio, :checkbox')
+                        .val('');
+                })
+                .fail(function (response) {
+                    showAlert(response.responseText);
+                })
+        })
+
+        changeEmailForm.on("submit", function(event)
+        {
+            event.preventDefault();
+            url = changeEmailForm.attr('action');
+            var obj = {
+                    new_email: $("#user-change-email-form input[name=new_email]").val()
+                }
+                Ajax.send(obj, url)
+                .done(function (response) {
+                    showAlert(response);
+                    $(':input','#user-change-email-form')
+                        .removeAttr('checked')
+                        .removeAttr('selected')
+                        .not(':button, :submit, :reset, :hidden, :radio, :checkbox')
+                        .val('');
+                })
+                .fail(function (response) {
+                    showAlert(response.responseText);
+                })
+        })
     }
 }

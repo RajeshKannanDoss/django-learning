@@ -159,11 +159,10 @@
         {% endif %}
     </div>
     <div class="menu_div">
-        <a href="{% url 'fifa_league:index' %}">
-            <div class="btn">Main</div>
-        </a>
+        <a href="{% url 'fifa_league:index' %}"><div class="btn">Main</div></a>
         {% if request.user.is_authenticated %}
         <div class="btn" id="menus-open-button">Add new items</div>
+        <a href="{% url 'fifa_league:user_settings' username=request.user.username %}"><div class="btn">Settings</div></a>
         {% endif %}
     </div>
 </div>

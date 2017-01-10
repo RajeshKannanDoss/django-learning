@@ -6,6 +6,7 @@ from . import views
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
+router.register(r'user', views.UserViewSet, base_name='user')
 router.register(r'teams', views.TeamViewSet, base_name='teams')
 router.register(r'leagues', views.LeagueList.as_view(), base_name='leagues')
 
@@ -21,6 +22,8 @@ urlpatterns = [
     url(r'^logout_user', views.LogOutUserView.as_view(), name='logout_user'),
     url(r'^login_user/', views.LoginUserView.as_view(), name='login_user'),
     url(r'^create_user/', views.CreateUserView.as_view(), name='create_user'),
+    url(r'^user/(?P<username>[0-9a-zA-Z]+)/settings',
+        views.UserSettingsView.as_view(), name='user_settings'),
 
 
     url(r'^create_league/', views.CreateLeagueView.as_view(),

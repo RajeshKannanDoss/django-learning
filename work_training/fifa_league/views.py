@@ -9,12 +9,13 @@ from django.contrib.auth import authenticate, login, logout
 
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from .serializers import LeagueSerializer, TeamSerializer
 
 from .models import Team, TeamStat, League, Player
 from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
-    PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm
+    PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm, \
+    UserChangePasswordForm, UserChangeEmailForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
 from .mixins import UserFormsMixin, UserPermissionsCheckMixin, AjaxCheckMixin,\
@@ -81,6 +82,25 @@ class TeamView(UserFormsMixin, TemplateView):
                                       league=league)
         ctx = super().get_context_data(**kwargs)
         ctx.update({'team_stat': team_stat})
+        return ctx
+
+
+class UserSettingsView(UserAuthenticationCheckMixin,
+                       UserFormsMixin, TemplateView):
+    """
+    Render template to change user settings
+    """
+    template_name = 'user/settings.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Update get_context data and add new forms for user settings
+        :param kwargs:
+        :return:
+        """
+        ctx = super().get_context_data(**kwargs)
+        ctx.update({'user_change_password_form': UserChangePasswordForm(),
+                    'user_change_email_form': UserChangeEmailForm()})
         return ctx
 
 
@@ -377,3 +397,83 @@ class TeamViewSet(viewsets.ViewSet):
                                        .filter(league__shortcut=shortcut))
         serializer = TeamSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class UserViewSet(viewsets.ViewSet):
+    """
+    User viewsets for handle users action
+    """
+
+    @detail_route(['POST'])
+    def change_password(self, request, pk, *args, **kwargs):
+        """
+        API for change user password
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        if not request.POST:
+            return HttpResponseBadRequest('POST is required!')
+
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        # Very important for security
+        if not request.user.pk == pk:
+            return HttpResponseForbidden('No no no!')
+
+        form = UserChangePasswordForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        old_password = form.cleaned_data['old_password']
+        new_password1 = form.cleaned_data['new_password1']
+        new_password2 = form.cleaned_data['new_password2']
+
+        user = authenticate(username=request.user.username,
+                            password=old_password)
+        if user is None:
+            return HttpResponseBadRequest('Bad old password!')
+
+        if not new_password1 == new_password2:
+            return HttpResponseBadRequest('New passwords not same!')
+
+        if new_password1 == old_password:
+            return HttpResponseBadRequest('You cannot set the same password!')
+
+        user.set_password(new_password1)
+        user.save()
+        login(request, user)
+        return Response('Password has changed!')
+
+    @detail_route(['POST'])
+    def change_email(self, request, pk, *args, **kwargs):
+        """
+        API for change user email
+        :return:
+        """
+        if not request.POST:
+            return HttpResponseBadRequest('POST is required!')
+
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        # Very important for security
+        if not request.user.pk == pk:
+            return HttpResponseForbidden('No no no!')
+
+        form = UserChangeEmailForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        new_email = form.cleaned_data['new_email']
+
+        if new_email == request.user.email:
+            return HttpResponseBadRequest('You cannot set the same emails!')
+
+        request.user.email = new_email
+        request.user.save()
+        return Response('Email has changed!')

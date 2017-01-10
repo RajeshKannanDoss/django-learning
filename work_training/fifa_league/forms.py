@@ -29,6 +29,25 @@ class UserLoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 
+class UserChangePasswordForm(forms.Form):
+    """
+    Form to change user password
+    """
+    old_password = forms.CharField(widget=forms.PasswordInput,
+                                   label='Old password')
+    new_password1 = forms.CharField(widget=forms.PasswordInput,
+                                    label='New password')
+    new_password2 = forms.CharField(widget=forms.PasswordInput,
+                                    label='New password (one more time)')
+
+
+class UserChangeEmailForm(forms.Form):
+    """
+    Form for user email change
+    """
+    new_email = forms.EmailField(label='New email')
+
+
 class LeagueCreateForm(forms.ModelForm):
     """
     Form for League create
