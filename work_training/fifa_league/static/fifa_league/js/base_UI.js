@@ -68,8 +68,9 @@ var base_UI = {
 
         // create user form
         // START
-        userCreateFormSubmitButton.on("submit", function()
+        createUserForm.on("submit", function(event)
         {
+            event.preventDefault();
             var obj = {
                     username: $("#user-registration-form input[name=username]").val(),
                     email: $("#user-registration-form input[name=email]").val(),
@@ -77,6 +78,7 @@ var base_UI = {
             }
              Ajax.send(obj, "/fifa/create_user/")
                     .done(function (response) {
+                        location.reload(true);
                     })
                     .fail(function (response) {
                         showAlert(response.responseText);
@@ -87,14 +89,16 @@ var base_UI = {
 
         // log in user form
         // START
-        userLoginFormSubmitButton.on("submit", function()
+        loginUserForm.on("submit", function(event)
         {
+            event.preventDefault();
             var obj = {
                     username: $("#user-login-form input[name=username]").val(),
                     password: $("#user-login-form input[name=password]").val()
             }
              Ajax.send(obj, "/fifa/login_user/")
                     .done(function (response) {
+                        location.reload(true);
                     })
                     .fail(function (response) {
                         showAlert(response.responseText);
