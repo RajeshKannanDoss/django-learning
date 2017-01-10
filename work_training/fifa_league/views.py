@@ -411,14 +411,14 @@ class UserViewSet(viewsets.ViewSet):
         :param kwargs:
         :return:
         """
-        if not request.POST:
-            return HttpResponseBadRequest('POST is required!')
+        if not request.is_ajax():
+            return HttpResponseBadRequest('AJAX is required!')
 
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
 
         # Very important for security
-        if not request.user.pk == pk:
+        if not str(request.user.pk) == pk:
             return HttpResponseForbidden('No no no!')
 
         form = UserChangePasswordForm(request.POST)
@@ -436,7 +436,8 @@ class UserViewSet(viewsets.ViewSet):
             return HttpResponseBadRequest('Bad old password!')
 
         if not new_password1 == new_password2:
-            return HttpResponseBadRequest('New passwords not same!')
+            return HttpResponseBadRequest(
+                'Please enter new passwords correctly!')
 
         if new_password1 == old_password:
             return HttpResponseBadRequest('You cannot set the same password!')
@@ -444,7 +445,7 @@ class UserViewSet(viewsets.ViewSet):
         user.set_password(new_password1)
         user.save()
         login(request, user)
-        return Response('Password has changed!')
+        return HttpResponse('Password has changed!')
 
     @detail_route(['POST'])
     def change_email(self, request, pk, *args, **kwargs):
@@ -452,14 +453,14 @@ class UserViewSet(viewsets.ViewSet):
         API for change user email
         :return:
         """
-        if not request.POST:
-            return HttpResponseBadRequest('POST is required!')
+        if not request.is_ajax():
+            return HttpResponseBadRequest('AJAX is required!')
 
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
 
         # Very important for security
-        if not request.user.pk == pk:
+        if not str(request.user.pk) == pk:
             return HttpResponseForbidden('No no no!')
 
         form = UserChangeEmailForm(request.POST)
@@ -474,4 +475,4 @@ class UserViewSet(viewsets.ViewSet):
 
         request.user.email = new_email
         request.user.save()
-        return Response('Email has changed!')
+        return HttpResponse('Email has changed!')
