@@ -516,6 +516,7 @@ class TestCreateUserViewTestCase(TestCase):
         response = self.client.post('/fifa/create_user/',
                                     {'username': 'testuser',
                                      'password': '12345678',
+                                     'password1': '12345678',
                                      'email': 'testuser@mail.com'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         user = User.objects.get(username='testuser')
@@ -558,12 +559,14 @@ class TestCreateUserViewTestCase(TestCase):
         self.client.post('/fifa/create_user/',
                          {'username': 'testuser1',
                           'password': '12345678',
-                          'email': 'testuser@mail.com'},
+                          'password1': '12345678',
+                          'email': 'testuser1@mail.com'},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         response = self.client.post('/fifa/create_user/',
                                     {'username': 'testuser2',
                                      'password': '12345678',
-                                     'email': 'testuser@mail.com'},
+                                     'password1': '12345678',
+                                     'email': 'testuser2@mail.com'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertRedirects(response, '/fifa/')
         self.assertEqual('2', self.client.session['_auth_user_id'])
@@ -587,6 +590,34 @@ class TestCreateUserViewTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
+
+    def test_create_user_with_bad_confirm_password(self):
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser2',
+                                     'password': '12345678',
+                                     'password1': '1234',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Passwords not same!')
+
+    def test_create_users_with_equal_emails(self):
+        self.client.post('/fifa/create_user/',
+                         {'username': 'testuser1',
+                          'password': '12345678',
+                          'password1': '12345678',
+                          'email': 'testuser@mail.com'},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.post('/fifa/create_user/',
+                                    {'username': 'testuser2',
+                                     'password': '12345678',
+                                     'password1': '12345678',
+                                     'email': 'testuser@mail.com'},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'This email already exists!')
 
 
 class TestLoginUserViewTestCase(TestCase):
