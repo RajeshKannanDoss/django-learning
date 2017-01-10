@@ -305,8 +305,11 @@ class CreateUserView(AjaxCheckMixin, View):
 
         username = form.cleaned_data['username']
         password = form.cleaned_data['password']
+        password1 = form.cleaned_data['password1']
         email = form.cleaned_data['email']
 
+        if not password == password1:
+            return HttpResponseBadRequest('Passwords not same!')
 
         if User.objects.filter(email=email).exists():
             return HttpResponseBadRequest('This email already exists!')

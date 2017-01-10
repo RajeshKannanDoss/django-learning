@@ -13,12 +13,15 @@ class UserCreateForm(forms.ModelForm):
     User Form for registration and next login new user
     """
     password = forms.CharField(widget=forms.PasswordInput, label='Password')
+    password1 = forms.CharField(widget=forms.PasswordInput,
+                                label='Password (one more time)')
     username = forms.SlugField()
     email = forms.EmailField()
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password',)
+        exclude = ('password1',)
 
 
 class UserLoginForm(forms.Form):

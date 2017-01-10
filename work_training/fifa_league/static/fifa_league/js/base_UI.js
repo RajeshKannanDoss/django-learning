@@ -75,6 +75,7 @@ var base_UI = {
                     username: $("#user-registration-form input[name=username]").val(),
                     email: $("#user-registration-form input[name=email]").val(),
                     password: $("#user-registration-form input[name=password]").val(),
+                    password1: $("#user-registration-form input[name=password1]").val()
             }
              Ajax.send(obj, "/fifa/create_user/")
                     .done(function (response) {
