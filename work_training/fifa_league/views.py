@@ -131,11 +131,8 @@ class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
                 League.objects.filter(shortcut=league.shortcut).exists():
             return HttpResponseBadRequest(_('League {} already exist!')
                                           .format(league.name))
-        try:
-            league.save()
-        except DatabaseError as e:
-            return HttpResponseServerError(_('Database error! {}')
-                                           .format(e.args[0]))
+
+        league.save()
 
         return HttpResponse(_('League {} is create!')
                             .format(league.name))
@@ -194,11 +191,8 @@ class CreateTeamView(AjaxCheckMixin, UserAuthenticationCheckMixin,
                 Team.objects.filter(shortcut=team.shortcut).exists():
             return HttpResponseBadRequest(_('Team {} already exist!')
                                           .format(team.name))
-        try:
-            team.save()
-        except DatabaseError as e:
-            return HttpResponseBadRequest(_('Database error! {}')
-                                          .format(e.args[0]))
+
+        team.save()
 
         return HttpResponse(_('Team {} is created!')
                             .format(team.name))
@@ -231,11 +225,8 @@ class CreatePlayerView(AjaxCheckMixin, UserAuthenticationCheckMixin,
             return HttpResponseBadRequest(_('Player {} already exist in {}!')
                                           .format(player.name,
                                                   player.team.name))
-        try:
-            player.save()
-        except DatabaseError as e:
-            return HttpResponseServerError(_('Database error! {}')
-                                           .format(e.args[0]))
+
+        player.save()
 
         return HttpResponse(_('Player {} is created!')
                             .format(player.name))
@@ -268,11 +259,7 @@ class CreateTeamStatView(AjaxCheckMixin, UserAuthenticationCheckMixin,
             return HttpResponseBadRequest(
                 _('Team already play in this league!'))
 
-        try:
-            teamstat.save()
-        except DatabaseError as e:
-            return HttpResponseServerError(_('Database error! {}')
-                                           .format(e.args[0]))
+        teamstat.save()
 
         return HttpResponse(_('Team {} now in {}!')
                             .format(teamstat.team.name,
