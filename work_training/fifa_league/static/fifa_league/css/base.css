@@ -191,9 +191,9 @@ overflow-x: hidden;
 
 .forms_container
 {
-    margin: 20vh auto;
+    margin: 15vh auto;
     width: 70vw;
-    height: 60vh;
+    height: 70vh;
     background-color: white;
     border: 0.2em solid skyblue;
 }
@@ -255,7 +255,19 @@ overflow-x: hidden;
 {
     text-align: center;
     font-size: 1.2em;
+    font-weight: bold;
 }
+
+.menu_form select {
+    width: 100%;
+    padding: 0.6em 0.7em;
+    margin: 0.2em 0;
+    display: inline-block;
+    border: 0.15em solid #ccc;
+    border-radius: 0.3em;
+    box-sizing: border-box;
+}
+
 
 .menus_forms_div
 {
