@@ -1,11 +1,9 @@
 Work_training repository - Django | AJAX | JQuery
 
-After cloning or download repository you need to create database:
-- python3 manage.py makemigrations
-- python3 manage.py sqlmigrate fifa_league 0001
+After cloning or download repository you need to create database migration:
 - python3 manage.py migrate
 
-In addition to create admin:
+In addition to create admin user:
 - python3 manage.py createsuperuser
 
 App list:
