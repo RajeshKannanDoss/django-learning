@@ -20,6 +20,9 @@ db.*
 .coverage
 coverage-report/
 
+# media files folder
+media/
+
 # Linux Editors
 *~
 \#*\#

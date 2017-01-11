@@ -1,7 +1,7 @@
 from django.views import View
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseForbidden, \
-    HttpResponseBadRequest, HttpResponseServerError
+    HttpResponseBadRequest, HttpResponseServerError, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.db import DatabaseError
 from django.utils.translation import ugettext as _
@@ -16,7 +16,7 @@ from .serializers import LeagueSerializer, TeamSerializer
 from .models import Team, TeamStat, League, Player
 from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
     PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm, \
-    UserChangePasswordForm, UserChangeEmailForm
+    UserChangePasswordForm, UserChangeEmailForm, UserAvatarUploadForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
 from .mixins import UserFormsMixin, UserPermissionsCheckMixin, AjaxCheckMixin,\
@@ -358,6 +358,25 @@ class LogOutUserView(View):
         if request.user.is_authenticated:
             logout(request)
         return redirect('fifa_league:index')
+
+
+class UserAvatarUploadView(View):
+    """
+    User view to handle avatar upload
+    """
+    def post(self, request):
+        form = UserAvatarUploadForm(request.POST, request.FILES,
+                                    instance=request.user.profile)
+        if not form.is_valid():
+            response = {'is_valid': False,
+                        'message': 'Invalid data!'}
+            return JsonResponse(response)
+
+        profile = form.save()
+        response = {'is_valid': True,
+                    'url': '/fifa{}'.format(profile.avatar.url),
+                    'message': 'Your avatar successfully upload!'}
+        return JsonResponse(response)
 
 
 class LeagueList(generics.ListCreateAPIView):

@@ -5,7 +5,7 @@ forms.py - contains Django work classes to generate and validate forms
 from django.contrib.auth.models import User
 from django import forms
 
-from .models import League, Team, Player, TeamStat, Match
+from .models import League, Team, Player, TeamStat, Match, UserProfile
 
 
 class UserCreateForm(forms.ModelForm):
@@ -162,3 +162,15 @@ class MatchCreateForm(forms.Form):
                                      team_home_goals=team_home_goals,
                                      team_guest_goals=team_guest_goals)
         return match
+
+
+class UserAvatarUploadForm(forms.ModelForm):
+    """
+    Form for user avatar upload
+    """
+
+    class Meta:
+        model = UserProfile
+        fields = ['avatar']
+
+

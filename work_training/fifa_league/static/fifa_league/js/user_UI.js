@@ -309,5 +309,27 @@ var user_UI = {
                     showAlert(response.responseText);
                 })
         })
+
+        $("#avatar-upload-button").on("click", function()
+        {
+            $("#avatarupload").click();
+        });
+
+        $("#avatarupload").fileupload({
+            dataType: 'json',
+            done: function (e, data) {
+                if(data.result.is_valid)
+                {
+                    $('#avatar-img').attr('src', data.result.url);
+                    $('.user_avatar').attr('src', data.result.url);
+                    $("#avatar-message").addClass('message_ok');
+                    $('#avatar-message').html(data.result.message);
+                } else
+                {
+                    $("#avatar-message").addClass('message_error');
+                    $('#avatar-message').html(data.result.message);
+                }
+            }
+        })
     }
 }

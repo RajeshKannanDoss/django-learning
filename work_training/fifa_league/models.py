@@ -1,7 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.db.models.signals import post_save
-from .functions import add_points_to_teams
+from .functions import add_points_to_teams, user_directory_path
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.conf import settings
 
 
 class League(models.Model):
@@ -99,3 +102,32 @@ class Match(models.Model):
 
 
 post_save.connect(add_points_to_teams, Match)
+
+
+class UserProfile(models.Model):
+    """
+    Profile model for user
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='profile')
+    avatar = models.FileField(upload_to=user_directory_path,
+                              default='..{}fifa_league/gfx/user/default-avatar.svg'
+                              .format(settings.STATIC_URL))
+
+    def __str__(self):
+        return '{} profile'.format(self.user.username)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    """
+    Create or update UserProfile when User is create or save
+    :param sender:
+    :param instance:
+    :param kwargs:
+    :return:
+    """
+    if kwargs['created']:
+        UserProfile.objects.create(user=instance)
+    else:
+        instance.profile.save()

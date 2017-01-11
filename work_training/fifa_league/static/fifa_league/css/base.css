@@ -6,7 +6,7 @@
     text-decoration: none;
 }
 
-html, body
+html
 {
 overflow-x: hidden;
 }
@@ -297,4 +297,14 @@ overflow-x: hidden;
 {
     width: 4.1em;
     height: 4.1em;
+}
+
+.user_avatar
+{
+    display: block;
+    margin: 0 auto;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    width: 5em;
+    height: 5em;
 }

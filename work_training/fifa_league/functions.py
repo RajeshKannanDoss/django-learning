@@ -65,3 +65,13 @@ def add_permissions_to_user(user, perm_list=DEFAULT_PERMISSIONS):
             user.user_permissions.add(perm_obj)
         except Permission.DoesNotExist:
             pass
+
+
+def user_directory_path(instance, filename):
+    """
+    Function to set user path
+    :param instance:
+    :param filename:
+    :return:
+    """
+    return 'uploads/users/user{}/{}'.format(instance.id, filename)

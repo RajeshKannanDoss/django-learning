@@ -2,6 +2,8 @@
 URL pattern file for fifa_league app
 """
 from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.conf import settings
 from . import views
 from rest_framework.routers import SimpleRouter
 
@@ -25,6 +27,9 @@ urlpatterns = [
     url(r'^user/(?P<username>[0-9a-zA-Z]+)/settings',
         views.UserSettingsView.as_view(), name='user_settings'),
 
+    # uploads
+    url(r'^avatar_upload/$', views.UserAvatarUploadView.as_view(),
+        name='avatar_upload'),
 
     url(r'^create_league/', views.CreateLeagueView.as_view(),
         name='create_league'),
@@ -42,3 +47,7 @@ urlpatterns = [
     url(r'^(?P<league_shortcut>[0-9a-zA-Z]+)'
         r'/(?P<team_shortcut>[0-9a-zA-Z]+)/$', views.TeamView.as_view()),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

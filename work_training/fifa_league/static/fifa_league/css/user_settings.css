@@ -31,3 +31,40 @@
   border: 0;
   box-shadow: 0 10px 10px -10px #8c8b8b inset;
 }
+
+.avatar_upload_div
+{
+    width: 80%;
+    height: 10em;
+    margin: 1em auto;
+}
+
+.avatar_upload_div img
+{
+    float: left;
+    height: 100%;
+    width: 40%;
+}
+
+.avatar_upload_div .addmenu_btn
+{
+    float: right;
+    width: 50%;
+}
+
+#avatar-message
+{
+    width: 35%;
+    margin-top: 2em;
+    float: right;
+}
+
+.message_error
+{
+    color: red;
+}
+
+.message_ok
+{
+    color: green;
+}
