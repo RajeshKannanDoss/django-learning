@@ -156,7 +156,7 @@
 <div class="main_top">
     <div class="user_div">
         {% if request.user.is_authenticated %}
-        <img src="/fifa{{ request.user.profile.avatar.url }}" class="user_avatar">
+        <img src="{{ request.user.profile.avatar.url }}" class="user_avatar">
         <h3 class="username">Welcome, {{ request.user.username }}!</h3>
         {% else %}
         <div class="btn" style="width:100%; padding-top: 25%;" id="user-form-div-button">Log in / Sign up</div>

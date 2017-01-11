@@ -374,7 +374,7 @@ class UserAvatarUploadView(View):
 
         profile = form.save()
         response = {'is_valid': True,
-                    'url': '/fifa{}'.format(profile.avatar.url),
+                    'url': profile.avatar.url,
                     'message': 'Your avatar successfully upload!'}
         return JsonResponse(response)
 

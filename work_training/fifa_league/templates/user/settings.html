@@ -39,7 +39,7 @@
     <hr class="separate_line">
     <br>
     <div class="avatar_upload_div">
-        <img src="/fifa{{ request.user.profile.avatar.url }}" id="avatar-img">
+        <img src="{{ request.user.profile.avatar.url }}" id="avatar-img">
         <div class="addmenu_btn" id="avatar-upload-button">Upload new avatar</div>
         <input id="avatarupload" type="file" name="avatar" multiple
             style="display: none;"
