@@ -80,7 +80,7 @@ var base_UI = {
              Ajax.send(obj, "/fifa/create_user/")
                     .done(function (response) {
                         showAlert(response);
-                        setTimeout(function(){location.reload(true);}, 1000);
+                        setTimeout(function(){location.reload(true);}, 800);
                     })
                     .fail(function (response) {
                         showAlert(response.responseText);
@@ -101,7 +101,7 @@ var base_UI = {
              Ajax.send(obj, "/fifa/login_user/")
                     .done(function (response) {
                         showAlert(response);
-                        setTimeout(function(){location.reload(true);}, 1000);
+                        setTimeout(function(){location.reload(true);}, 800);
                     })
                     .fail(function (response) {
                         showAlert(response.responseText);

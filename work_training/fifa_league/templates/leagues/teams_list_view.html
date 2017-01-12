@@ -12,6 +12,9 @@
 {% endblock %}
 
 {% block body %}
+<!-- TODO: BUG! If teams doesn't exist from what i can take first teamstat?-->
+<h1>{{ teams.first.league.name }}</h1>
+<p>{{ teams.first.league.full_description }}</p>
 {% if teams %}
         <table class="teams_table">
             <thead>

@@ -839,6 +839,3 @@ class TestUserViewSetAPITestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter new passwords correctly!')
-
-
-

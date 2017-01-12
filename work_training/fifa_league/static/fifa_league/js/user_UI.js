@@ -345,6 +345,9 @@ var user_UI = {
                 })
         })
 
+
+        // TODO: Need to refactor this part of code
+        // avatar upload
         $("#avatar-upload-button").on("click", function()
         {
             $("#avatarupload").click();
@@ -366,5 +369,6 @@ var user_UI = {
                 }
             }
         })
+
     }
 }
