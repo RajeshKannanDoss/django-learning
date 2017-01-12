@@ -114,7 +114,7 @@ class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
     permissions_required = ['add_league']
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
 
         if not form.is_valid():
             return HttpResponseBadRequest('Please enter correct data!')
@@ -126,6 +126,9 @@ class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
 
         league.name = form.cleaned_data['name']
         league.shortcut = form.cleaned_data['shortcut']
+        league.short_description = form.cleaned_data['short_description']
+        league.full_description = form.cleaned_data['full_description']
+        league.author = request.user
 
         if League.objects.filter(name=league.name).exists() or \
                 League.objects.filter(shortcut=league.shortcut).exists():
