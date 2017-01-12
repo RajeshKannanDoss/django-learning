@@ -76,10 +76,13 @@ class TeamCreateForm(forms.ModelForm):
     name = forms.CharField()
     shortcut = forms.SlugField(widget=forms.TextInput(
         attrs={'pattern': '[A-Za-z0-9]+'}))
+    description = forms.Textarea()
+    logo = forms.ClearableFileInput()
 
     class Meta:
         model = Team
-        fields = ('name', 'shortcut',)
+        fields = ['name', 'shortcut', 'description', 'logo']
+        exclude = ['author']
 
 
 class PlayerCreateForm(forms.ModelForm):

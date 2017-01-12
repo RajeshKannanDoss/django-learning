@@ -174,7 +174,7 @@ class CreateTeamView(AjaxCheckMixin, UserAuthenticationCheckMixin,
     permissions_required = ['add_team']
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
 
         if not form.is_valid():
             return HttpResponseBadRequest('Please enter correct data!')
@@ -186,6 +186,8 @@ class CreateTeamView(AjaxCheckMixin, UserAuthenticationCheckMixin,
 
         team.name = form.cleaned_data['name']
         team.shortcut = form.cleaned_data['shortcut']
+        team.description = form.cleaned_data['description']
+        team.author = request.user
 
         if Team.objects.filter(name=team.name).exists() or \
                 Team.objects.filter(shortcut=team.shortcut).exists():

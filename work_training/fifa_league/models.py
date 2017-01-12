@@ -36,8 +36,14 @@ class Team(models.Model):
     Team model
     - shortcut field for user-friendly url
     """
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=50)
     shortcut = models.CharField(max_length=50)
+    description = models.TextField(default='Team full description')
+    author = models.ForeignKey(User, related_name='teams', default=None)
+    logo = models.FileField(upload_to='uploads/teams/logos/',
+                            default='..{}fifa_league/'
+                                    'gfx/team/default-team-logo.svg'
+                            .format(settings.STATIC_URL))
 
     class Meta:
         verbose_name = _('Team')

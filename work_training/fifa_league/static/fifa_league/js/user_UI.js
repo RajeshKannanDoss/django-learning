@@ -29,6 +29,7 @@ var user_UI = {
         var changeEmailForm = $("#user-change-email-form");
 
         var leagueLogoFileInput = $('#create-league-form input[name=logo]');
+        var teamLogoFileInput = $('#create-team-form input[name=logo]');
 
         // menus sequence set up
         // TODO: Refactor this part of code
@@ -192,23 +193,30 @@ var user_UI = {
         // END
 
         // create team
-        // START
-        createTeamForm.on("submit", function(event)
+        teamLogoFileInput.fileupload({
+            replaceFileInput: false,
+            add: function (e, data) {
+                createTeamForm.off('submit').on("submit", function(event)
+                {
+                    event.preventDefault();
+                    url = createTeamForm.attr('action');
+                    data.url = url;
+                    data.formData = {
+                        name: $("#create-team-form input[name=name]").val(),
+                        shortcut: $("#create-team-form input[name=shortcut]").val(),
+                        description: $("#create-team-form input[name=description]").val(),
+                    }
+                    data.submit();
+                });
+            },
+            done: function (e, data) {
+                showAlert(data._response.result);
+            },
+            fail: function (e, data)
             {
-                event.preventDefault();
-                var obj = {
-                    name: $("#create-team-form input[name=name]").val(),
-                    shortcut: $("#create-team-form input[name=shortcut]").val(),
-                }
-                Ajax.send(obj, "/fifa/create_team/")
-                .done(function (response) {
-                    showAlert(response);
-                })
-                .fail(function (response) {
-                    showAlert(response.responseText);
-                })
-            })
-        // END
+                showAlert(data._response.jqXHR.responseText);
+            }
+        });
 
         // create player
         // START

@@ -29,7 +29,10 @@
             <tbody>
             {% for team in teams %}
             <tr>
-                <td><a href='{{team.team.shortcut}}'> {{ team.team.name }} </a></td>
+                <td>
+                    <img class='team_logo' src="{{ team.team.logo.url }}">
+                    <a href='{{team.team.shortcut}}'> {{ team.team.name }} </a>
+                </td>
                 <td> {{ team.match_count }} </td>
                 <td> {{ team.wins }} </td>
                 <td> {{ team.loses }} </td>
