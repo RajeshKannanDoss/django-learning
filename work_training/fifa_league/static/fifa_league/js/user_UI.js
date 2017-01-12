@@ -33,7 +33,6 @@ var user_UI = {
         var playerPhotoFileInput = $('#create-player-form input[name=photo]');
 
         // menus sequence set up
-        // TODO: Refactor this part of code
         $(".menus_choose_buttons_div div:first").addClass('focus_button');
         $(".menus_forms_div form:first").addClass('focus_form');
 
@@ -104,6 +103,23 @@ var user_UI = {
 
         // create league
         // START
+        createLeagueForm.on("submit", function(event) {
+            event.preventDefault();
+            var obj = {
+                name: $("#create-league-form input[name=name]").val(),
+                shortcut: $("#create-league-form input[name=shortcut]").val(),
+                short_description: $("#create-league-form input[name=short_description]").val(),
+                full_description: $("#create-league-form textarea[name=full_description]").val(),
+            }
+            Ajax.send(obj, "/fifa/create_league/")
+                 .done(function (response) {
+                     showAlert(response);
+                 })
+                 .fail(function (response) {
+                     showAlert(response.responseText);
+                 })
+             })
+
         leagueLogoFileInput.fileupload({
             replaceFileInput: false,
             add: function (e, data) {
@@ -130,7 +146,6 @@ var user_UI = {
             }
         });
 
-        // END
 
         // function to get all teams related to specific League
         // START
@@ -194,6 +209,22 @@ var user_UI = {
         // END
 
         // create team
+        createTeamForm.on("submit", function(event) {
+            event.preventDefault();
+            var obj = {
+                name: $("#create-team-form input[name=name]").val(),
+                shortcut: $("#create-team-form input[name=shortcut]").val(),
+                description: $("#create-team-form textarea[name=description]").val(),
+            }
+            Ajax.send(obj, "/fifa/create_team/")
+            .done(function (response) {
+                showAlert(response);
+            })
+            .fail(function (response) {
+                showAlert(response.responseText);
+            })
+        })
+
         teamLogoFileInput.fileupload({
             replaceFileInput: false,
             add: function (e, data) {
@@ -205,7 +236,7 @@ var user_UI = {
                     data.formData = {
                         name: $("#create-team-form input[name=name]").val(),
                         shortcut: $("#create-team-form input[name=shortcut]").val(),
-                        description: $("#create-team-form input[name=description]").val(),
+                        description: $("#create-team-form textarea[name=description]").val()
                     }
                     data.submit();
                 });
@@ -218,6 +249,7 @@ var user_UI = {
                 showAlert(data._response.jqXHR.responseText);
             }
         });
+
 
         // create player
         createPlayerForm.on("submit", function(event)
