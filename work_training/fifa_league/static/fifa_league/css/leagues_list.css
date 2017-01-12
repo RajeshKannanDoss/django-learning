@@ -16,3 +16,18 @@ color:grey;
 .title {
 text-align:center;
 }
+
+.league_block
+{
+    width: 100%;
+    height: 5em;
+    margin-top: 1em;
+}
+
+.league_block img
+{
+    float: left;
+    width: 4em;
+    height: 4em;
+    margin-right: 2em;
+}

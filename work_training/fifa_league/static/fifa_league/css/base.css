@@ -188,7 +188,7 @@ html
 .fullscreen_div
 {
     display: none;
-    position: absolute;
+    position: fixed;
     z-index: 10;
     width: 100vw;
     height: 100vh;
@@ -197,9 +197,9 @@ html
 
 .forms_container
 {
-    margin: 15vh auto;
+    margin: 2.5vh auto;
     width: 70vw;
-    height: 70vh;
+    height: 95vh;
     background-color: white;
     border: 0.2em solid skyblue;
 }
@@ -259,9 +259,10 @@ html
 
 .menu_form label
 {
-    text-align: center;
     font-size: 1.2em;
     font-weight: bold;
+    float: left;
+    width: 100%;
 }
 
 .menu_form select {
@@ -315,4 +316,11 @@ html
     margin-bottom: 0.4em;
     width: 80%;
     height: 70%;
+}
+
+.separate_line
+{
+  height: 10px;
+  border: 0;
+  box-shadow: 0 10px 10px -10px #8c8b8b inset;
 }

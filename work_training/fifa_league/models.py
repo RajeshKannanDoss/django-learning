@@ -12,8 +12,16 @@ class League(models.Model):
     League model
     - shortcut field for user-friendly url
     """
-    name = models.CharField(max_length=250)
-    shortcut = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    shortcut = models.SlugField(max_length=50)
+    short_description = models.CharField(max_length=250,
+                                         default='League short description')
+    full_description = models.TextField(default='League full description')
+    author = models.ForeignKey(User, related_name='leagues', default=None)
+    logo = models.FileField(upload_to='uploads/leagues/logos/',
+                            default='..{}fifa_league/'
+                                      'gfx/league/default-league-logo.svg'
+                            .format(settings.STATIC_URL))
 
     class Meta:
         verbose_name = _('League')

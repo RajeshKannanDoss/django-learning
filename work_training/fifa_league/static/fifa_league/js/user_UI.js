@@ -28,6 +28,8 @@ var user_UI = {
         var changePasswordForm = $("#user-change-password-form");
         var changeEmailForm = $("#user-change-email-form");
 
+        var leagueLogoFileInput = $('#create-league-form input[name=logo]');
+
         // menus sequence set up
         // TODO: Refactor this part of code
         $(".menus_choose_buttons_div div:first").addClass('focus_button');
@@ -97,37 +99,35 @@ var user_UI = {
         });
         // END
 
+
         // create league
         // START
-            createLeagueForm.on("submit", function(event)
+        leagueLogoFileInput.fileupload({
+            replaceFileInput: false,
+            add: function (e, data) {
+                createLeagueForm.off('submit').on("submit", function(event)
+                {
+                    event.preventDefault();
+                    url = createLeagueForm.attr('action');
+                    data.url = url;
+                    data.formData = {
+                        name: $("#create-league-form input[name=name]").val(),
+                        shortcut: $("#create-league-form input[name=shortcut]").val(),
+                        short_description: $("#create-league-form input[name=short_description]").val(),
+                        full_description: $("#create-league-form textarea[name=full_description]").val(),
+                    }
+                    data.submit();
+                });
+            },
+            done: function (e, data) {
+                showAlert(data._response.result);
+            },
+            fail: function (e, data)
             {
-                event.preventDefault();
-                var obj = {
-                    name: $("#create-league-form input[name=name]").val(),
-                    shortcut: $("#create-league-form input[name=shortcut]").val(),
-                }
-                Ajax.send(obj, "/fifa/create_league/")
-                .done(function (response) {
-                    showAlert(response);
-                    $(".title").html('Leagues');
-                    $("#leagues-list").empty();
-                    Ajax.sendGET("/fifa/api/leagues/")
-                    .done(function (response) {
+                showAlert(data._response.jqXHR.responseText);
+            }
+        });
 
-                        $.each(response, function(key, value) {
-                            $("#leagues-list")
-                                .append($("<li></li>")
-                                .append($("<a></a>").attr("href", value['shortcut']).text(value['name'])));
-                    });
-                    })
-                    .fail(function (response) {
-                        showAlert(response.responseText);
-                    })
-                })
-                .fail(function (response) {
-                    showAlert(response.responseText);
-                })
-            })
         // END
 
         // function to get all teams related to specific League

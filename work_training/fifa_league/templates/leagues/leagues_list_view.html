@@ -14,11 +14,20 @@
 {% block body %}
     {% if leagues_list %}
     <h1 class="title">{% trans 'Leagues' %}</h1>
-        <ul class="leagues_list" id="leagues-list">
             {% for league in leagues_list %}
-            <li><a href='{{league.shortcut}}'> {{ league.name }} </a></li>
+            <div class="league_block">
+                <img src="{{ league.logo.url }}">
+                <h3><a href='{{league.shortcut}}'> {{ league.name }} </a></h3>
+                <p>{{ league.short_description}}</p>
+                <h4>Author: {{ league.author.username }}</h4>
+                {% if league.author == request.user %}
+                <h4 style="color:red;">CAN EDIT</h4>
+                {% endif %}
+            </div>
+            <br>
+            <hr class="separate_line">
+            <br>
             {% endfor%}
-        </ul>
     {% else %}
         <h1 class="title">{% trans 'No leagues available' %}</h1>
         <ul class="leagues_list" id="leagues-list">

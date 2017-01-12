@@ -58,10 +58,15 @@ class LeagueCreateForm(forms.ModelForm):
     name = forms.CharField()
     shortcut = forms.SlugField(widget=forms.TextInput(
         attrs={'pattern': '[A-Za-z0-9]+'}))
+    short_description = forms.CharField(max_length=250)
+    full_description = forms.Textarea()
+    logo = forms.ClearableFileInput()
 
     class Meta:
         model = League
-        fields = ('name', 'shortcut',)
+        fields = ['name', 'shortcut', 'short_description', 'full_description',
+                  'logo']
+        exclude = ['author']
 
 
 class TeamCreateForm(forms.ModelForm):
