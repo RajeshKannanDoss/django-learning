@@ -365,6 +365,8 @@ class UserAvatarUploadView(View):
     User view to handle avatar upload
     """
     def post(self, request):
+        old_filename = request.user.profile.avatar.name
+
         form = UserAvatarUploadForm(request.POST, request.FILES,
                                     instance=request.user.profile)
         if not form.is_valid():
@@ -372,7 +374,10 @@ class UserAvatarUploadView(View):
                         'message': 'Invalid data!'}
             return JsonResponse(response)
 
+        request.user.profile.avatar.storage.delete(old_filename)
+
         profile = form.save()
+
         response = {'is_valid': True,
                     'url': profile.avatar.url,
                     'message': 'Your avatar successfully upload!'}
