@@ -172,5 +172,3 @@ class UserAvatarUploadForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['avatar']
-
-

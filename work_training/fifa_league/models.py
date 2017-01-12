@@ -111,7 +111,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='profile')
     avatar = models.FileField(upload_to=user_directory_path,
-                              default='..{}fifa_league/gfx/user/default-avatar.svg'
+                              default='..{}fifa_league/'
+                                      'gfx/user/default-avatar.svg'
                               .format(settings.STATIC_URL))
 
     def __str__(self):

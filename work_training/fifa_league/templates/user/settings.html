@@ -41,7 +41,7 @@
     <div class="avatar_upload_div">
         <img src="{{ request.user.profile.avatar.url }}" id="avatar-img">
         <div class="addmenu_btn" id="avatar-upload-button">Upload new avatar</div>
-        <input id="avatarupload" type="file" name="avatar" multiple
+        <input id="avatarupload" type="file" name="avatar"
             style="display: none;"
             data-url="{% url 'fifa_league:avatar_upload' %}"
             data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
