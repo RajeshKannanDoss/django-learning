@@ -21,3 +21,11 @@ text-align:center;
 border:.1em solid red;
 padding:.5em;
 }
+
+.player img
+{
+    width: 8em;
+    height: 8em;
+}
+
+

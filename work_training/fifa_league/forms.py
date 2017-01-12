@@ -95,10 +95,12 @@ class PlayerCreateForm(forms.ModelForm):
         to_field_name='shortcut')
     name = forms.CharField()
     age = forms.IntegerField(min_value=1, max_value=200)
+    photo = forms.ClearableFileInput()
 
     class Meta:
         model = Player
-        fields = ('team', 'name', 'age',)
+        fields = ['team', 'name', 'age', 'photo']
+        exclude = ['author']
 
 
 class TeamStatCreateForm(forms.ModelForm):

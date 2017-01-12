@@ -212,7 +212,7 @@ class CreatePlayerView(AjaxCheckMixin, UserAuthenticationCheckMixin,
     permissions_required = ['add_player']
 
     def post(self, request):
-        form = self.form_class(request.POST)
+        form = self.form_class(request.POST, request.FILES)
 
         if not form.is_valid():
             return HttpResponseBadRequest('Please enter correct data!')
@@ -225,6 +225,7 @@ class CreatePlayerView(AjaxCheckMixin, UserAuthenticationCheckMixin,
         player.name = form.cleaned_data['name']
         player.age = form.cleaned_data['age']
         player.team = form.cleaned_data['team']
+        player.author = request.user
 
         if Player.objects.filter(name=player.name).exists():
             return HttpResponseBadRequest(_('Player {} already exist in {}!')

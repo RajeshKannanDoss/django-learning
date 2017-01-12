@@ -54,8 +54,11 @@
     <h2>{% trans 'Players:' %}</h2>
     {% for player in team_stat.team.player_set.all %}
              <div class="player">
+                 <img src="{{ player.photo.url }}" alt="{{ player.name }}">
+                 <div class="player_description">
                  {% trans 'Name:' %} {{ player.name }} <br>
                  {% trans 'Age:' %} {{ player.age }}
+                 </div>
              </div>
         {% endfor%}
 </div>

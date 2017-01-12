@@ -85,6 +85,11 @@ class Player(models.Model):
     team = models.ForeignKey(Team)
     name = models.CharField(max_length=500)
     age = models.IntegerField(default=0)
+    author = models.ForeignKey(User, related_name='players', default=None)
+    photo = models.FileField(upload_to='uploads/players/photos/',
+                             default='..{}fifa_league/'
+                                     'gfx/player/default-player-photo.svg'
+                             .format(settings.STATIC_URL))
 
     class Meta:
         verbose_name = _('Player')

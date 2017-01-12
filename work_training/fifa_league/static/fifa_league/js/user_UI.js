@@ -30,6 +30,7 @@ var user_UI = {
 
         var leagueLogoFileInput = $('#create-league-form input[name=logo]');
         var teamLogoFileInput = $('#create-team-form input[name=logo]');
+        var playerPhotoFileInput = $('#create-player-form input[name=photo]');
 
         // menus sequence set up
         // TODO: Refactor this part of code
@@ -219,7 +220,6 @@ var user_UI = {
         });
 
         // create player
-        // START
         createPlayerForm.on("submit", function(event)
             {
                 event.preventDefault();
@@ -236,7 +236,34 @@ var user_UI = {
                     showAlert(response.responseText);
                 })
             })
-        // END
+
+
+        playerPhotoFileInput.fileupload({
+            replaceFileInput: false,
+            add: function (e, data) {
+                createPlayerForm.off('submit').on("submit", function(event)
+                {
+                    event.preventDefault();
+                    url = createPlayerForm.attr('action');
+                    data.url = url;
+                    data.formData = {
+                        name: $("#create-player-form input[name=name]").val(),
+                        age: $("#create-player-form input[name=age]").val(),
+                        team: $("#create-player-form select[name=team]").val(),
+                    }
+                    data.submit();
+                });
+            },
+            done: function (e, data) {
+                showAlert(data._response.result);
+            },
+            fail: function (e, data)
+            {
+                showAlert(data._response.jqXHR.responseText);
+            }
+        });
+
+
 
         // START
         function get_all_teams(id){
