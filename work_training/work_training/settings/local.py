@@ -15,7 +15,7 @@ SECRET_KEY = 'h%9y02()a-=$^0@ig&0tf5lzpj_okw5&h*4^@y5ae#d0tv-pz8'
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -27,9 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
+    'debug_panel'
 ]
 
 MIDDLEWARE = [
+    'debug_panel.middleware.DebugPanelMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -40,6 +43,7 @@ MIDDLEWARE = [
 
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+
 ]
 
 ROOT_URLCONF = 'work_training.urls'
