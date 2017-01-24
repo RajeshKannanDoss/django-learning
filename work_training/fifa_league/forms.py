@@ -156,7 +156,7 @@ class MatchCreateForm(forms.Form):
             guest_team = Team.objects.get(shortcut=team_guest_shortcut)
 
             if home_team == guest_team:
-                raise ValueError
+                raise ValueError('Please choose different teams!')
 
             home_stat = TeamStat.objects.get(team=home_team, league=league)
             guest_stat = TeamStat.objects.get(team=guest_team, league=league)
