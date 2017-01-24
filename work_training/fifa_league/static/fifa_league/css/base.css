@@ -17,7 +17,7 @@ html
     overflow-x: hidden;
 }
 
-.main_top
+#main-top
 {
     width: 100vw;
     height: 15%;
@@ -28,13 +28,23 @@ html
             box-shadow: 0 2px 1px 0 rgba(0,0,0,.75);
 }
 
-.main_top,
+#main-top,
 .username
 {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+}
+
+.description
+{
+    width: 100%;
+}
+
+#leagues-list-div
+{
+    width: 100%;
 }
 
 .user_div
@@ -68,7 +78,7 @@ html
     color: white;
 }
 
-.main
+#main
 {
     width: 80%;
     height: 82vh;
@@ -97,34 +107,47 @@ html
 
 .btn:hover
 {
-    font-size: 1.3em;
-
-    padding-top: 4.2%;
-
     background-color: #3a7ed6;
 }
 
-.add_menu
+.fullscreen_menu
 {
     position: fixed;
-    z-index: 10;
+    z-index: 2;
+    top: 0;
+    left: 0;
 
-    display: none;
+    display: block;
 
-    width: 40%;
-    height: 40%;
-    margin-top: 15%;
-    margin-left: 25%;
-    padding: .5em;
+    width: 100%;
+    height: 100%;
 
-    color: black;
-    border: .2em solid skyblue;
-    background-color: white;
+    -webkit-transition-duration: .5s;
+            transition-duration: .5s;
+    -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+    animation-timing-function: ease-in;
+
+    color: white;
+    background-color: rgba(0, 0, 0, .9);
 }
 
-.add_menu h3
+.animation_from
 {
-    text-align: center;
+    -webkit-transition-duration: .5s;
+            transition-duration: .5s;
+    -webkit-transform: translate3d(0%, 0, 0);
+            transform: translate3d(0%, 0, 0);
+    animation-timing-function: ease-in;
+}
+
+.animation_to
+{
+    -webkit-transition-duration: .5s;
+            transition-duration: .5s;
+    -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+    animation-timing-function: ease-in;
 }
 
 .alert
@@ -146,7 +169,7 @@ html
     background-color: white;
 }
 
-.close
+#close-form-button
 {
     position: absolute;
     right: 0;
@@ -157,7 +180,7 @@ html
     margin-right: .8em;
 }
 
-.close:hover
+#close-form-button:hover
 {
     width: 3.2em;
     height: 3.2em;
@@ -195,7 +218,7 @@ html
     background-color: rgba(0,0,0,0.6);
 }
 
-.forms_container
+#forms-container, #edit-container
 {
     margin: 2.5vh auto;
     width: 70vw;
@@ -247,7 +270,6 @@ html
   padding: 1em;
   padding-top: 1.5em;
   height: 100%;
-  display: none;
 }
 
 .menu_form input
@@ -263,6 +285,7 @@ html
     font-weight: bold;
     float: left;
     width: 100%;
+    color: black;
 }
 
 .menu_form select {
@@ -284,12 +307,19 @@ html
 
 .focus_form
 {
-    display: block;
+    display: block !important;
 }
 
 .focus_button
 {
     background-color: #3a7ed6;
+    height: 100%;
+}
+
+#user-login-form-div,
+#user-signup-form-div
+{
+    display: none;
 }
 
 .logout_img
@@ -322,5 +352,165 @@ html
 {
   height: 10px;
   border: 0;
+  margin-top: 2em;
   box-shadow: 0 10px 10px -10px #8c8b8b inset;
+}
+
+.league_img
+{
+    float: left;
+    width: 8em;
+    height: 8em;
+    margin-right: 2em;
+}
+
+.update_league_current_img
+{
+    width: 8em;
+    height: 8em;
+    margin-left: 2em;
+}
+
+.league_block
+{
+    width: 100%;
+    height: 10em;
+    margin-top: 2em;
+}
+
+.league_div
+{
+    width: 100%;
+    height: 8em;
+}
+
+#profile-div
+{
+    height: 100%;
+}
+
+.teams_table
+{
+    width: 100%;
+}
+
+.teams_table td {
+text-align:center;
+padding:.5em;
+}
+
+.teams_table th {
+padding:.5em;
+text-align: center;
+}
+
+.teams_table td h3 {
+font-size:1.5em;
+width: 100%;
+text-decoration:none;
+color:#000;
+float: left;
+}
+
+.teams_table td h3:hover {
+color:grey;
+}
+
+.team_logo
+{
+   height: 5em;
+   width: 5em;
+   display: block;
+   margin: 0 auto;
+}
+
+#team-description
+{
+    width: 100%;
+}
+
+.description_container
+{
+    width: 100%;
+    height: 10em;
+}
+
+.description_container img
+{
+    float: left;
+    display: block;
+    width: 8em;
+    height: 8em;
+}
+
+#matches
+{
+    float: left;
+    width: 75%;
+}
+
+#players
+{
+    width: 25%;
+    float: right;
+}
+
+.title
+{
+    text-align: center;
+}
+
+#return-div
+{
+    float:left;
+    left:0;
+    top: 12em;
+    width: 10%;
+    position: fixed;
+}
+
+.return_arrow
+{
+    width: 5em;
+    height: 5em;
+    display: block;
+    margin: 1em auto;
+}
+
+.return_arrow:hover
+{
+    width: 4.8em;
+    height: 4.8em;
+    margin: 1.2em auto;
+}
+
+#alert-success, #alert-error
+{
+    position: fixed;
+    z-index: 3;
+    top: 50%;
+    left: 0;
+
+    display: none;
+
+    width: 25%;
+    height: 15%;
+
+    color: blue;
+    border: 0.15em solid blue;
+    border-left: none;
+    background-color: white;
+}
+
+#alert-error img, #alert-success img
+{
+    width: 25%;
+    height: 80%;
+    margin-top: 2%;
+    float: right;
+}
+
+input
+{
+    color: black;
 }

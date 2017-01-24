@@ -1,0 +1,266 @@
+*
+{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+
+html, body
+{
+    width: 100vw;
+    height: 100vh;
+}
+
+html
+{
+    overflow-x: hidden;
+}
+
+#root
+{
+    width: 100%;
+    height: 100%;
+}
+.container
+{
+    width: 100%;
+    height: 100%;
+}
+
+.main_top
+{
+    width: 100%;
+    height: 15%;
+    background-color: #3a95d6;
+}
+
+#profile {
+    float: left;
+    width: 15%;
+    height: 100%;
+}
+
+.menu_container
+{
+    float: left;
+    width: 70%;
+    height: 100%;
+}
+
+.menu_container nav
+{
+    width: 100%;
+    height: 100%;
+}
+
+.menu_container nav ul
+{
+    list-style: none;
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.menu_container nav ul li
+{
+    display: table-cell;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.menu_container nav ul li a
+{
+    font-size: 1.4em;
+    display: block;
+    text-align: center;
+    color: white;
+    height: 100%;
+    text-decoration: none;
+}
+
+.menu_container nav ul li a.active
+{
+    background-color: #3b95e6;
+}
+
+.teams_table
+{
+    width: 100%;
+}
+
+.teams_table td {
+text-align:center;
+padding:.5em;
+}
+
+.teams_table th {
+padding:.5em;
+text-align: center;
+}
+
+.teams_table td h3 {
+font-size:1.5em;
+width: 100%;
+text-decoration:none;
+color:#000;
+float: left;
+}
+
+.teams_table td h3:hover {
+color:grey;
+}
+
+.team_logo
+{
+   height: 5em;
+   width: 5em;
+   display: block;
+   margin: 0 auto;
+}
+
+#team-description
+{
+    width: 100%;
+}
+
+.description_container
+{
+    width: 100%;
+    height: 10em;
+}
+
+.description_container img
+{
+    float: left;
+    display: block;
+    width: 8em;
+    height: 8em;
+}
+
+#matches
+{
+    float: left;
+    width: 75%;
+}
+
+#players
+{
+    width: 25%;
+    float: right;
+}
+
+.title
+{
+    text-align: center;
+}
+
+#return-div
+{
+    float:left;
+    left:0;
+    width: 10%;
+}
+
+.return_arrow
+{
+    width: 7.5em;
+    height: 7.5em;
+    display: block;
+    margin: 1em auto;
+}
+
+.return_arrow:hover
+{
+    width: 7.3em;
+    height: 7.3em;
+    margin: 1.2em auto;
+}
+
+#alert-success, #alert-error
+{
+    position: fixed;
+    z-index: 3;
+    top: 50%;
+    left: 0;
+
+    display: none;
+
+    width: 35%;
+    height: 10%;
+
+    color: blue;
+    border: 0.15em solid blue;
+    border-left: none;
+    background-color: white;
+}
+
+#alert-error img, #alert-success img
+{
+    width: 25%;
+    height: 80%;
+    margin-top: 2%;
+    float: right;
+}
+
+
+.main_container
+{
+    width: 100%;
+    height: 100%;
+}
+
+.settings_container
+{
+    width: 60%;
+    margin: 2em auto;
+}
+
+.user_logo
+{
+    width: 5em;
+    display: block;
+    margin: 1em auto;
+}
+
+.username
+{
+    text-align: center;
+}
+
+.avatar_preview
+{
+    width: 80%;
+    height: 12em;
+    display: block;
+}
+
+input, textarea, select
+{
+    color: black;
+}
+
+h2, h3
+{
+    font-size: 2em;
+    margin-bottom: 0;
+}
+
+.close_button
+{
+    position: absolute;
+    right: 0;
+
+    width: 3em;
+    height: 3em;
+    margin-top: .8em;
+    margin-right: .8em;
+}
+
+.close_button:hover
+{
+    width: 3.2em;
+    height: 3.2em;
+    margin-top: .7em;
+    margin-right: .7em;
+}

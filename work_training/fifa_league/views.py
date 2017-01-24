@@ -4,30 +4,34 @@ from django.http import HttpResponse, HttpResponseForbidden, \
     HttpResponseBadRequest, HttpResponseServerError, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.db import DatabaseError
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import list_route, detail_route
-from .serializers import LeagueSerializer, TeamSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
+    IsAuthenticated
+from .serializers import LeagueSerializer, TeamSerializer, \
+    TeamStatSerializer, MatchSerializer, PlayerSerializer
 
-from .models import Team, TeamStat, League, Player
+from .models import Team, TeamStat, League, Player, Match
 from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
     PlayerCreateForm, TeamStatCreateForm, MatchCreateForm, UserLoginForm, \
     UserChangePasswordForm, UserChangeEmailForm, UserAvatarUploadForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
-from .mixins import UserFormsMixin, UserPermissionsCheckMixin, AjaxCheckMixin,\
-    UserAuthenticationCheckMixin
+from .mixins import UserFormsMixin, AjaxCheckMixin
 
 
 class IndexView(UserFormsMixin, TemplateView):
     """
     Render list of all leagues and generate form fo user registration/login
     """
-    template_name = 'leagues/leagues_list_view.html'
+    # template_name = 'leagues/leagues_list_view.html'
+    template_name = 'base.html'
 
     def get_context_data(self, **kwargs):
         """
@@ -37,239 +41,6 @@ class IndexView(UserFormsMixin, TemplateView):
         ctx = super().get_context_data(**kwargs)
         ctx.update({'leagues_list': League.objects.all()})
         return ctx
-
-
-class TeamsListView(UserFormsMixin, TemplateView):
-    """
-    Render table of teams with statistic for specific League
-    league_id - shortcut for League
-    """
-    template_name = 'leagues/teams_list_view.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        :return: list of TeamStat models object, order by points (best on top)
-        """
-        league_id = str(self.kwargs['league_shortcut'])
-
-        league = get_object_or_404(League, shortcut=league_id)
-
-        teams = league.teams_stat.order_by('points').reverse()
-
-        ctx = super().get_context_data(**kwargs)
-        ctx.update({'teams': teams})
-        return ctx
-
-
-class TeamView(UserFormsMixin, TemplateView):
-    """
-    Render Team statistic for specific League
-    """
-    template_name = 'teams/team_view.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        get league_shortcut and team_shortcut from URL,
-        get specific team_stat then return
-        :return: single TeamStat model object for template
-        """
-        league_id = str(self.kwargs['league_shortcut'])
-        team_id = str(self.kwargs['team_shortcut'])
-
-        league = get_object_or_404(League, shortcut=league_id)
-        team = get_object_or_404(Team, shortcut=team_id)
-        team_stat = get_object_or_404(team.leagues_stat,
-                                      team=team,
-                                      league=league)
-        ctx = super().get_context_data(**kwargs)
-        ctx.update({'team_stat': team_stat})
-        return ctx
-
-
-class UserSettingsView(UserAuthenticationCheckMixin,
-                       UserFormsMixin, TemplateView):
-    """
-    Render template to change user settings
-    """
-    template_name = 'user/settings.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Update get_context data and add new forms for user settings
-        :param kwargs:
-        :return:
-        """
-        ctx = super().get_context_data(**kwargs)
-        ctx.update({'user_change_password_form': UserChangePasswordForm(),
-                    'user_change_email_form': UserChangeEmailForm()})
-        return ctx
-
-
-class CreateLeagueView(AjaxCheckMixin, UserAuthenticationCheckMixin,
-                       UserPermissionsCheckMixin, View):
-    """
-    Handle AJAX request and create new league
-    """
-    form_class = LeagueCreateForm
-    permissions_required = ['add_league']
-
-    def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
-
-        if not form.is_valid():
-            return HttpResponseBadRequest('Please enter correct data!')
-
-        try:
-            league = form.save(commit=False)
-        except ValueError as e:
-            return HttpResponseBadRequest(e.args[0])
-
-        league.name = form.cleaned_data['name']
-        league.shortcut = form.cleaned_data['shortcut']
-        league.short_description = form.cleaned_data['short_description']
-        league.full_description = form.cleaned_data['full_description']
-        league.author = request.user
-
-        if League.objects.filter(name=league.name).exists() or \
-                League.objects.filter(shortcut=league.shortcut).exists():
-            return HttpResponseBadRequest(_('League {} already exist!')
-                                          .format(league.name))
-
-        league.save()
-
-        return HttpResponse(_('League {} is create!')
-                            .format(league.name))
-
-
-class CreateMatchView(AjaxCheckMixin, UserAuthenticationCheckMixin,
-                      UserPermissionsCheckMixin, View):
-    """
-    Handle AJAX request create new match and add points to related teams
-    """
-    form_class = MatchCreateForm
-    permissions_required = ['add_match']
-
-    def post(self, request):
-        form = self.form_class(request.POST)
-
-        if not form.is_valid():
-            return HttpResponseBadRequest('Please enter correct data!')
-
-        try:
-            match = form.create()
-        except ValueError as e:
-            return HttpResponseBadRequest(e.args[0])
-        except DatabaseError as e:
-            return HttpResponseServerError(_('Database error! {}')
-                                           .format(e.args[0]))
-
-        return HttpResponse(_('Match between {} and {} is created!')
-                            .format(match.team_home.team.name,
-                                    match.team_guest.team.name))
-
-
-class CreateTeamView(AjaxCheckMixin, UserAuthenticationCheckMixin,
-                     UserPermissionsCheckMixin, View):
-    """
-    Handle AJAX request and create new team
-    """
-    form_class = TeamCreateForm
-    permissions_required = ['add_team']
-
-    def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
-
-        if not form.is_valid():
-            return HttpResponseBadRequest('Please enter correct data!')
-
-        try:
-            team = form.save(commit=False)
-        except ValueError as e:
-            return HttpResponseBadRequest(e.args[0])
-
-        team.name = form.cleaned_data['name']
-        team.shortcut = form.cleaned_data['shortcut']
-        team.description = form.cleaned_data['description']
-        team.author = request.user
-
-        if Team.objects.filter(name=team.name).exists() or \
-                Team.objects.filter(shortcut=team.shortcut).exists():
-            return HttpResponseBadRequest(_('Team {} already exist!')
-                                          .format(team.name))
-
-        team.save()
-
-        return HttpResponse(_('Team {} is created!')
-                            .format(team.name))
-
-
-class CreatePlayerView(AjaxCheckMixin, UserAuthenticationCheckMixin,
-                       UserPermissionsCheckMixin, View):
-    """
-    Handle AJAX request and create new player for specific team
-    """
-    form_class = PlayerCreateForm
-    permissions_required = ['add_player']
-
-    def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
-
-        if not form.is_valid():
-            return HttpResponseBadRequest('Please enter correct data!')
-
-        try:
-            player = form.save(commit=False)
-        except ValueError as e:
-            return HttpResponseBadRequest(e.args[0])
-
-        player.name = form.cleaned_data['name']
-        player.age = form.cleaned_data['age']
-        player.team = form.cleaned_data['team']
-        player.author = request.user
-
-        if Player.objects.filter(name=player.name).exists():
-            return HttpResponseBadRequest(_('Player {} already exist in {}!')
-                                          .format(player.name,
-                                                  player.team.name))
-
-        player.save()
-
-        return HttpResponse(_('Player {} is created!')
-                            .format(player.name))
-
-
-class CreateTeamStatView(AjaxCheckMixin, UserAuthenticationCheckMixin,
-                         UserPermissionsCheckMixin, View):
-    """
-    Handle AJAX request and add specific team to league
-    """
-    form_class = TeamStatCreateForm
-    permissions_required = ['add_teamstat']
-
-    def post(self, request):
-        form = self.form_class(request.POST)
-
-        if not form.is_valid():
-            return HttpResponseBadRequest('Please enter correct data!')
-
-        try:
-            teamstat = form.save(commit=False)
-        except ValueError as e:
-            return HttpResponseBadRequest(e.args[0])
-
-        teamstat.team = form.cleaned_data['team']
-        teamstat.league = form.cleaned_data['league']
-
-        if TeamStat.objects.filter(team=teamstat.team,
-                                   league=teamstat.league).exists():
-            return HttpResponseBadRequest(
-                _('Team already play in this league!'))
-
-        teamstat.save()
-
-        return HttpResponse(_('Team {} now in {}!')
-                            .format(teamstat.team.name,
-                                    teamstat.league.name))
 
 
 class CreateUserView(AjaxCheckMixin, View):
@@ -286,7 +57,6 @@ class CreateUserView(AjaxCheckMixin, View):
         """
 
         form = self.form_class(request.POST)
-
         if not form.is_valid():
             return HttpResponseBadRequest('Please enter correct data!')
 
@@ -366,42 +136,104 @@ class LogOutUserView(View):
         return redirect('fifa_league:index')
 
 
-class UserAvatarUploadView(View):
-    """
-    User view to handle avatar upload
-    """
-    def post(self, request):
-        old_filename = request.user.profile.avatar.name
-
-        form = UserAvatarUploadForm(request.POST, request.FILES,
-                                    instance=request.user.profile)
-        if not form.is_valid():
-            response = {'is_valid': False,
-                        'message': 'Invalid data!'}
-            return JsonResponse(response)
-
-        request.user.profile.avatar.storage.delete(old_filename)
-
-        profile = form.save()
-
-        response = {'is_valid': True,
-                    'url': profile.avatar.url,
-                    'message': 'Your avatar successfully upload!'}
-        return JsonResponse(response)
-
-
-class LeagueList(generics.ListCreateAPIView):
+class LeagueViewSet(viewsets.ModelViewSet):
     """
     REST API View | generates list of all Leagues and send
     """
-    queryset = League.objects.all()
-    serializer_class = LeagueSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def list(self, request):
+        queryset = League.objects.all()
+        serializer = LeagueSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @detail_route(['DELETE'])
+    def delete(self, request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        league = get_object_or_404(League, pk=pk)
+
+        if league.author != request.user:
+            return HttpResponseForbidden('No no no!')
+
+        league.delete()
+        message = {'success': True, 'message': 'League is delete!'}
+        return Response(message, status=204)
+
+    @detail_route(['GET'])
+    def get_info(self, request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponse(status=401)
+
+        league = get_object_or_404(League, pk=pk)
+
+        if league.author != request.user:
+            return HttpResponseForbidden('No no no!')
+
+        serializer = LeagueSerializer(league)
+        return Response(serializer.data)
+
+    @detail_route(['GET'])
+    def get_teamstat_list(self, request, pk, *args, **kwargs):
+        teamstats = TeamStat.objects.filter(league__pk=pk)\
+            .order_by('points').reverse()
+
+        serializer = TeamStatSerializer(teamstats, many=True)
+        return Response(serializer.data)
+
+    def update(self, request, pk, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+
+        league = get_object_or_404(League, pk=pk)
+
+        if league.author != request.user:
+            return HttpResponseForbidden('No no no')
+
+        instance = get_object_or_404(League, pk=pk)
+        form = LeagueCreateForm(request.POST, request.FILES, instance=instance)
+        if not form.is_valid():
+            return Response(form.errors, status=422)
+
+        form.save()
+        return Response('Object is updated!')
+
+    def create(self, request):
+        if not request.user.is_authenticated:
+            return Response(status=401)
+        form = LeagueCreateForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        try:
+            league = form.save(commit=False)
+        except ValueError as e:
+            return HttpResponseBadRequest(e.args[0])
+
+        league.name = form.cleaned_data['name']
+        league.shortcut = form.cleaned_data['shortcut']
+        league.short_description = form.cleaned_data['short_description']
+        league.full_description = form.cleaned_data['full_description']
+        league.author = request.user
+
+        if League.objects.filter(name=league.name).exists() or \
+                League.objects.filter(shortcut=league.shortcut).exists():
+            return HttpResponseBadRequest(_('League {} already exist!')
+                                          .format(league.name))
+
+        league.save()
+
+        return Response(_('League {} is create!')
+                        .format(league.name))
 
 
 class TeamViewSet(viewsets.ViewSet):
     """
     Simple viewset for Team API
     """
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def list(self, request):
         """
@@ -414,23 +246,62 @@ class TeamViewSet(viewsets.ViewSet):
 
     @list_route(methods=['get'],
                 url_path='get_teams_from_league/'
-                         '(?P<league_shortcut>[0-9a-zA-Z]+)')
+                         '(?P<shortcut>[0-9A-Za-z]+)')
     def get_teams_from_league(self, request, *args, **kwargs):
         """
         :param kwargs: contains league_shortcut
         :return: list of team related to league
         """
-        shortcut = self.kwargs.get('league_shortcut')
+        shortcut = self.kwargs['shortcut']
         queryset = Team.objects.filter(leagues_stat__in=TeamStat.objects
                                        .filter(league__shortcut=shortcut))
         serializer = TeamSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @detail_route(['GET'])
+    def get_players(self, request, pk, *args, **kwargs):
+        players = Player.objects.filter(team__pk=pk)
+        serializer = PlayerSerializer(players, many=True)
+        return Response(serializer.data)
+
+    @detail_route(['GET'])
+    def get_team_from_teamstat(self, request, pk, *args, **kwargs):
+        team = get_object_or_404(Team, leagues_stat__pk=pk)
+        serializer = TeamSerializer(team)
+        return Response(serializer.data)
+
+    def create(self, request):
+        form = TeamCreateForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        try:
+            team = form.save(commit=False)
+        except ValueError as e:
+            return HttpResponseBadRequest(e.args[0])
+
+        team.name = form.cleaned_data['name']
+        team.shortcut = form.cleaned_data['shortcut']
+        team.description = form.cleaned_data['description']
+        team.author = request.user
+
+        if Team.objects.filter(name=team.name).exists() or \
+                Team.objects.filter(shortcut=team.shortcut).exists():
+            return HttpResponseBadRequest(_('Team {} already exist!')
+                                          .format(team.name))
+
+        team.save()
+
+        return Response(_('Team {} is created!')
+                        .format(team.name))
 
 
 class UserViewSet(viewsets.ViewSet):
     """
     User viewsets for handle users action
     """
+    permission_classes = (IsAuthenticated, )
 
     @detail_route(['POST'])
     def change_password(self, request, pk, *args, **kwargs):
@@ -483,8 +354,6 @@ class UserViewSet(viewsets.ViewSet):
         API for change user email
         :return:
         """
-        if not request.is_ajax():
-            return HttpResponseBadRequest('AJAX is required!')
 
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
@@ -506,3 +375,134 @@ class UserViewSet(viewsets.ViewSet):
         request.user.email = new_email
         request.user.save()
         return HttpResponse('Email has changed!')
+
+    @detail_route(['POST'])
+    def change_avatar(self, request, pk, *args, **kwargs):
+        if not str(request.user.pk) == pk:
+            return HttpResponseForbidden()
+
+        old_filename = request.user.profile.avatar.name
+
+        form = UserAvatarUploadForm(data=request.FILES,
+                                    instance=request.user.profile)
+        if not form.is_valid():
+            response = {'is_valid': False,
+                        'message': 'Invalid data!'}
+            return JsonResponse(response, status=400)
+
+        request.user.profile.avatar.storage.delete(old_filename)
+
+        profile = form.save()
+        response = {'is_valid': True,
+                    'url': profile.avatar.url,
+                    'message': 'Your avatar successfully upload!'}
+        return JsonResponse(response)
+
+    @list_route(['GET'])
+    def get_user_leagues(self, request):
+        leagues = League.objects.filter(author=request.user)
+        serializer = LeagueSerializer(leagues, many=True)
+        return Response(serializer.data)
+
+
+class TeamStatViewSet(viewsets.ViewSet):
+    """
+    TeamStat viewset
+    """
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    @detail_route(['GET'])
+    def get_info(self, request, pk, *args, **kwargs):
+        teamstat = get_object_or_404(TeamStat, pk=pk)
+
+        serializer = TeamStatSerializer(teamstat)
+        return Response(serializer.data)
+
+    @detail_route(['GET'])
+    def get_matches(self, request, pk, *args, **kwargs):
+        matches = Match.objects.filter(Q(team_home=pk)
+                                       | Q(team_guest=pk))
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        form = TeamStatCreateForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        try:
+            teamstat = form.save(commit=False)
+        except ValueError as e:
+            return HttpResponseBadRequest(e.args[0])
+
+        teamstat.team = form.cleaned_data['team']
+        teamstat.league = form.cleaned_data['league']
+
+        if TeamStat.objects.filter(team=teamstat.team,
+                                   league=teamstat.league).exists():
+            return HttpResponseBadRequest(
+                _('Team already play in this league!'))
+
+        teamstat.save()
+
+        return Response(_('Team {} now in {}!')
+                        .format(teamstat.team.name,
+                                teamstat.league.name))
+
+
+class MatchViewSet(viewsets.ViewSet):
+    """
+    Viewset for match and related objects
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        form = MatchCreateForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        try:
+            match = form.create()
+        except ValueError as e:
+            return HttpResponseBadRequest(e.args[0])
+        except DatabaseError as e:
+            return HttpResponseServerError(_('Database error! {}')
+                                           .format(e.args[0]))
+
+        return Response(_('Match between {} and {} is created!')
+                        .format(match.team_home.team.name,
+                                match.team_guest.team.name))
+
+
+class PlayerViewSet(viewsets.ViewSet):
+    """
+    Viewset for Player model and related objects
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        form = PlayerCreateForm(request.POST, request.FILES)
+
+        if not form.is_valid():
+            return HttpResponseBadRequest('Please enter correct data!')
+
+        try:
+            player = form.save(commit=False)
+        except ValueError as e:
+            return HttpResponseBadRequest(e.args[0])
+
+        player.name = form.cleaned_data['name']
+        player.age = form.cleaned_data['age']
+        player.team = form.cleaned_data['team']
+        player.author = request.user
+
+        if Player.objects.filter(name=player.name).exists():
+            return HttpResponseBadRequest(_('Player {} already exist!')
+                                          .format(player.name))
+
+        player.save()
+
+        return Response(_('Player {} is created!')
+                        .format(player.name))
