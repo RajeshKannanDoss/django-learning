@@ -204,7 +204,7 @@ class APITestCase(TestCase):
         self.assertTrue(self.is_lists_equals(test_serializers, response_data))
 
 
-class TestCreateLeagueViewTestCase(TestCase):
+class TestCreateLeagueTestCase(TestCase):
     def setUp(self):
         self.user_password = '1234'
         self.user = UserFactory(password=self.user_password)
@@ -289,7 +289,7 @@ class TestCreateLeagueViewTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCreateTeamViewTestCase(TestCase):
+class TestCreateTeamTestCase(TestCase):
     def setUp(self):
         self.user_password = '1234'
         self.user = UserFactory(password=self.user_password)
@@ -367,7 +367,7 @@ class TestCreateTeamViewTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCreatePlayerViewTestCase(TestCase):
+class TestCreatePlayerTestCase(TestCase):
     def setUp(self):
         self.team = TeamFactory()
         self.user_password = '1234'
@@ -458,7 +458,7 @@ class TestCreatePlayerViewTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCreateTeamStatViewTestCase(TestCase):
+class TestCreateTeamStatTestCase(TestCase):
     def setUp(self):
         self.team = TeamFactory()
         self.league = LeagueFactory()
@@ -506,7 +506,7 @@ class TestCreateTeamStatViewTestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCreateMatchViewTestCase(TestCase):
+class TestCreateMatchTestCase(TestCase):
 
     def setUp(self):
         self.league = LeagueFactory()
