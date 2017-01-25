@@ -5,7 +5,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from .factories import TeamFactory, LeagueFactory, TeamStatFactory, \
     PlayerFactory, MatchFactory, UserFactory
-from .serializers import LeagueSerializer, TeamSerializer
+from .serializers import LeagueSerializer, TeamSerializer, UserSerializer
 from .models import League, Team, Player, TeamStat
 
 
@@ -125,13 +125,19 @@ class SerializersTestCase(TestCase):
         league = self.league
         serializer = LeagueSerializer(league)
         self.assertEqual(serializer.data,
-                         {'name': league.name, 'shortcut': league.shortcut})
+                         {'name': league.name, 'shortcut': league.shortcut,
+                          'short_description': league.short_description,
+                          'full_description': league.full_description,
+                          'logo': league.logo.url, 'pk': league.pk,
+                          'author': UserSerializer(league.author).data})
 
     def test_team_serializer(self):
         team = self.team
         serializer = TeamSerializer(team)
         self.assertEqual(serializer.data,
-                         {'name': team.name, 'shortcut': team.shortcut})
+                         {'name': team.name, 'shortcut': team.shortcut,
+                          'description': team.description,
+                          'logo': team.logo.url, 'pk': team.pk})
 
 
 class APITestCase(TestCase):
@@ -206,37 +212,53 @@ class TestCreateLeagueViewTestCase(TestCase):
         self.client.login(username=self.user.username,
                           password=self.user_password)
 
-    def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/create_league/',
+    def test_create_with_valid_data_wit_default_logo(self):
+        response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleague1'},
+                                     'shortcut': 'testleague1',
+                                     'short_description': 'Lorem',
+                                     'full_description': 'Lorem ipsum',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
-                         'League TESTLEAGUE1 is create!')
+                         '"League TESTLEAGUE1 is create!"')
 
         league = League.objects.get(name='TESTLEAGUE1', shortcut='testleague1')
         self.assertEqual(league.name, 'TESTLEAGUE1')
         self.assertEqual(league.shortcut, 'testleague1')
+        self.assertEqual(league.short_description, 'Lorem')
+        self.assertEqual(league.full_description, 'Lorem ipsum')
+        self.assertEqual(league.logo.url, '/static/fifa_league/gfx/'
+                                          'league/default-league-logo.svg')
 
     def test_create_with_empty_fields(self):
-        response = self.client.post('/fifa/create_league/',
+        response = self.client.post('/fifa/api/leagues/',
                                     {'name': '',
-                                     'shortcut': ''},
+                                     'shortcut': '',
+                                     'short_description': 'Lorem',
+                                     'full_description': 'Lorem ipsum',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
 
     def test_create_two_equal(self):
-        self.client.post('/fifa/create_league/',
+        self.client.post('/fifa/api/leagues/',
                          {'name': 'TESTLEAGUE1',
-                          'shortcut': 'testleague1'},
+                          'shortcut': 'testleague1',
+                          'short_description': 'Lorem',
+                          'full_description': 'Lorem ipsum',
+                          'logo': ''},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        response = self.client.post('/fifa/create_league/',
+        response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleague1'},
+                                     'shortcut': 'testleague1',
+                                     'short_description': 'Lorem',
+                                     'full_description': 'Lorem ipsum',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
@@ -244,19 +266,25 @@ class TestCreateLeagueViewTestCase(TestCase):
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/create_league/',
+        response = client.post('/fifa/api/leagues/',
                                {'name': 'TESTLEAGUE1',
-                                'shortcut': 'testleague1'},
+                                'shortcut': 'testleague1',
+                                'short_description': 'Lorem',
+                                'full_description': 'Lorem ipsum',
+                                'logo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_authenticated_user_without_permissions(self):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_league/',
+        response = client.post('/fifa/api/leagues/',
                                {'name': 'TESTLEAGUE1',
-                                'shortcut': 'testleague1'},
+                                'shortcut': 'testleague1',
+                                'short_description': 'Lorem',
+                                'full_description': 'Lorem ipsum',
+                                'logo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -269,57 +297,72 @@ class TestCreateTeamViewTestCase(TestCase):
         self.client.login(username=self.user.username,
                           password=self.user_password)
 
-    def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/create_team/',
+    def test_create_with_valid_data_without_logo(self):
+        response = self.client.post('/fifa/api/teams/',
                                     {'name': 'TESTTEAM1',
-                                     'shortcut': 'testteam1'},
+                                     'shortcut': 'testteam1',
+                                     'description': 'Lorem ipsum',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Team TESTTEAM1 is created!')
+                         '"Team TESTTEAM1 is created!"')
 
         team = Team.objects.get(name='TESTTEAM1', shortcut='testteam1')
         self.assertEqual(team.name, 'TESTTEAM1')
         self.assertEqual(team.shortcut, 'testteam1')
+        self.assertEqual(team.description, 'Lorem ipsum')
+        self.assertEqual(team.logo.url,
+                         '/static/fifa_league/gfx/team/default-team-logo.svg')
 
     def test_create_with_empty_fields(self):
-        response = self.client.post('/fifa/create_team/',
+        response = self.client.post('/fifa/api/teams/',
                                     {'name': '',
-                                     'shortcut': ''},
+                                     'shortcut': '',
+                                     'description': '',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
 
     def test_create_two_equal(self):
-        self.client.post('/fifa/create_team/',
+        self.client.post('/fifa/api/teams/',
                          {'name': 'TESTTEAM1',
-                          'shortcut': 'testteam1'},
+                          'shortcut': 'testteam1',
+                          'description': 'Lorem ipsum',
+                          'logo': ''},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        response = self.client.post('/fifa/create_team/',
-                                    {'team_name': 'TESTTEAM1',
-                                     'team_shortcut': 'testteam1'},
+        response = self.client.post('/fifa/api/teams/',
+                                    {'name': 'TESTTEAM1',
+                                     'shortcut': 'testteam1',
+                                     'description': 'Lorem ipsum lorem',
+                                     'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Please enter correct data!')
+                         'Team TESTTEAM1 already exist!')
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/create_team/',
+        response = client.post('/fifa/api/teams/',
                                {'name': 'TESTTEAM1',
-                                'shortcut': 'testteam1'},
+                                'shortcut': 'testteam1',
+                                'description': 'Lorem ipsum',
+                                'logo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_authenticated_user_without_permissions(self):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_team/',
+        response = client.post('/fifa/api/teams/',
                                {'name': 'TESTTEAM1',
-                                'shortcut': 'testteam1'},
+                                'shortcut': 'testteam1',
+                                'description': 'Lorem ipsum',
+                                'logo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -333,75 +376,84 @@ class TestCreatePlayerViewTestCase(TestCase):
         self.client.login(username=self.user.username,
                           password=self.user_password)
 
-    def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/create_player/',
+    def test_create_with_valid_data_with_default_photo(self):
+        response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 19,
-                                     'team': self.team.shortcut},
+                                     'team': self.team.shortcut,
+                                     'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Player TESTPLAYER1 is created!')
+                         '"Player TESTPLAYER1 is created!"')
 
         player = Player.objects.get(name='TESTPLAYER1', team=self.team)
         self.assertEqual(player.name, 'TESTPLAYER1')
         self.assertEqual(player.age, 19)
         self.assertEqual(player.team.name, self.team.name)
+        self.assertEqual(player.photo.url, '/static/fifa_league/gfx'
+                                           '/player/default-player-photo.svg')
 
     def test_create_with_few_empty_fields(self):
-        response = self.client.post('/fifa/create_player/',
+        response = self.client.post('/fifa/api/players/',
                                     {'name': '',
                                      'age': 0,
-                                     'team': ''},
+                                     'team': '',
+                                     'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
 
     def test_create_age_not_number(self):
-        response = self.client.post('/fifa/create_player/',
+        response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 'not number',
-                                     'team': self.team.shortcut},
+                                     'team': self.team.shortcut,
+                                     'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
                          'Please enter correct data!')
 
     def test_create_two_equal(self):
-        self.client.post('/fifa/create_player/',
+        self.client.post('/fifa/api/players/',
                          {'name': 'TESTPLAYER1',
                           'age': 19,
-                          'team': self.team.shortcut},
+                          'team': self.team.shortcut,
+                          'photo': ''},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        response = self.client.post('/fifa/create_player/',
+        response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 19,
-                                     'team': self.team.shortcut},
+                                     'team': self.team.shortcut,
+                                     'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Player TESTPLAYER1 already exist in {}!'
+                         'Player TESTPLAYER1 already exist!'
                          .format(self.team.name))
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/create_player/',
+        response = client.post('/fifa/api/players/',
                                {'name': 'TESTPLAYER1',
                                 'age': 19,
-                                'team': self.team.shortcut},
+                                'team': self.team.shortcut,
+                                'photo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_authenticated_user_without_permissions(self):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_player/',
+        response = client.post('/fifa/api/players/',
                                {'name': 'TESTPLAYER1',
                                 'age': 19,
-                                'team': self.team.shortcut},
+                                'team': self.team.shortcut,
+                                'photo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -417,17 +469,17 @@ class TestCreateTeamStatViewTestCase(TestCase):
                           password=self.user_password)
 
     def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/create_teamstat/',
+        response = self.client.post('/fifa/api/teamstat/',
                                     {'team': self.team.shortcut,
                                      'league': self.league.shortcut},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Team {} now in {}!'.format(self.team.name,
+                         '"Team {} now in {}!"'.format(self.team.name,
                                                      self.league.name))
 
     def test_create_with_empty_fields(self):
-        response = self.client.post('/fifa/create_teamstat/',
+        response = self.client.post('/fifa/api/teamstat/',
                                     {'team': '',
                                      'league': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -437,19 +489,19 @@ class TestCreateTeamStatViewTestCase(TestCase):
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/create_teamstat/',
-                               {'team': '',
-                                'league': ''},
+        response = client.post('/fifa/api/teamstat/',
+                               {'team': self.team.shortcut,
+                                'league': self.league.shortcut},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_authenticated_user_without_permissions(self):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_teamstat/',
-                               {'team': '',
-                                'league': ''},
+        response = client.post('/fifa/api/teamstat/',
+                               {'team': self.team.shortcut,
+                                'league': self.league.shortcut},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -467,7 +519,7 @@ class TestCreateMatchViewTestCase(TestCase):
                           password=self.user_password)
 
     def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/create_match/',
+        response = self.client.post('/fifa/api/match/',
                                     {'league': self.league.shortcut,
                                      'team_home': self.team_home.team.shortcut,
                                      'team_guest': self.team_guest
@@ -477,13 +529,13 @@ class TestCreateMatchViewTestCase(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Match between {} and {} is created!'
+                         '"Match between {} and {} is created!"'
                          .format(self.team_home.team.name,
                                  self.team_guest.team.name))
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/create_match/',
+        response = client.post('/fifa/api/match/',
                                {'league': self.league.shortcut,
                                 'team_home': self.team_home.team.shortcut,
                                 'team_guest': self.team_guest
@@ -491,13 +543,13 @@ class TestCreateMatchViewTestCase(TestCase):
                                 'team_home_goals': 2,
                                 'team_guest_goals': 1},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_authenticated_user_without_permissions(self):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/create_match/',
+        response = client.post('/fifa/api/match/',
                                {'league': self.league.shortcut,
                                 'team_home': self.team_home.team.shortcut,
                                 'team_guest': self.team_guest
@@ -696,24 +748,6 @@ class TestUserViewSetAPITestCase(TestCase):
         response = self.client.get('/fifa/api/user/{}/change_email/')
         self.assertEqual(response.status_code, 405)
 
-    def test_change_password_if_ajax(self):
-        response = self.client.post('/fifa/api/user/{}/change_password/'
-                                    .format(self.user.pk),
-                                    {'old_password': self.password,
-                                     'new_password1': '1234',
-                                     'new_password2': '1234'})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content.decode('utf-8'),
-                         'AJAX is required!')
-
-    def test_change_email_if_ajax(self):
-        response = self.client.post('/fifa/api/user/{}/change_email/'
-                                    .format(self.user.pk),
-                                    {'new_email': 'test@email.com'})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content.decode('utf-8'),
-                         'AJAX is required!')
-
     def test_change_password_with_valid_data(self):
         self.client.login(username='testuser', password=self.password)
         response = self.client.post('/fifa/api/user/{}/change_password/'
@@ -745,7 +779,7 @@ class TestUserViewSetAPITestCase(TestCase):
                                      'new_password1': '1234',
                                      'new_password2': '1234'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_change_email_unauthenticated_user(self):
         response = self.client.post('/fifa/api/user/{}/change_email/'
@@ -754,7 +788,7 @@ class TestUserViewSetAPITestCase(TestCase):
                                      'new_password1': '1234',
                                      'new_password2': '1234'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_change_password_invalid_pk(self):
         self.client.login(username='testuser', password=self.password)

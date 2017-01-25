@@ -26,6 +26,7 @@ class League(models.Model):
     class Meta:
         verbose_name = _('League')
         verbose_name_plural = _('Leagues')
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         return str(self.name)
@@ -48,6 +49,7 @@ class Team(models.Model):
     class Meta:
         verbose_name = _('Team')
         verbose_name_plural = _('Teams')
+        default_permissions = ('add', 'delete', 'change')
 
     def __str__(self):
         return _('Club: {}').format(self.name)
@@ -71,6 +73,7 @@ class TeamStat(models.Model):
     class Meta:
         verbose_name = _('Team statistic')
         verbose_name_plural = _('Teams statistics')
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         return _('Statistic: {} in {} league')\
@@ -93,6 +96,7 @@ class Player(models.Model):
 
     class Meta:
         verbose_name = _('Player')
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         return _('{} | Club: {}').format(self.name, self.team.name)
@@ -112,6 +116,7 @@ class Match(models.Model):
     class Meta:
         verbose_name = _('Match')
         verbose_name_plural = _('Matches')
+        default_permissions = ('add', 'delete', 'change')
 
     def __str__(self):
         return _('{} vs {} ({}:{})').format(self.team_home.team.name,

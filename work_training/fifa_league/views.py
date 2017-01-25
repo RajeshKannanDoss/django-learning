@@ -200,8 +200,9 @@ class LeagueViewSet(viewsets.ModelViewSet):
         return Response('Object is updated!')
 
     def create(self, request):
-        if not request.user.is_authenticated:
-            return Response(status=401)
+        if not request.user.has_perm('fifa_league.add_league'):
+            return HttpResponseForbidden()
+
         form = LeagueCreateForm(request.POST, request.FILES)
 
         if not form.is_valid():
@@ -271,6 +272,9 @@ class TeamViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        if not request.user.has_perm('fifa_league.add_team'):
+            return HttpResponseForbidden()
+
         form = TeamCreateForm(request.POST, request.FILES)
 
         if not form.is_valid():
@@ -310,17 +314,13 @@ class UserViewSet(viewsets.ViewSet):
         :param request:
         :param args:
         :param kwargs:
+        :param pk:
         :return:
         """
-        if not request.is_ajax():
-            return HttpResponseBadRequest('AJAX is required!')
-
-        if not request.user.is_authenticated:
-            return HttpResponse(status=401)
-
         # Very important for security
         if not str(request.user.pk) == pk:
-            return HttpResponseForbidden('No no no!')
+            return HttpResponseForbidden('Invalid pk '
+                                         'identificator for user and request')
 
         form = UserChangePasswordForm(request.POST)
 
@@ -426,6 +426,9 @@ class TeamStatViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        if not request.user.has_perm('fifa_league.add_teamstat'):
+            return HttpResponseForbidden()
+
         form = TeamStatCreateForm(request.POST)
 
         if not form.is_valid():
@@ -458,6 +461,9 @@ class MatchViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
+        if not request.user.has_perm('fifa_league.add_match'):
+            return HttpResponseForbidden()
+
         form = MatchCreateForm(request.POST)
 
         if not form.is_valid():
@@ -483,6 +489,9 @@ class PlayerViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
+        if not request.user.has_perm('fifa_league.add_player'):
+            return HttpResponseForbidden()
+
         form = PlayerCreateForm(request.POST, request.FILES)
 
         if not form.is_valid():

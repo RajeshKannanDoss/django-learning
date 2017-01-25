@@ -7,6 +7,7 @@ from .models import League, Team, Player, TeamStat, Match
 
 admin.site.site_title = "Football App"
 admin.site.site_header = "FIFA Leagues App"
+admin.site.index_title = 'FIFA App'
 
 
 class HomeMatchInline(admin.TabularInline):

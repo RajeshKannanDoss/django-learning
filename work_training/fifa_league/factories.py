@@ -7,12 +7,34 @@ from .models import Match, League, Team, TeamStat, Player
 from .functions import add_permissions_to_user
 
 
+class UserFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: 'TESTUSER%d' % n)
+    password = '12345678'
+    email = 'test_user@mail.com'
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        password = kwargs.pop('password', None)
+        user = super(UserFactory, cls)._prepare(create, **kwargs)
+        if password:
+            user.set_password(password)
+            if create:
+                user.save()
+                # add DEFAULT PERMISSIONS to user
+                add_permissions_to_user(user)
+        return user
+
+
 class LeagueFactory(factory.DjangoModelFactory):
     class Meta:
         model = League
 
     name = 'TESTLEAGUE'
     shortcut = 'testleague'
+    author = factory.SubFactory(UserFactory)
 
 
 class TeamFactory(factory.DjangoModelFactory):
@@ -21,6 +43,8 @@ class TeamFactory(factory.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: 'TESTTEAM%d' % n)
     shortcut = factory.Sequence(lambda n: 'testteam%d' % n)
+    author = factory.SubFactory(UserFactory)
+    description = 'Lorem ipsum'
 
 
 class TeamStatFactory(factory.DjangoModelFactory):
@@ -55,24 +79,4 @@ class PlayerFactory(factory.DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
     name = 'Rocko Pocko'
     age = 21
-
-
-class UserFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = User
-
-    username = factory.Sequence(lambda n: 'TESTUSER%d' % n)
-    password = '12345678'
-    email = 'test_user@mail.com'
-
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        password = kwargs.pop('password', None)
-        user = super(UserFactory, cls)._prepare(create, **kwargs)
-        if password:
-            user.set_password(password)
-            if create:
-                user.save()
-                # add DEFAULT PERMISSIONS to user
-                add_permissions_to_user(user)
-        return user
+    author = factory.SubFactory(UserFactory)

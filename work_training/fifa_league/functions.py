@@ -10,7 +10,10 @@ DRAW_POINT = 1
 # default list of permissions fo user
 DEFAULT_PERMISSIONS = [
         'add_league',
+        'delete_league',
         'add_team',
+        'delete_team',
+        'change_team',
         'add_player',
         'add_match',
         'add_teamstat'
