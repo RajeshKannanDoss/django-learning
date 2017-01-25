@@ -128,8 +128,7 @@ class LogOutUserView(View):
     """
 
     def get(self, request):
-        if request.user.is_authenticated:
-            logout(request)
+        logout(request)
         return redirect('fifa_league:index')
 
 
