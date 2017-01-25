@@ -703,7 +703,8 @@ class TestLoginUserViewTestCase(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Bad login or password!')
+                         'Bad login or password '
+                         'or your account is disable!')
 
     def test_login_with_bad_password(self):
         response = self.client.post('/fifa/login_user/',
@@ -712,7 +713,20 @@ class TestLoginUserViewTestCase(TestCase):
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content.decode('utf-8'),
-                         'Bad login or password!')
+                         'Bad login or password '
+                         'or your account is disable!')
+
+    def test_user_is_not_active(self):
+        self.user.is_active = False
+        self.user.save()
+        response = self.client.post('/fifa/login_user/',
+                                    {'username': 'testuser',
+                                     'password': self.password},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content.decode('utf-8'),
+                         'Bad login or password '
+                         'or your account is disable!')
 
 
 class TestLogOutUserViewTestCase(TestCase):

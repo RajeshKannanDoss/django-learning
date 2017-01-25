@@ -110,12 +110,9 @@ class LoginUserView(AjaxCheckMixin, View):
         password = form.cleaned_data['password']
 
         user = authenticate(username=username, password=password)
-
         if user is None:
-            return HttpResponseBadRequest('Bad login or password!')
-
-        if not user.is_active:
-            return HttpResponseForbidden('Your account is disabled!')
+            return HttpResponseBadRequest('Bad login or password '
+                                          'or your account is disable!')
 
         login(request, user)
         return HttpResponse('Welcome {}!'
