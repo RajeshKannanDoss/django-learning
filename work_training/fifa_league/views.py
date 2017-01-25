@@ -89,9 +89,6 @@ class CreateUserView(AjaxCheckMixin, View):
         if user is None:
             return HttpResponseServerError("User didn't exist after saving!")
 
-        if not user.is_active:
-            return HttpResponseForbidden('Your account is disabled!')
-
         login(request, user)
         return HttpResponse('User {} is created! Welcome!'
                             .format(user.username))
