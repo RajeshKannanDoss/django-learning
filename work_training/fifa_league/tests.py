@@ -7,7 +7,8 @@ from .factories import TeamFactory, LeagueFactory, TeamStatFactory, \
     PlayerFactory, MatchFactory, UserFactory
 from .serializers import LeagueSerializer, TeamSerializer, UserSerializer
 from .models import League, Team, Player, TeamStat
-
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 
 class MatchCreateTestCase(TestCase):
     """
@@ -212,7 +213,7 @@ class TestCreateLeagueTestCase(TestCase):
         self.client.login(username=self.user.username,
                           password=self.user_password)
 
-    def test_create_with_valid_data_wit_default_logo(self):
+    def test_create_with_valid_data_and_default_logo(self):
         response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
                                      'shortcut': 'testleague1',
@@ -231,6 +232,33 @@ class TestCreateLeagueTestCase(TestCase):
         self.assertEqual(league.full_description, 'Lorem ipsum')
         self.assertEqual(league.logo.url, '/static/fifa_league/gfx/'
                                           'league/default-league-logo.svg')
+
+    def test_create_with_valid_data_and_custom_logo(self):
+        main_dir = os.path.dirname(__file__)
+        file = open(os.path.join(main_dir,
+                                 'test/files/league-custom-logo.svg'), 'rb')
+        response = self.client.post('/fifa/api/leagues/',
+                                    {'name': 'TESTLEAGUE1',
+                                     'shortcut': 'testleague1',
+                                     'short_description': 'Lorem',
+                                     'full_description': 'Lorem ipsum',
+                                     'logo': SimpleUploadedFile(file.name,
+                                                                file.read())},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         '"League TESTLEAGUE1 is create!"')
+
+        league = League.objects.get(name='TESTLEAGUE1', shortcut='testleague1')
+        self.assertEqual(league.name, 'TESTLEAGUE1')
+        self.assertEqual(league.shortcut, 'testleague1')
+        self.assertEqual(league.short_description, 'Lorem')
+        self.assertEqual(league.full_description, 'Lorem ipsum')
+        try:
+            self.assertEqual(league.logo.url, '/media/uploads/leagues/'
+                                              'logos/league-custom-logo.svg')
+        finally:
+            league.logo.storage.delete(league.logo.name)
 
     def test_create_with_empty_fields(self):
         response = self.client.post('/fifa/api/leagues/',
