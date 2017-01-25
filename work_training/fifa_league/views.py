@@ -347,10 +347,6 @@ class UserViewSet(viewsets.ViewSet):
         API for change user email
         :return:
         """
-
-        if not request.user.is_authenticated:
-            return HttpResponse(status=401)
-
         # Very important for security
         if not str(request.user.pk) == pk:
             return HttpResponseForbidden('No no no!')
