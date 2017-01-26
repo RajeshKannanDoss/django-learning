@@ -87,7 +87,7 @@ class Player(models.Model):
     """
     team = models.ForeignKey(Team)
     name = models.CharField(max_length=500)
-    age = models.IntegerField(default=0)
+    age = models.PositiveSmallIntegerField(default=0)
     author = models.ForeignKey(User, related_name='players', default=None)
     photo = models.FileField(upload_to='uploads/players/photos/',
                              default='..{}fifa_league/'
@@ -110,8 +110,8 @@ class Match(models.Model):
     """
     team_home = models.ForeignKey(TeamStat, related_name="home_matches")
     team_guest = models.ForeignKey(TeamStat, related_name="guest_matches")
-    team_home_goals = models.IntegerField(default=0)
-    team_guest_goals = models.IntegerField(default=0)
+    team_home_goals = models.PositiveSmallIntegerField(default=0)
+    team_guest_goals = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         verbose_name = _('Match')
