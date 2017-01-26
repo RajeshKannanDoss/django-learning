@@ -30,7 +30,6 @@ class IndexView(UserFormsMixin, TemplateView):
     """
     Render list of all leagues and generate form fo user registration/login
     """
-    # template_name = 'leagues/leagues_list_view.html'
     template_name = 'base.html'
 
     def get_context_data(self, **kwargs):
@@ -142,9 +141,6 @@ class LeagueViewSet(viewsets.ModelViewSet):
 
     @detail_route(['DELETE'])
     def delete(self, request, pk, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponse(status=401)
-
         league = get_object_or_404(League, pk=pk)
 
         if league.author != request.user:
