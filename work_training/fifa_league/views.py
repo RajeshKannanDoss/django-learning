@@ -176,9 +176,6 @@ class LeagueViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return Response(status=401)
-
         league = get_object_or_404(League, pk=pk)
 
         if league.author != request.user:
