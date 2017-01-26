@@ -31140,6 +31140,11 @@
 	            if (this.is_update === false) {
 	                _ajax.sendFormData.post(this.url, data).then(function (response) {
 	                    (0, _notification.showSuccess)(response.data);
+	
+	                    // need this to re-render LeaguesList component
+	                    document.getElementById('main').innerHTML = '';
+	
+	                    _reactDom2.default.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
 	                }).catch(function (error) {
 	                    (0, _notification.showError)(error.response.data);
 	                });

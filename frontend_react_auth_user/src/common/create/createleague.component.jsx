@@ -62,6 +62,14 @@ class CreateLeagueForm extends Component
         sendFormData.post(this.url, data)
         .then(function (response) {
             showSuccess(response.data);
+
+            // need this to re-render LeaguesList component
+            document.getElementById('main').innerHTML = '';
+
+            ReactDOM.render(
+                <LeaguesList />,
+                document.getElementById('main')
+            );
         })
         .catch(function (error) {
             showError(error.response.data);
@@ -73,7 +81,7 @@ class CreateLeagueForm extends Component
 
                 // need this to re-render LeaguesList component
                 document.getElementById('main').innerHTML = '';
-                
+
                 ReactDOM.render(
                     <LeaguesList />,
                     document.getElementById('main')
