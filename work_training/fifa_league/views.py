@@ -23,7 +23,7 @@ from .forms import UserCreateForm, LeagueCreateForm, TeamCreateForm, \
     UserChangePasswordForm, UserChangeEmailForm, UserAvatarUploadForm
 from .functions import add_permissions_to_user, DEFAULT_PERMISSIONS
 
-from .mixins import UserFormsMixin, AjaxCheckMixin
+from .mixins import UserFormsMixin
 
 
 class IndexView(UserFormsMixin, TemplateView):
@@ -43,7 +43,7 @@ class IndexView(UserFormsMixin, TemplateView):
         return ctx
 
 
-class CreateUserView(AjaxCheckMixin, View):
+class CreateUserView(View):
     """
     View for new user registration and than log in new user
     """
@@ -94,7 +94,7 @@ class CreateUserView(AjaxCheckMixin, View):
                             .format(user.username))
 
 
-class LoginUserView(AjaxCheckMixin, View):
+class LoginUserView(View):
     """
     View for user log in
     """
