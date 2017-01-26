@@ -31068,6 +31068,10 @@
 	
 	var _leaguesComponent2 = _interopRequireDefault(_leaguesComponent);
 	
+	var _reactDom = __webpack_require__(/*! react-dom */ 32);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31142,9 +31146,13 @@
 	            } else {
 	                _ajax.sendFormData.put(this.url, data).then(function (response) {
 	                    (0, _notification.showSuccess)(response.data);
-	                    ReactDOM.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
+	
+	                    // need this to re-render LeaguesList component
+	                    document.getElementById('main').innerHTML = '';
+	                    _reactDom2.default.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
 	                }).catch(function (error) {
-	                    (0, _notification.showError)(error.response.data);
+	                    (0, _notification.showError)(error);
+	                    console.log('ERROR');
 	                });
 	            }
 	        }
@@ -32234,4 +32242,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=bundle.js.map
+//# sourceMappingURL=auth_user.js.map

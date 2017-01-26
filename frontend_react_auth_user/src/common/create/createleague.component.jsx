@@ -3,6 +3,7 @@ import { sendFormData } from '../ajax.jsx';
 import {showError} from '../notification.jsx';
 import {showSuccess} from '../notification.jsx';
 import LeaguesList from '../main-content/leagues.component.jsx';
+import ReactDOM from 'react-dom';
 
 class CreateLeagueForm extends Component
 {
@@ -69,6 +70,10 @@ class CreateLeagueForm extends Component
             sendFormData.put(this.url, data)
             .then(function (response) {
                 showSuccess(response.data);
+
+                // need this to re-render LeaguesList component
+                document.getElementById('main').innerHTML = '';
+                
                 ReactDOM.render(
                     <LeaguesList />,
                     document.getElementById('main')
