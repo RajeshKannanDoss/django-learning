@@ -25,17 +25,17 @@ class ChangeAvatar extends Component
         data.append('avatar', this.avatar);
         sendFormData.post(this.url, data)
         .then(function (response) {
-            response = response.data;
-            var url = response.url;
+            avatar = response.data.url;
+            document.getElementById('profile').innerHTML = '';
             ReactDOM.render(
-                <Profile avatarurl={url} />,
+                <Profile avatarurl={avatar} />,
                 document.getElementById('profile')
             );
             showSuccess(response.message);
         })
         .catch(function (error) {
             console.log(error);
-            showError(error.response.data.message);
+            showError(error.response);
         });
     }
 

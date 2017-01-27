@@ -363,15 +363,16 @@ class UserViewSet(viewsets.ViewSet):
             return HttpResponseForbidden()
 
         old_filename = request.user.profile.avatar.name
-
-        form = UserAvatarUploadForm(data=request.FILES,
+        form = UserAvatarUploadForm(request.POST, request.FILES,
                                     instance=request.user.profile)
         if not form.is_valid():
             response = {'is_valid': False,
                         'message': 'Invalid data!'}
             return JsonResponse(response, status=400)
 
-        request.user.profile.avatar.storage.delete(old_filename)
+        if old_filename != '../media/static/fifa_league' \
+                           '/user/default-avatar.svg':
+            request.user.profile.avatar.storage.delete(old_filename)
 
         profile = form.save()
         response = {'is_valid': True,

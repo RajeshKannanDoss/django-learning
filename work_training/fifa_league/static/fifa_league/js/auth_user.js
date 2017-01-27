@@ -27336,11 +27336,11 @@
 	
 	var _changepasswordComponent2 = _interopRequireDefault(_changepasswordComponent);
 	
-	var _changeemailComponent = __webpack_require__(/*! ./changeemail.component.jsx */ 266);
+	var _changeemailComponent = __webpack_require__(/*! ./changeemail.component.jsx */ 267);
 	
 	var _changeemailComponent2 = _interopRequireDefault(_changeemailComponent);
 	
-	var _changeavatarComponent = __webpack_require__(/*! ./changeavatar.component.jsx */ 267);
+	var _changeavatarComponent = __webpack_require__(/*! ./changeavatar.component.jsx */ 268);
 	
 	var _changeavatarComponent2 = _interopRequireDefault(_changeavatarComponent);
 	
@@ -27411,7 +27411,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29768,6 +29768,41 @@
 
 /***/ },
 /* 266 */
+/*!*************************************!*\
+  !*** ./src/common/notification.jsx ***!
+  \*************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var showErrorDiv = document.getElementById('alert-error');
+	var errorMessage = document.getElementById('error-message');
+	function showError(mes) {
+	    showErrorDiv.style.display = 'block';
+	    errorMessage.innerHTML = mes;
+	    setTimeout(function () {
+	        showErrorDiv.style.display = 'none';
+	    }, 2500);
+	}
+	
+	var showSuccessDiv = document.getElementById('alert-success');
+	var successMessage = document.getElementById('success-message');
+	function showSuccess(mes) {
+	    showSuccessDiv.style.display = 'block';
+	    successMessage.innerHTML = mes;
+	    setTimeout(function () {
+	        showSuccessDiv.style.display = 'none';
+	    }, 2500);
+	}
+	
+	exports.showError = showError;
+	exports.showSuccess = showSuccess;
+
+/***/ },
+/* 267 */
 /*!*******************************************************!*\
   !*** ./src/common/settings/changeemail.component.jsx ***!
   \*******************************************************/
@@ -29787,7 +29822,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29885,7 +29920,7 @@
 	exports.default = ChangeEmail;
 
 /***/ },
-/* 267 */
+/* 268 */
 /*!********************************************************!*\
   !*** ./src/common/settings/changeavatar.component.jsx ***!
   \********************************************************/
@@ -29905,7 +29940,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	var _profileComponent = __webpack_require__(/*! ../main/profile.component.jsx */ 269);
 	
@@ -29947,9 +29982,11 @@
 	            var data = new FormData();
 	            data.append('avatar', this.avatar);
 	            _ajax.sendFormData.post(this.url, data).then(function (response) {
+	                console.log(response);
 	                response = response.data;
-	                var url = response.url;
-	                _reactDom2.default.render(_react2.default.createElement(_profileComponent2.default, { avatarurl: url }), document.getElementById('profile'));
+	                avatar = response.url;
+	                document.getElementById('profile').innerHTML = '';
+	                _reactDom2.default.render(_react2.default.createElement(_profileComponent2.default, { avatarurl: avatar }), document.getElementById('profile'));
 	                (0, _notification.showSuccess)(response.message);
 	            }).catch(function (error) {
 	                console.log(error);
@@ -30034,41 +30071,6 @@
 	}(_react.Component);
 	
 	exports.default = ChangeAvatar;
-
-/***/ },
-/* 268 */
-/*!*************************************!*\
-  !*** ./src/common/notification.jsx ***!
-  \*************************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var showErrorDiv = document.getElementById('alert-error');
-	var errorMessage = document.getElementById('error-message');
-	function showError(mes) {
-	    showErrorDiv.style.display = 'block';
-	    errorMessage.innerHTML = mes;
-	    setTimeout(function () {
-	        showErrorDiv.style.display = 'none';
-	    }, 2500);
-	}
-	
-	var showSuccessDiv = document.getElementById('alert-success');
-	var successMessage = document.getElementById('success-message');
-	function showSuccess(mes) {
-	    showSuccessDiv.style.display = 'block';
-	    successMessage.innerHTML = mes;
-	    setTimeout(function () {
-	        showSuccessDiv.style.display = 'none';
-	    }, 2500);
-	}
-	
-	exports.showError = showError;
-	exports.showSuccess = showSuccess;
 
 /***/ },
 /* 269 */
@@ -30260,7 +30262,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	var _createleagueComponent = __webpack_require__(/*! ../create/createleague.component.jsx */ 278);
 	
@@ -31061,7 +31063,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	var _leaguesComponent = __webpack_require__(/*! ../main-content/leagues.component.jsx */ 271);
 	
@@ -31464,7 +31466,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -31659,7 +31661,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	var _axios = __webpack_require__(/*! axios */ 236);
 	
@@ -31877,7 +31879,7 @@
 	
 	var _axios2 = _interopRequireDefault(_axios);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -32030,7 +32032,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
 	var _axios = __webpack_require__(/*! axios */ 236);
 	

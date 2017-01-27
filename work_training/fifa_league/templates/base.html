@@ -21,7 +21,7 @@
       <script>
           var csrftoken = '{{ csrf_token }}';
           var username = '{{ request.user.username }}';
-          var avatar = '/media/{{ request.user.profile.avatar }}';
+          var avatar = '{{ request.user.profile.avatar.url }}';
           var userpk = {{ request.user.pk }};
           var user_email = '{{ request.user.email }}';
           var team_list = [];
