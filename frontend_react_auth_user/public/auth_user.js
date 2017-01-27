@@ -29851,15 +29851,24 @@
 	    }
 	
 	    _createClass(ChangeEmail, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            document.getElementById('current-email').innerHTML = 'Current email: ' + user_email;
+	        }
+	    }, {
 	        key: '_handleSubmit',
 	        value: function _handleSubmit(e) {
 	            e.preventDefault();
+	            var user_new_email = this.state.new_email;
 	            _ajax.sendURLEncodedForm.post(this.url, qs.stringify({
-	                new_email: this.state.new_email
+	                new_email: user_new_email
 	            })).then(function (response) {
 	                (0, _notification.showSuccess)(response.data);
+	                user_email = user_new_email;
+	                document.getElementById('current-email').innerHTML = 'Current email: ' + user_email;
+	                document.getElementById('id_new_email').value = '';
 	            }).catch(function (error) {
-	                (0, _notification.showError)(error.response.data);
+	                (0, _notification.showError)(error);
 	            });
 	        }
 	    }, {
@@ -29875,12 +29884,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(
-	                    'h1',
-	                    { className: 'current_email' },
-	                    'Current email: ',
-	                    this.user_email
-	                ),
+	                _react2.default.createElement('h1', { className: 'current_email', id: 'current-email' }),
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'menu_form', id: 'user-login-form', method: 'post', onSubmit: function onSubmit(e) {

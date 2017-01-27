@@ -16,17 +16,26 @@ class ChangeEmail extends Component
         this.handleNewEmail = this.handleNewEmail.bind(this);
     }
 
+    componentDidMount()
+    {
+        document.getElementById('current-email').innerHTML = 'Current email: ' + user_email;
+    }
+
     _handleSubmit(e)
     {
         e.preventDefault();
+        var user_new_email = this.state.new_email;
         sendURLEncodedForm.post(this.url, qs.stringify({
-            new_email: this.state.new_email
+            new_email: user_new_email
         }))
         .then(function (response) {
             showSuccess(response.data);
+            user_email = user_new_email;
+            document.getElementById('current-email').innerHTML = 'Current email: ' + user_email;
+            document.getElementById('id_new_email').value = '';
         })
         .catch(function (error) {
-            showError(error.response.data);
+            showError(error);
         });
     }
 
@@ -38,7 +47,7 @@ class ChangeEmail extends Component
     {
         return (
         <div>
-            <h1 className='current_email'>Current email: {this.user_email}</h1>
+            <h1 className='current_email' id='current-email'></h1>
             <form className='menu_form' id="user-login-form" method="post" onSubmit={(e)=>this._handleSubmit(e)}>
             <fieldset>
                 <label htmlFor="id_new_email">Enter new email:</label>
