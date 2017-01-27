@@ -29936,7 +29936,7 @@
 	
 	        _this.state = { file: '', imagePreviewUrl: '' };
 	        _this.avatar = '';
-	        _this.url = '/fifa/avatar_upload/';
+	        _this.url = '/fifa/api/user/' + userpk + '/change_avatar/';
 	        _this.handleImageChange = _this.handleImageChange.bind(_this);
 	        return _this;
 	    }

@@ -19,9 +19,9 @@ class League(models.Model):
     full_description = models.TextField(default='League full description')
     author = models.ForeignKey(User, related_name='leagues', default=None)
     logo = models.FileField(upload_to='uploads/leagues/logos/',
-                            default='..{}fifa_league/'
-                                      'gfx/league/default-league-logo.svg'
-                            .format(settings.STATIC_URL))
+                            default='..{}static/fifa_league/'
+                                      'league/default-league-logo.svg'
+                            .format(settings.MEDIA_URL))
 
     class Meta:
         verbose_name = _('League')
@@ -42,9 +42,9 @@ class Team(models.Model):
     description = models.TextField(default='Team full description')
     author = models.ForeignKey(User, related_name='teams', default=None)
     logo = models.FileField(upload_to='uploads/teams/logos/',
-                            default='..{}fifa_league/'
-                                    'gfx/team/default-team-logo.svg'
-                            .format(settings.STATIC_URL))
+                            default='..{}static/fifa_league/'
+                                    'team/default-team-logo.svg'
+                            .format(settings.MEDIA_URL))
 
     class Meta:
         verbose_name = _('Team')
@@ -90,9 +90,9 @@ class Player(models.Model):
     age = models.PositiveSmallIntegerField(default=0)
     author = models.ForeignKey(User, related_name='players', default=None)
     photo = models.FileField(upload_to='uploads/players/photos/',
-                             default='..{}fifa_league/'
-                                     'gfx/player/default-player-photo.svg'
-                             .format(settings.STATIC_URL))
+                             default='..{}static/fifa_league/'
+                                     'player/default-player-photo.svg'
+                             .format(settings.MEDIA_URL))
 
     class Meta:
         verbose_name = _('Player')
@@ -135,9 +135,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='profile')
     avatar = models.FileField(upload_to=user_directory_path,
-                              default='..{}fifa_league/'
-                                      'gfx/user/default-avatar.svg'
-                              .format(settings.STATIC_URL))
+                              default='..{}static/fifa_league/'
+                                      'user/default-avatar.svg'
+                              .format(settings.MEDIA_URL))
 
     def __str__(self):
         return '{} profile'.format(self.user.username)

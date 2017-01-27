@@ -230,8 +230,8 @@ class TestCreateLeagueTestCase(TestCase):
         self.assertEqual(league.shortcut, 'testleague1')
         self.assertEqual(league.short_description, 'Lorem')
         self.assertEqual(league.full_description, 'Lorem ipsum')
-        self.assertEqual(league.logo.url, '/static/fifa_league/gfx/'
-                                          'league/default-league-logo.svg')
+        self.assertEqual(league.logo.url, '/media/static/fifa_league'
+                                          '/league/default-league-logo.svg')
 
     def test_create_with_valid_data_and_custom_logo(self):
         main_dir = os.path.dirname(__file__)
@@ -341,7 +341,8 @@ class TestCreateTeamTestCase(TestCase):
         self.assertEqual(team.shortcut, 'testteam1')
         self.assertEqual(team.description, 'Lorem ipsum')
         self.assertEqual(team.logo.url,
-                         '/static/fifa_league/gfx/team/default-team-logo.svg')
+                         '/media/static/fifa_league/'
+                         'team/default-team-logo.svg')
 
     def test_create_with_empty_fields(self):
         response = self.client.post('/fifa/api/teams/',
@@ -419,7 +420,7 @@ class TestCreatePlayerTestCase(TestCase):
         self.assertEqual(player.name, 'TESTPLAYER1')
         self.assertEqual(player.age, 19)
         self.assertEqual(player.team.name, self.team.name)
-        self.assertEqual(player.photo.url, '/static/fifa_league/gfx'
+        self.assertEqual(player.photo.url, '/media/static/fifa_league'
                                            '/player/default-player-photo.svg')
 
     def test_create_with_few_empty_fields(self):
@@ -504,7 +505,7 @@ class TestCreateTeamStatTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
                          '"Team {} now in {}!"'.format(self.team.name,
-                                                     self.league.name))
+                                                       self.league.name))
 
     def test_create_with_empty_fields(self):
         response = self.client.post('/fifa/api/teamstat/',

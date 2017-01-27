@@ -14,7 +14,7 @@ class ChangeAvatar extends Component
         super(props);
         this.state = {file: '', imagePreviewUrl: ''};
         this.avatar = '';
-        this.url = '/fifa/avatar_upload/';
+        this.url = '/fifa/api/user/' + userpk + '/change_avatar/';
         this.handleImageChange = this.handleImageChange.bind(this);
     }
 
