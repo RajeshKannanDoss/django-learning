@@ -4376,9 +4376,14 @@
 	                password1: this.state.password1,
 	                email: this.state.email
 	            })).then(function (response) {
+	                (0, _notification.showSuccess)(response.data);
 	                location.reload();
 	            }).catch(function (error) {
-	                (0, _notification.showError)(error.response.data);
+	                if (error.response != undefined) {
+	                    (0, _notification.showError)(error.response.data);
+	                } else {
+	                    (0, _notification.showError)(error);
+	                }
 	            });
 	        }
 	    }, {
@@ -4498,7 +4503,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var instance = _axios2.default.create({
-	  timeout: 2000,
+	  timeout: 3500,
 	  xsrfCookieName: 'csrftoken',
 	  xsrfHeaderName: 'X-CSRFToken',
 	  headers: { 'X-Requested-With': 'XMLHttpRequest',
@@ -25433,4 +25438,4 @@
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=bundle.js.map
+//# sourceMappingURL=anon_user.js.map

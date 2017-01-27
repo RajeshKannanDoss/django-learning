@@ -27,10 +27,17 @@ class SignUpForm extends Component
             email: this.state.email
         }))
         .then(function (response) {
+            showSuccess(response.data);
             location.reload();
         })
         .catch(function (error) {
-            showError(error.response.data);
+            if(error.response != undefined)
+            {
+                showError(error.response.data);
+            } else
+            {
+                showError(error)
+            }
         });
     }
 

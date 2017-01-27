@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 var instance = axios.create({
-  timeout: 2000,
+  timeout: 3500,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
   headers: {'X-Requested-With': 'XMLHttpRequest',
