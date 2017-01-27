@@ -27411,7 +27411,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _ajax2 = _interopRequireDefault(_ajax);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -27444,15 +27444,14 @@
 	        key: '_handleSubmit',
 	        value: function _handleSubmit(e) {
 	            e.preventDefault();
-	            _ajax2.default.post(this.url, qs.stringify({
+	            _ajax.sendURLEncodedForm.post(this.url, qs.stringify({
 	                old_password: this.state.old_password,
 	                new_password1: this.state.new_password1,
 	                new_password2: this.state.new_password2
 	            })).then(function (response) {
-	                showSuccess(response.data);
-	                location.reload();
+	                (0, _notification.showSuccess)(response.data);
 	            }).catch(function (error) {
-	                showError(error.response.data);
+	                (0, _notification.showError)(error.response.data);
 	            });
 	        }
 	    }, {
@@ -27560,7 +27559,7 @@
 	
 	
 	var sendURLEncodedForm = _axios2.default.create({
-	  timeout: 2000,
+	  timeout: 3500,
 	  xsrfCookieName: 'csrftoken',
 	  xsrfHeaderName: 'X-CSRFToken',
 	  headers: { 'X-Requested-With': 'XMLHttpRequest',
@@ -27571,7 +27570,7 @@
 	});
 	
 	var sendFormData = _axios2.default.create({
-	  timeout: 2000,
+	  timeout: 3500,
 	  xsrfCookieName: 'csrftoken',
 	  xsrfHeaderName: 'X-CSRFToken',
 	  headers: { 'X-Requested-With': 'XMLHttpRequest',
@@ -27582,7 +27581,7 @@
 	});
 	
 	var sendDelete = _axios2.default.create({
-	  timeout: 2000,
+	  timeout: 3500,
 	  xsrfCookieName: 'csrftoken',
 	  xsrfHeaderName: 'X-CSRFToken',
 	  headers: { 'X-Requested-With': 'XMLHttpRequest',
@@ -29788,7 +29787,7 @@
 	
 	var _ajax = __webpack_require__(/*! ../ajax.jsx */ 235);
 	
-	var _ajax2 = _interopRequireDefault(_ajax);
+	var _notification = __webpack_require__(/*! ../notification.jsx */ 268);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29820,12 +29819,12 @@
 	        key: '_handleSubmit',
 	        value: function _handleSubmit(e) {
 	            e.preventDefault();
-	            _ajax2.default.post(this.url, qs.stringify({
+	            _ajax.sendURLEncodedForm.post(this.url, qs.stringify({
 	                new_email: this.state.new_email
 	            })).then(function (response) {
-	                showSuccess(response.data);
+	                (0, _notification.showSuccess)(response.data);
 	            }).catch(function (error) {
-	                showError(error.response.data);
+	                (0, _notification.showError)(error.response.data);
 	            });
 	        }
 	    }, {

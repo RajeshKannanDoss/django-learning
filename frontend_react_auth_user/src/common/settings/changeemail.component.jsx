@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import sendURLEncodedForm from '../ajax.jsx';
+import {sendURLEncodedForm} from '../ajax.jsx';
+import {showError} from '../notification.jsx';
+import {showSuccess} from '../notification.jsx';
 var qs = require('qs');
 
 class ChangeEmail extends Component

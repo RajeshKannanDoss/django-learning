@@ -4,7 +4,7 @@ import axios from 'axios';
 var qs = require('qs');
 
 var sendURLEncodedForm = axios.create({
-  timeout: 2000,
+  timeout: 3500,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
   headers: {'X-Requested-With': 'XMLHttpRequest',
@@ -15,7 +15,7 @@ var sendURLEncodedForm = axios.create({
 });
 
 var sendFormData = axios.create({
-  timeout: 2000,
+  timeout: 3500,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
   headers: {'X-Requested-With': 'XMLHttpRequest',
@@ -26,7 +26,7 @@ var sendFormData = axios.create({
 });
 
 var sendDelete = axios.create({
-  timeout: 2000,
+  timeout: 3500,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
   headers: {'X-Requested-With': 'XMLHttpRequest',
