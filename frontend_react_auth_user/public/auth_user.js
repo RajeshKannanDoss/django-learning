@@ -30329,7 +30329,7 @@
 	
 	            var league_pk = e.target.getAttribute('data-pk');
 	            _ajax.sendDelete.delete('/fifa/api/leagues/' + league_pk + '/delete/').then(function (res) {
-	                (0, _notification.showSuccess)(res.data.message);
+	                (0, _notification.showSuccess)('Successfuly delete league!');
 	                _axios2.default.get(_this3.url).then(function (res) {
 	                    var leagues = res.data;
 	                    _this3.setState({ leagues: leagues });

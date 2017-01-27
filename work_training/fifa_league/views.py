@@ -147,8 +147,7 @@ class LeagueViewSet(viewsets.ModelViewSet):
             return HttpResponseForbidden('No no no!')
 
         league.delete()
-        message = {'success': True, 'message': 'League is delete!'}
-        return Response(message, status=204)
+        return Response(status=204)
 
     @detail_route(['GET'])
     def get_info(self, request, pk, *args, **kwargs):

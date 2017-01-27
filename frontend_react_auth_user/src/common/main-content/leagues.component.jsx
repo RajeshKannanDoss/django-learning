@@ -63,7 +63,7 @@ class LeaguesList extends Component
         var league_pk = e.target.getAttribute('data-pk');
         sendDelete.delete('/fifa/api/leagues/' + league_pk + '/delete/')
             .then(res =>{
-                showSuccess(res.data.message);
+                showSuccess('Successfuly delete league!');
                 axios.get(this.url)
                     .then(res => {
                         const leagues = res.data;
