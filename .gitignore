@@ -24,7 +24,7 @@ coverage-report/
 node_modules/
 
 # media files folder
-media/
+media/uploads/
 
 # Linux Editors
 *~
