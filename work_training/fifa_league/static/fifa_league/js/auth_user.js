@@ -150,6 +150,8 @@
 	    createMatchOpenButton.classList.add('focus_button');
 	    (0, _reactDom.render)(_react2.default.createElement(_creatematchComponent2.default, null), document.getElementById('focus-form'));
 	});
+	
+	(0, _reactDom.render)(_react2.default.createElement(_createleagueComponent2.default, { league: '' }), document.getElementById('focus-form'));
 
 /***/ },
 /* 1 */
@@ -31350,7 +31352,6 @@
 	        value: function handleCreateItems() {
 	            document.getElementById('fullscreen-forms-div').classList.remove('animation_to');
 	            document.getElementById('fullscreen-forms-div').classList.add('animation_from');
-	            _reactDom2.default.render(_react2.default.createElement(_createleagueComponent2.default, { league: '' }), document.getElementById('focus-form'));
 	        }
 	    }, {
 	        key: 'render',

@@ -23,10 +23,6 @@ class Main extends Component
     {
         document.getElementById('fullscreen-forms-div').classList.remove('animation_to');
         document.getElementById('fullscreen-forms-div').classList.add('animation_from');
-        ReactDOM.render(
-            <CreateLeagueForm league='' />,
-            document.getElementById('focus-form')
-        );
     }
 
     render()

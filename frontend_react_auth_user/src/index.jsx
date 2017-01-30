@@ -85,3 +85,8 @@ createMatchOpenButton.addEventListener('click', function(){
         document.getElementById('focus-form')
     );
 });
+
+render(
+    <CreateLeagueForm league='' />,
+    document.getElementById('focus-form')
+);
