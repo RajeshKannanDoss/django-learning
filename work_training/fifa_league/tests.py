@@ -74,6 +74,11 @@ class LeagueModelCreateTestCase(TestCase):
     def test_league_create(self):
         self.assertEqual(self.league.__str__(), 'TESTLEAGUE')
         self.assertEqual(self.league.name, 'TESTLEAGUE')
+        self.assertEqual(self.league.short_description, '')
+        self.assertEqual(self.league.full_description, '')
+        self.assertEqual(self.league.logo.url,
+                         '/media/static/fifa_league'
+                         '/league/default-league-logo.svg')
 
 
 class TeamModelCreateTestCase(TestCase):
@@ -84,6 +89,9 @@ class TeamModelCreateTestCase(TestCase):
         self.assertEqual(self.team.__str__(), 'Club: {}'
                          .format(self.team.name))
         self.assertEqual(self.team.name, '{}'.format(self.team.name))
+        self.assertEqual(self.team.description, '')
+        self.assertEqual(self.team.logo.url, '/media/static/fifa_league/'
+                                             'team/default-team-logo.svg')
 
 
 class TeamStatModelCreateTestCase(TestCase):
@@ -110,6 +118,8 @@ class PlayerModelCreateTestCase(TestCase):
         player = self.player
         self.assertEqual(player.name, 'Rocko Pocko')
         self.assertEqual(player.age, 21)
+        self.assertEqual(player.photo.url, '/media/static/fifa_league'
+                                           '/player/default-player-photo.svg')
 
     def test_player_str(self):
         self.assertEqual(self.player.__str__(), '{} | Club: {}'

@@ -14,8 +14,8 @@ class League(models.Model):
     """
     name = models.CharField(max_length=50)
     short_description = models.CharField(max_length=250,
-                                         default='League short description')
-    full_description = models.TextField(default='League full description')
+                                         default='')
+    full_description = models.TextField(default='')
     author = models.ForeignKey(User, related_name='leagues', default=None)
     logo = models.FileField(upload_to='uploads/leagues/logos/',
                             default='..{}static/fifa_league/'
@@ -37,7 +37,7 @@ class Team(models.Model):
     - shortcut field for user-friendly url
     """
     name = models.CharField(max_length=50)
-    description = models.TextField(default='Team full description')
+    description = models.TextField(default='')
     author = models.ForeignKey(User, related_name='teams', default=None)
     logo = models.FileField(upload_to='uploads/teams/logos/',
                             default='..{}static/fifa_league/'

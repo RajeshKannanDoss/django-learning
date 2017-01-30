@@ -42,7 +42,6 @@ class TeamFactory(factory.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: 'TESTTEAM%d' % n)
     author = factory.SubFactory(UserFactory)
-    description = 'Lorem ipsum'
 
 
 class TeamStatFactory(factory.DjangoModelFactory):
