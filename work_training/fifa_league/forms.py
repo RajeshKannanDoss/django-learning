@@ -56,15 +56,13 @@ class LeagueCreateForm(forms.ModelForm):
     Form for League create
     """
     name = forms.CharField()
-    shortcut = forms.SlugField(widget=forms.TextInput(
-        attrs={'pattern': '[A-Za-z0-9]+'}))
     short_description = forms.CharField(max_length=250)
     full_description = forms.Textarea()
     logo = forms.ClearableFileInput()
 
     class Meta:
         model = League
-        fields = ['name', 'shortcut', 'short_description', 'full_description',
+        fields = ['name', 'short_description', 'full_description',
                   'logo']
         exclude = ['author']
 
@@ -74,14 +72,12 @@ class TeamCreateForm(forms.ModelForm):
     Form for Team create
     """
     name = forms.CharField()
-    shortcut = forms.SlugField(widget=forms.TextInput(
-        attrs={'pattern': '[A-Za-z0-9]+'}))
     description = forms.Textarea()
     logo = forms.ClearableFileInput()
 
     class Meta:
         model = Team
-        fields = ['name', 'shortcut', 'description', 'logo']
+        fields = ['name', 'description', 'logo']
         exclude = ['author']
 
 
@@ -92,7 +88,7 @@ class PlayerCreateForm(forms.ModelForm):
     team = forms.ModelChoiceField(
         queryset=Team.objects.all(),
         empty_label=None,
-        to_field_name='shortcut')
+        to_field_name='pk')
     name = forms.CharField()
     age = forms.IntegerField(min_value=1, max_value=200)
     photo = forms.ClearableFileInput()
@@ -111,15 +107,15 @@ class TeamStatCreateForm(forms.ModelForm):
     team = forms.ModelChoiceField(
         queryset=Team.objects.all(),
         empty_label=None,
-        to_field_name='shortcut')
+        to_field_name='pk')
     league = forms.ModelChoiceField(
         queryset=League.objects.all(),
         empty_label=None,
-        to_field_name='shortcut')
+        to_field_name='pk')
 
     class Meta:
         model = TeamStat
-        fields = ('team', 'league',)
+        fields = ['team', 'league']
 
 
 class ChoiceFieldNoValidation(forms.ChoiceField):
@@ -137,23 +133,23 @@ class MatchCreateForm(forms.Form):
 
     league = forms.ModelChoiceField(queryset=League.objects.all(),
                                     empty_label=None,
-                                    to_field_name='shortcut')
+                                    to_field_name='pk')
     team_home = ChoiceFieldNoValidation()
     team_home_goals = forms.IntegerField(min_value=0)
     team_guest = ChoiceFieldNoValidation()
     team_guest_goals = forms.IntegerField(min_value=0)
 
     def create(self):
-        league_shortcut = self['league'].data
-        team_home_shortcut = self['team_home'].data
-        team_guest_shortcut = self['team_guest'].data
+        league_pk = self['league'].data
+        team_home_pk = self['team_home'].data
+        team_guest_pk = self['team_guest'].data
         team_home_goals = int(self['team_home_goals'].data)
         team_guest_goals = int(self['team_guest_goals'].data)
 
         try:
-            league = League.objects.get(shortcut=league_shortcut)
-            home_team = Team.objects.get(shortcut=team_home_shortcut)
-            guest_team = Team.objects.get(shortcut=team_guest_shortcut)
+            league = League.objects.get(pk=league_pk)
+            home_team = Team.objects.get(pk=team_home_pk)
+            guest_team = Team.objects.get(pk=team_guest_pk)
 
             if home_team == guest_team:
                 raise ValueError('Please choose different teams!')

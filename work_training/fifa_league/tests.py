@@ -10,6 +10,7 @@ from .models import League, Team, Player, TeamStat
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 
+
 class MatchCreateTestCase(TestCase):
     """
     Test Case for Match create
@@ -73,7 +74,6 @@ class LeagueModelCreateTestCase(TestCase):
     def test_league_create(self):
         self.assertEqual(self.league.__str__(), 'TESTLEAGUE')
         self.assertEqual(self.league.name, 'TESTLEAGUE')
-        self.assertEqual(self.league.shortcut, 'testleague')
 
 
 class TeamModelCreateTestCase(TestCase):
@@ -84,7 +84,6 @@ class TeamModelCreateTestCase(TestCase):
         self.assertEqual(self.team.__str__(), 'Club: {}'
                          .format(self.team.name))
         self.assertEqual(self.team.name, '{}'.format(self.team.name))
-        self.assertEqual(self.team.shortcut, '{}'.format(self.team.shortcut))
 
 
 class TeamStatModelCreateTestCase(TestCase):
@@ -126,7 +125,7 @@ class SerializersTestCase(TestCase):
         league = self.league
         serializer = LeagueSerializer(league)
         self.assertEqual(serializer.data,
-                         {'name': league.name, 'shortcut': league.shortcut,
+                         {'name': league.name,
                           'short_description': league.short_description,
                           'full_description': league.full_description,
                           'logo': league.logo.url, 'pk': league.pk,
@@ -136,7 +135,7 @@ class SerializersTestCase(TestCase):
         team = self.team
         serializer = TeamSerializer(team)
         self.assertEqual(serializer.data,
-                         {'name': team.name, 'shortcut': team.shortcut,
+                         {'name': team.name,
                           'description': team.description,
                           'logo': team.logo.url, 'pk': team.pk})
 
@@ -144,8 +143,7 @@ class SerializersTestCase(TestCase):
 class APITestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.league2 = LeagueFactory(name='TESTLEAGUE2',
-                                     shortcut='testleague2')
+        self.league2 = LeagueFactory(name='TESTLEAGUE2')
         self.teamstat1 = TeamStatFactory()
         self.teamstat2 = TeamStatFactory()
 
@@ -182,11 +180,11 @@ class APITestCase(TestCase):
 
     def test_get_teams_from_league(self):
         league = self.teamstat1.league
-        response = self.client.get('/fifa/api/teams/get_teams_from_league/{}/'
-                                   .format(league.shortcut))
+        response = self.client.get('/fifa/api/teams/{}/get_teams_from_league/'
+                                   .format(league.pk))
         test_serializers = []
 
-        teams_list = TeamStat.objects.filter(league__shortcut=league.shortcut)
+        teams_list = TeamStat.objects.filter(league__pk=league.pk)
         for teamstat in teams_list:
             test_serializers.append(TeamSerializer(teamstat.team).data)
 
@@ -216,7 +214,6 @@ class TestCreateLeagueTestCase(TestCase):
     def test_create_with_valid_data_and_default_logo(self):
         response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleague1',
                                      'short_description': 'Lorem',
                                      'full_description': 'Lorem ipsum',
                                      'logo': ''},
@@ -225,9 +222,8 @@ class TestCreateLeagueTestCase(TestCase):
         self.assertEqual(response.content.decode('utf-8'),
                          '"League TESTLEAGUE1 is create!"')
 
-        league = League.objects.get(name='TESTLEAGUE1', shortcut='testleague1')
+        league = League.objects.get(name='TESTLEAGUE1')
         self.assertEqual(league.name, 'TESTLEAGUE1')
-        self.assertEqual(league.shortcut, 'testleague1')
         self.assertEqual(league.short_description, 'Lorem')
         self.assertEqual(league.full_description, 'Lorem ipsum')
         self.assertEqual(league.logo.url, '/media/static/fifa_league'
@@ -239,7 +235,6 @@ class TestCreateLeagueTestCase(TestCase):
                                  'test/files/league-custom-logo.svg'), 'rb')
         response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleague1',
                                      'short_description': 'Lorem',
                                      'full_description': 'Lorem ipsum',
                                      'logo': SimpleUploadedFile(file.name,
@@ -249,9 +244,8 @@ class TestCreateLeagueTestCase(TestCase):
         self.assertEqual(response.content.decode('utf-8'),
                          '"League TESTLEAGUE1 is create!"')
 
-        league = League.objects.get(name='TESTLEAGUE1', shortcut='testleague1')
+        league = League.objects.get(name='TESTLEAGUE1')
         self.assertEqual(league.name, 'TESTLEAGUE1')
-        self.assertEqual(league.shortcut, 'testleague1')
         self.assertEqual(league.short_description, 'Lorem')
         self.assertEqual(league.full_description, 'Lorem ipsum')
         try:
@@ -263,7 +257,6 @@ class TestCreateLeagueTestCase(TestCase):
     def test_create_with_empty_fields(self):
         response = self.client.post('/fifa/api/leagues/',
                                     {'name': '',
-                                     'shortcut': '',
                                      'short_description': 'Lorem',
                                      'full_description': 'Lorem ipsum',
                                      'logo': ''},
@@ -275,7 +268,6 @@ class TestCreateLeagueTestCase(TestCase):
     def test_create_two_equal(self):
         self.client.post('/fifa/api/leagues/',
                          {'name': 'TESTLEAGUE1',
-                          'shortcut': 'testleague1',
                           'short_description': 'Lorem',
                           'full_description': 'Lorem ipsum',
                           'logo': ''},
@@ -283,7 +275,6 @@ class TestCreateLeagueTestCase(TestCase):
 
         response = self.client.post('/fifa/api/leagues/',
                                     {'name': 'TESTLEAGUE1',
-                                     'shortcut': 'testleague1',
                                      'short_description': 'Lorem',
                                      'full_description': 'Lorem ipsum',
                                      'logo': ''},
@@ -296,7 +287,6 @@ class TestCreateLeagueTestCase(TestCase):
         client = Client()
         response = client.post('/fifa/api/leagues/',
                                {'name': 'TESTLEAGUE1',
-                                'shortcut': 'testleague1',
                                 'short_description': 'Lorem',
                                 'full_description': 'Lorem ipsum',
                                 'logo': ''},
@@ -309,12 +299,65 @@ class TestCreateLeagueTestCase(TestCase):
         client.login(username='testuser', password='12345678')
         response = client.post('/fifa/api/leagues/',
                                {'name': 'TESTLEAGUE1',
-                                'shortcut': 'testleague1',
                                 'short_description': 'Lorem',
                                 'full_description': 'Lorem ipsum',
                                 'logo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
+
+
+class TestUpdateLeagueTestCase(TestCase):
+    def setUp(self):
+        self.password = '1234'
+        self.user = UserFactory(password=self.password)
+        self.anon_client = Client()
+        self.auth_client = Client()
+        self.auth_client.login(username=self.user.username,
+                               password=self.password)
+
+    def _test_update_with_valid_data_and_without_logo_change(self):
+        league = LeagueFactory(short_description='Lorem',
+                               full_description='Lorem ipsum',
+                               author=self.user)
+        response = self.auth_client.put('/fifa/api/leagues/{}/'
+                                        .format(league.pk),
+                                        {'name': 'TESTLEAGUE',
+                                         'shortcut': 'testleague',
+                                         'short_description': 'Lorem Lorem',
+                                         'full_description': 'Lorem ipsum '
+                                                             'Lorem ipsum',
+                                         'logo': ''},
+                                        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         '"Object is updated"')
+
+    def _test_update_with_valid_data_and_logo_change(self):
+        main_dir = os.path.dirname(__file__)
+        file = open(os.path.join(main_dir,
+                                 'test/files/league-custom-logo.svg'), 'rb')
+        league = LeagueFactory(short_description='Lorem',
+                               full_description='Lorem ipsum',
+                               author=self.user)
+        response = self.auth_client.put('/fifa/api/leagues/{}/'
+                                        .format(league.pk),
+                                        {'name': 'TESTLEAGUE1',
+                                         'shortcut': 'testleague1',
+                                         'short_description': 'Lorem Lorem',
+                                         'full_description': 'Lorem ipsum '
+                                                             'Lorem ipsum',
+                                         'logo': SimpleUploadedFile(file.name,
+                                                                    file.read()
+                                                                    )},
+                                        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'),
+                         '"Object is updated"')
+        try:
+            self.assertEqual(league.logo.url, '/media/uploads/leagues/'
+                                              'logos/league-custom-logo.svg')
+        finally:
+            league.logo.storage.delete(league.logo.name)
 
 
 class TestCreateTeamTestCase(TestCase):
@@ -328,7 +371,6 @@ class TestCreateTeamTestCase(TestCase):
     def test_create_with_valid_data_without_logo(self):
         response = self.client.post('/fifa/api/teams/',
                                     {'name': 'TESTTEAM1',
-                                     'shortcut': 'testteam1',
                                      'description': 'Lorem ipsum',
                                      'logo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -336,9 +378,8 @@ class TestCreateTeamTestCase(TestCase):
         self.assertEqual(response.content.decode('utf-8'),
                          '"Team TESTTEAM1 is created!"')
 
-        team = Team.objects.get(name='TESTTEAM1', shortcut='testteam1')
+        team = Team.objects.get(name='TESTTEAM1')
         self.assertEqual(team.name, 'TESTTEAM1')
-        self.assertEqual(team.shortcut, 'testteam1')
         self.assertEqual(team.description, 'Lorem ipsum')
         self.assertEqual(team.logo.url,
                          '/media/static/fifa_league/'
@@ -409,7 +450,7 @@ class TestCreatePlayerTestCase(TestCase):
         response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 19,
-                                     'team': self.team.shortcut,
+                                     'team': self.team.pk,
                                      'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
@@ -438,7 +479,7 @@ class TestCreatePlayerTestCase(TestCase):
         response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 'not number',
-                                     'team': self.team.shortcut,
+                                     'team': self.team.pk,
                                      'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
@@ -449,14 +490,14 @@ class TestCreatePlayerTestCase(TestCase):
         self.client.post('/fifa/api/players/',
                          {'name': 'TESTPLAYER1',
                           'age': 19,
-                          'team': self.team.shortcut,
+                          'team': self.team.pk,
                           'photo': ''},
                          HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         response = self.client.post('/fifa/api/players/',
                                     {'name': 'TESTPLAYER1',
                                      'age': 19,
-                                     'team': self.team.shortcut,
+                                     'team': self.team.pk,
                                      'photo': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 400)
@@ -469,7 +510,7 @@ class TestCreatePlayerTestCase(TestCase):
         response = client.post('/fifa/api/players/',
                                {'name': 'TESTPLAYER1',
                                 'age': 19,
-                                'team': self.team.shortcut,
+                                'team': self.team.pk,
                                 'photo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
@@ -481,7 +522,7 @@ class TestCreatePlayerTestCase(TestCase):
         response = client.post('/fifa/api/players/',
                                {'name': 'TESTPLAYER1',
                                 'age': 19,
-                                'team': self.team.shortcut,
+                                'team': self.team.pk,
                                 'photo': ''},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
@@ -499,8 +540,8 @@ class TestCreateTeamStatTestCase(TestCase):
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/api/teamstat/',
-                                    {'team': self.team.shortcut,
-                                     'league': self.league.shortcut},
+                                    {'team': self.team.pk,
+                                     'league': self.league.pk},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content.decode('utf-8'),
@@ -519,8 +560,8 @@ class TestCreateTeamStatTestCase(TestCase):
     def test_unauthenticated_user(self):
         client = Client()
         response = client.post('/fifa/api/teamstat/',
-                               {'team': self.team.shortcut,
-                                'league': self.league.shortcut},
+                               {'team': self.team.pk,
+                                'league': self.league.pk},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -529,8 +570,8 @@ class TestCreateTeamStatTestCase(TestCase):
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
         response = client.post('/fifa/api/teamstat/',
-                               {'team': self.team.shortcut,
-                                'league': self.league.shortcut},
+                               {'team': self.team.pk,
+                                'league': self.league.pk},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
@@ -549,10 +590,10 @@ class TestCreateMatchTestCase(TestCase):
 
     def test_create_with_valid_data(self):
         response = self.client.post('/fifa/api/match/',
-                                    {'league': self.league.shortcut,
-                                     'team_home': self.team_home.team.shortcut,
+                                    {'league': self.league.pk,
+                                     'team_home': self.team_home.team.pk,
                                      'team_guest': self.team_guest
-                                     .team.shortcut,
+                                     .team.pk,
                                      'team_home_goals': 2,
                                      'team_guest_goals': 1},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -565,10 +606,10 @@ class TestCreateMatchTestCase(TestCase):
     def test_unauthenticated_user(self):
         client = Client()
         response = client.post('/fifa/api/match/',
-                               {'league': self.league.shortcut,
-                                'team_home': self.team_home.team.shortcut,
+                               {'league': self.league.pk,
+                                'team_home': self.team_home.team.pk,
                                 'team_guest': self.team_guest
-                                .team.shortcut,
+                                .team.pk,
                                 'team_home_goals': 2,
                                 'team_guest_goals': 1},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -579,10 +620,10 @@ class TestCreateMatchTestCase(TestCase):
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
         response = client.post('/fifa/api/match/',
-                               {'league': self.league.shortcut,
-                                'team_home': self.team_home.team.shortcut,
+                               {'league': self.league.pk,
+                                'team_home': self.team_home.team.pk,
                                 'team_guest': self.team_guest
-                                .team.shortcut,
+                                .team.pk,
                                 'team_home_goals': 2,
                                 'team_guest_goals': 1},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')

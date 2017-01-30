@@ -23,13 +23,13 @@ class CreateMatchForm extends Component
 
     update_team_list()
     {
-        axios.get('/fifa/api/teams/get_teams_from_league/' + this.state.league + '/')
+        axios.get('/fifa/api/teams/' + this.state.league + '/get_teams_from_league/')
             .then(res => {
                 const team_list = res.data;
                 this.setState({ team_list });
                 this.setState({
-                    team_home: team_list[0]['shortcut'],
-                    team_guest: team_list[0]['shortcut']
+                    team_home: team_list[0]['pk'],
+                    team_guest: team_list[0]['pk']
                 })
         });
     }
@@ -39,7 +39,7 @@ class CreateMatchForm extends Component
             .then(res => {
                 const league_list = res.data;
                 this.setState({ league_list });
-                this.setState({league: league_list[0]['shortcut']},
+                this.setState({league: league_list[0]['pk']},
                 function()
                 {
                     this.update_team_list();
@@ -103,7 +103,7 @@ class CreateMatchForm extends Component
                 <select id="id_league" name="league" value={this.state.league}
                     onChange={this.handleLeague} required="true" >
                     { this.state.league_list.map( league =>
-                        <option value={league.shortcut} data-pk={league.pk}>{league.name}</option>
+                        <option value={league.pk}>{league.name}</option>
                     )}
                 </select>
 
@@ -111,7 +111,7 @@ class CreateMatchForm extends Component
                 <select id="id_team_home" name="team_home" value={this.state.team_home}
                     onChange={this.handleTeamHome} required="true" >
                     { this.state.team_list.map( team =>
-                        <option value={team.shortcut}>{team.name}</option>
+                        <option value={team.pk}>{team.name}</option>
                     )}
                 </select>
 

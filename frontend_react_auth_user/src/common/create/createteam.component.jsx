@@ -10,10 +10,9 @@ class CreateTeamForm extends Component
     {
         super(props);
         this.url = '/fifa/api/teams/';
-        this.state = {name:'', shortcut:'', description:'', logo: ''};
+        this.state = {name:'', description:'', logo: ''};
         this.logo = '';
         this.handleName = this.handleName.bind(this);
-        this.handleShortcut = this.handleShortcut.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
         this.handleLogo = this.handleLogo.bind(this);
     }
@@ -23,7 +22,6 @@ class CreateTeamForm extends Component
         e.preventDefault();
         var data = new FormData();
         data.append('name', this.state.name);
-        data.append('shortcut', this.state.shortcut);
         data.append('description', this.state.description);
         data.append('logo', this.logo);
 
@@ -38,11 +36,6 @@ class CreateTeamForm extends Component
 
     handleName(event) {
         this.setState({name: event.target.value});
-    }
-
-    handleShortcut(event)
-    {
-        this.setState({shortcut: event.target.value});
     }
 
     handleDescription(event)
@@ -87,16 +80,6 @@ class CreateTeamForm extends Component
                     type="text"
                     value={this.state.name}
                     onChange={this.handleName}
-                    required="true" />
-
-                <label htmlFor="id_shortcut">Shortcut:</label>
-                <input
-                    id="id_shortcut"
-                    name="shortcut"
-                    type="text"
-                    pattern='[A-Za-z0-9]+'
-                    value={this.state.shortcut}
-                    onChange={this.handleShortcut}
                     required="true" />
 
                 <label htmlFor="id_short_description">Description:</label>

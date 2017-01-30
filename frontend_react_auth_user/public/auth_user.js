@@ -30356,10 +30356,10 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'league_div' },
-	                            _react2.default.createElement('img', { className: 'league_img', alt: league.shortcut, src: league.logo }),
+	                            _react2.default.createElement('img', { className: 'league_img', alt: league.name, src: league.logo }),
 	                            _react2.default.createElement(
 	                                'h3',
-	                                { 'data-shortcut': league.shortcut, 'data-pk': league.pk, onClick: function onClick(e) {
+	                                { 'data-pk': league.pk, onClick: function onClick(e) {
 	                                        return _this4.handleClick(e);
 	                                    } },
 	                                league.name
@@ -30541,7 +30541,7 @@
 	                            _react2.default.createElement(
 	                                'td',
 	                                null,
-	                                _react2.default.createElement('img', { className: 'team_logo', alt: teamstat.team.shortcut, src: teamstat.team.logo }),
+	                                _react2.default.createElement('img', { className: 'team_logo', alt: teamstat.team.name, src: teamstat.team.logo }),
 	                                _react2.default.createElement(
 	                                    'h3',
 	                                    { 'data-leaguepk': teamstat.league, 'data-statpk': teamstat.pk, onClick: function onClick(e) {
@@ -30822,7 +30822,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'description_container' },
-	                _react2.default.createElement('img', { alt: this.team.shortcut, src: this.team.logo }),
+	                _react2.default.createElement('img', { alt: this.team.name, src: this.team.logo }),
 	                _react2.default.createElement(
 	                    'h1',
 	                    { className: 'title' },
@@ -31094,7 +31094,6 @@
 	        if (_this.props.league != '') {
 	            _this.state = {
 	                name: _this.props.league.name,
-	                shortcut: _this.props.league.shortcut,
 	                short_description: _this.props.league.short_description,
 	                full_description: _this.props.league.full_description,
 	                logo: _this.props.league.logo,
@@ -31105,13 +31104,12 @@
 	            _this.is_update = true;
 	        } else {
 	            _this.url = '/fifa/api/leagues/';
-	            _this.state = { name: '', shortcut: '', short_description: '',
+	            _this.state = { name: '', short_description: '',
 	                full_description: '', logo: '' };
 	            _this.logo = '';
 	            _this.is_update = false;
 	        }
 	        _this.handleName = _this.handleName.bind(_this);
-	        _this.handleShortcut = _this.handleShortcut.bind(_this);
 	        _this.handleShortDescription = _this.handleShortDescription.bind(_this);
 	        _this.handleFullDescription = _this.handleFullDescription.bind(_this);
 	        _this.handleLogo = _this.handleLogo.bind(_this);
@@ -31123,7 +31121,6 @@
 	        value: function componentWillReceiveProps(nextProps) {
 	            this.setState({
 	                name: nextProps.league.name,
-	                shortcut: nextProps.league.shortcut,
 	                short_description: nextProps.league.short_description,
 	                full_description: nextProps.league.full_description,
 	                logo: nextProps.league.logo,
@@ -31136,7 +31133,6 @@
 	            e.preventDefault();
 	            var data = new FormData();
 	            data.append('name', this.state.name);
-	            data.append('shortcut', this.state.shortcut);
 	            data.append('short_description', this.state.short_description);
 	            data.append('full_description', this.state.full_description);
 	            data.append('logo', this.logo);
@@ -31168,11 +31164,6 @@
 	        key: 'handleName',
 	        value: function handleName(event) {
 	            this.setState({ name: event.target.value });
-	        }
-	    }, {
-	        key: 'handleShortcut',
-	        value: function handleShortcut(event) {
-	            this.setState({ shortcut: event.target.value });
 	        }
 	    }, {
 	        key: 'handleShortDescription',
@@ -31239,19 +31230,6 @@
 	                        type: 'text',
 	                        value: this.state.name,
 	                        onChange: this.handleName,
-	                        required: 'true' }),
-	                    _react2.default.createElement(
-	                        'label',
-	                        { htmlFor: 'id_shortcut' },
-	                        'Shortcut:'
-	                    ),
-	                    _react2.default.createElement('input', {
-	                        id: 'id_shortcut',
-	                        name: 'shortcut',
-	                        type: 'text',
-	                        pattern: '[A-Za-z0-9]+',
-	                        value: this.state.shortcut,
-	                        onChange: this.handleShortcut,
 	                        required: 'true' }),
 	                    _react2.default.createElement(
 	                        'label',
@@ -31489,10 +31467,9 @@
 	        var _this = _possibleConstructorReturn(this, (CreateTeamForm.__proto__ || Object.getPrototypeOf(CreateTeamForm)).call(this, props));
 	
 	        _this.url = '/fifa/api/teams/';
-	        _this.state = { name: '', shortcut: '', description: '', logo: '' };
+	        _this.state = { name: '', description: '', logo: '' };
 	        _this.logo = '';
 	        _this.handleName = _this.handleName.bind(_this);
-	        _this.handleShortcut = _this.handleShortcut.bind(_this);
 	        _this.handleDescription = _this.handleDescription.bind(_this);
 	        _this.handleLogo = _this.handleLogo.bind(_this);
 	        return _this;
@@ -31504,7 +31481,6 @@
 	            e.preventDefault();
 	            var data = new FormData();
 	            data.append('name', this.state.name);
-	            data.append('shortcut', this.state.shortcut);
 	            data.append('description', this.state.description);
 	            data.append('logo', this.logo);
 	
@@ -31518,11 +31494,6 @@
 	        key: 'handleName',
 	        value: function handleName(event) {
 	            this.setState({ name: event.target.value });
-	        }
-	    }, {
-	        key: 'handleShortcut',
-	        value: function handleShortcut(event) {
-	            this.setState({ shortcut: event.target.value });
 	        }
 	    }, {
 	        key: 'handleDescription',
@@ -31584,19 +31555,6 @@
 	                        type: 'text',
 	                        value: this.state.name,
 	                        onChange: this.handleName,
-	                        required: 'true' }),
-	                    _react2.default.createElement(
-	                        'label',
-	                        { htmlFor: 'id_shortcut' },
-	                        'Shortcut:'
-	                    ),
-	                    _react2.default.createElement('input', {
-	                        id: 'id_shortcut',
-	                        name: 'shortcut',
-	                        type: 'text',
-	                        pattern: '[A-Za-z0-9]+',
-	                        value: this.state.shortcut,
-	                        onChange: this.handleShortcut,
 	                        required: 'true' }),
 	                    _react2.default.createElement(
 	                        'label',
@@ -31704,7 +31662,7 @@
 	            _axios2.default.get('/fifa/api/teams/').then(function (res) {
 	                var team_list = res.data;
 	                _this2.setState({ team_list: team_list });
-	                _this2.setState({ team: team_list[0]['shortcut'] });
+	                _this2.setState({ team: team_list[0]['pk'] });
 	            });
 	        }
 	    }, {
@@ -31806,7 +31764,7 @@
 	                        this.state.team_list.map(function (team) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: team.shortcut },
+	                                { value: team.pk },
 	                                team.name
 	                            );
 	                        })
@@ -31917,12 +31875,12 @@
 	            _axios2.default.get('/fifa/api/teams/').then(function (res) {
 	                var team_list = res.data;
 	                _this2.setState({ team_list: team_list });
-	                _this2.setState({ team: team_list[0]['shortcut'] });
+	                _this2.setState({ team: team_list[0]['pk'] });
 	            });
 	            _axios2.default.get('/fifa/api/leagues/').then(function (res) {
 	                var league_list = res.data;
 	                _this2.setState({ league_list: league_list });
-	                _this2.setState({ league: league_list[0]['shortcut'] });
+	                _this2.setState({ league: league_list[0]['pk'] });
 	            });
 	        }
 	    }, {
@@ -31974,7 +31932,7 @@
 	                        this.state.league_list.map(function (league) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: league.shortcut },
+	                                { value: league.pk },
 	                                league.name
 	                            );
 	                        })
@@ -31991,7 +31949,7 @@
 	                        this.state.team_list.map(function (team) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: team.shortcut },
+	                                { value: team.pk },
 	                                team.name
 	                            );
 	                        })
@@ -32075,12 +32033,12 @@
 	        value: function update_team_list() {
 	            var _this2 = this;
 	
-	            _axios2.default.get('/fifa/api/teams/get_teams_from_league/' + this.state.league + '/').then(function (res) {
+	            _axios2.default.get('/fifa/api/teams/' + this.state.league + '/get_teams_from_league/').then(function (res) {
 	                var team_list = res.data;
 	                _this2.setState({ team_list: team_list });
 	                _this2.setState({
-	                    team_home: team_list[0]['shortcut'],
-	                    team_guest: team_list[0]['shortcut']
+	                    team_home: team_list[0]['pk'],
+	                    team_guest: team_list[0]['pk']
 	                });
 	            });
 	        }
@@ -32092,7 +32050,7 @@
 	            _axios2.default.get('/fifa/api/leagues/').then(function (res) {
 	                var league_list = res.data;
 	                _this3.setState({ league_list: league_list });
-	                _this3.setState({ league: league_list[0]['shortcut'] }, function () {
+	                _this3.setState({ league: league_list[0]['pk'] }, function () {
 	                    this.update_team_list();
 	                });
 	            });
@@ -32166,7 +32124,7 @@
 	                        this.state.league_list.map(function (league) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: league.shortcut, 'data-pk': league.pk },
+	                                { value: league.pk },
 	                                league.name
 	                            );
 	                        })
@@ -32183,7 +32141,7 @@
 	                        this.state.team_list.map(function (team) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: team.shortcut },
+	                                { value: team.pk },
 	                                team.name
 	                            );
 	                        })

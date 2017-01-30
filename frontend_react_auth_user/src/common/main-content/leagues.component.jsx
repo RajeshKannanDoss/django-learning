@@ -82,8 +82,8 @@ class LeaguesList extends Component
             { this.state.leagues.map(league =>
             <div className="league_block">
                 <div className="league_div">
-                <img className="league_img" alt={league.shortcut} src={league.logo} />
-                <h3 data-shortcut={league.shortcut} data-pk={league.pk} onClick={(e)=>this.handleClick(e)}>{league.name}</h3>
+                <img className="league_img" alt={league.name} src={league.logo} />
+                <h3 data-pk={league.pk} onClick={(e)=>this.handleClick(e)}>{league.name}</h3>
                 <h2>Author: {league.author.username}</h2>
                 <p>{league.short_description}</p>
                 { league.author.username == username &&

@@ -13,7 +13,6 @@ class League(models.Model):
     - shortcut field for user-friendly url
     """
     name = models.CharField(max_length=50)
-    shortcut = models.SlugField(max_length=50)
     short_description = models.CharField(max_length=250,
                                          default='League short description')
     full_description = models.TextField(default='League full description')
@@ -38,7 +37,6 @@ class Team(models.Model):
     - shortcut field for user-friendly url
     """
     name = models.CharField(max_length=50)
-    shortcut = models.CharField(max_length=50)
     description = models.TextField(default='Team full description')
     author = models.ForeignKey(User, related_name='teams', default=None)
     logo = models.FileField(upload_to='uploads/teams/logos/',

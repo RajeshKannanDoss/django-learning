@@ -33,7 +33,6 @@ class LeagueFactory(factory.DjangoModelFactory):
         model = League
 
     name = 'TESTLEAGUE'
-    shortcut = 'testleague'
     author = factory.SubFactory(UserFactory)
 
 
@@ -42,7 +41,6 @@ class TeamFactory(factory.DjangoModelFactory):
         model = Team
 
     name = factory.Sequence(lambda n: 'TESTTEAM%d' % n)
-    shortcut = factory.Sequence(lambda n: 'testteam%d' % n)
     author = factory.SubFactory(UserFactory)
     description = 'Lorem ipsum'
 

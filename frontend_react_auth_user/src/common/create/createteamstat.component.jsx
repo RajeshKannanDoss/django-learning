@@ -22,13 +22,13 @@ class CreateTeamStatForm extends Component
             .then(res => {
                 const team_list = res.data;
                 this.setState({ team_list });
-                this.setState({team: team_list[0]['shortcut']});
+                this.setState({team: team_list[0]['pk']});
         });
         axios.get('/fifa/api/leagues/')
             .then(res => {
                 const league_list = res.data;
                 this.setState({ league_list });
-                this.setState({league: league_list[0]['shortcut']})
+                this.setState({league: league_list[0]['pk']})
         });
     }
 
@@ -67,7 +67,7 @@ class CreateTeamStatForm extends Component
                 <select id="id_league" name="league" value={this.state.league}
                     onChange={this.handleLeague} required="true" >
                     { this.state.league_list.map( league =>
-                        <option value={league.shortcut}>{league.name}</option>
+                        <option value={league.pk}>{league.name}</option>
                     )}
                 </select>
 
@@ -75,7 +75,7 @@ class CreateTeamStatForm extends Component
                 <select id="id_team" name="team" value={this.state.team}
                     onChange={this.handleTeam} required="true" >
                     { this.state.team_list.map( team =>
-                        <option value={team.shortcut}>{team.name}</option>
+                        <option value={team.pk}>{team.name}</option>
                     )}
                 </select>
                 <button type="submit" className="addmenu_btn" onSubmit={(e)=>this._handleSubmit(e)}>Add team to league</button>

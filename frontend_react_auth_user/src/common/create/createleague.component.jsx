@@ -14,7 +14,6 @@ class CreateLeagueForm extends Component
         {
             this.state = {
                 name: this.props.league.name,
-                shortcut: this.props.league.shortcut,
                 short_description: this.props.league.short_description,
                 full_description: this.props.league.full_description,
                 logo: this.props.league.logo,
@@ -25,13 +24,12 @@ class CreateLeagueForm extends Component
             this.is_update = true;
         } else {
             this.url = '/fifa/api/leagues/';
-            this.state = {name:'', shortcut:'', short_description:'',
+            this.state = {name:'', short_description:'',
             full_description:'', logo: ''};
             this.logo = '';
             this.is_update = false;
         }
         this.handleName = this.handleName.bind(this);
-        this.handleShortcut = this.handleShortcut.bind(this);
         this.handleShortDescription = this.handleShortDescription.bind(this);
         this.handleFullDescription = this.handleFullDescription.bind(this);
         this.handleLogo = this.handleLogo.bind(this);
@@ -41,7 +39,6 @@ class CreateLeagueForm extends Component
     {
         this.setState({
             name: nextProps.league.name,
-            shortcut: nextProps.league.shortcut,
             short_description: nextProps.league.short_description,
             full_description: nextProps.league.full_description,
             logo: nextProps.league.logo,
@@ -54,7 +51,6 @@ class CreateLeagueForm extends Component
         e.preventDefault();
         var data = new FormData();
         data.append('name', this.state.name);
-        data.append('shortcut', this.state.shortcut);
         data.append('short_description', this.state.short_description);
         data.append('full_description', this.state.full_description);
         data.append('logo', this.logo);
@@ -95,11 +91,6 @@ class CreateLeagueForm extends Component
 
     handleName(event) {
         this.setState({name: event.target.value});
-    }
-
-    handleShortcut(event)
-    {
-        this.setState({shortcut: event.target.value});
     }
 
     handleShortDescription(event)
@@ -149,16 +140,6 @@ class CreateLeagueForm extends Component
                     type="text"
                     value={this.state.name}
                     onChange={this.handleName}
-                    required="true" />
-
-                <label htmlFor="id_shortcut">Shortcut:</label>
-                <input
-                    id="id_shortcut"
-                    name="shortcut"
-                    type="text"
-                    pattern='[A-Za-z0-9]+'
-                    value={this.state.shortcut}
-                    onChange={this.handleShortcut}
                     required="true" />
 
                 <label htmlFor="id_short_description">Short description:</label>

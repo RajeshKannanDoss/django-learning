@@ -56,7 +56,7 @@ class TeamStatList extends Component
             { this.state.teamstats.map(teamstat =>
             <tr>
                 <td>
-                    <img className='team_logo' alt={teamstat.team.shortcut} src={teamstat.team.logo} />
+                    <img className='team_logo' alt={teamstat.team.name} src={teamstat.team.logo} />
                     <h3 data-leaguepk={teamstat.league} data-statpk={teamstat.pk} onClick={(e)=>this.handleClick(e)}> {teamstat.team.name} </h3>
                 </td>
                 <td> {teamstat.match_count} </td>

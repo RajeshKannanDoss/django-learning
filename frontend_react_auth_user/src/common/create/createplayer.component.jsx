@@ -24,7 +24,7 @@ class CreatePlayerForm extends Component
             .then(res => {
                 const team_list = res.data;
                 this.setState({ team_list });
-                this.setState({ team:team_list[0]['shortcut'] });
+                this.setState({ team:team_list[0]['pk'] });
         });
     }
 
@@ -104,7 +104,7 @@ class CreatePlayerForm extends Component
                 <select id="id_team" name="team" value={this.state.team}
                     onChange={this.handleTeam} required="true">
                     { this.state.team_list.map( team =>
-                        <option value={team.shortcut}>{team.name}</option>
+                        <option value={team.pk}>{team.name}</option>
                     )}
                 </select>
 

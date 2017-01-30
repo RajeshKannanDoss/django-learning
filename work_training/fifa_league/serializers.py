@@ -24,7 +24,7 @@ class LeagueSerializer(serializers.ModelSerializer):
         Define League model and League fields
         """
         model = League
-        fields = ['pk', 'name', 'shortcut', 'short_description',
+        fields = ['pk', 'name', 'short_description',
                   'full_description', 'logo', 'author']
 
 
@@ -39,7 +39,7 @@ class TeamSerializer(serializers.ModelSerializer):
         Define Team model and Team name and shortcut
         """
         model = Team
-        fields = ['pk', 'name', 'shortcut', 'logo', 'description']
+        fields = ['pk', 'name', 'logo', 'description']
 
 
 class TeamOnlyNameSerializer(serializers.ModelSerializer):

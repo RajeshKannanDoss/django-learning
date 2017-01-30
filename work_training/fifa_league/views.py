@@ -199,13 +199,11 @@ class LeagueViewSet(viewsets.ModelViewSet):
             return HttpResponseBadRequest(e.args[0])
 
         league.name = form.cleaned_data['name']
-        league.shortcut = form.cleaned_data['shortcut']
         league.short_description = form.cleaned_data['short_description']
         league.full_description = form.cleaned_data['full_description']
         league.author = request.user
 
-        if League.objects.filter(name=league.name).exists() or \
-                League.objects.filter(shortcut=league.shortcut).exists():
+        if League.objects.filter(name=league.name).exists():
             return HttpResponseBadRequest(_('League {} already exist!')
                                           .format(league.name))
 
@@ -230,17 +228,15 @@ class TeamViewSet(viewsets.ViewSet):
         serializer = TeamSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @list_route(methods=['get'],
-                url_path='get_teams_from_league/'
-                         '(?P<shortcut>[0-9A-Za-z]+)')
-    def get_teams_from_league(self, request, *args, **kwargs):
+    @detail_route(['GET'])
+    def get_teams_from_league(self, request, pk, *args, **kwargs):
         """
         :param kwargs: contains league_shortcut
         :return: list of team related to league
         """
-        shortcut = self.kwargs['shortcut']
+        #shortcut = self.kwargs['shortcut']
         queryset = Team.objects.filter(leagues_stat__in=TeamStat.objects
-                                       .filter(league__shortcut=shortcut))
+                                       .filter(league__pk=pk))
         serializer = TeamSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -271,12 +267,10 @@ class TeamViewSet(viewsets.ViewSet):
             return HttpResponseBadRequest(e.args[0])
 
         team.name = form.cleaned_data['name']
-        team.shortcut = form.cleaned_data['shortcut']
         team.description = form.cleaned_data['description']
         team.author = request.user
 
-        if Team.objects.filter(name=team.name).exists() or \
-                Team.objects.filter(shortcut=team.shortcut).exists():
+        if Team.objects.filter(name=team.name).exists():
             return HttpResponseBadRequest(_('Team {} already exist!')
                                           .format(team.name))
 

@@ -6940,10 +6940,10 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'league_div' },
-	                            _react2.default.createElement('img', { className: 'league_img', alt: league.shortcut, src: league.logo }),
+	                            _react2.default.createElement('img', { className: 'league_img', alt: league.name, src: league.logo }),
 	                            _react2.default.createElement(
 	                                'h3',
-	                                { 'data-shortcut': league.shortcut, 'data-pk': league.pk, onClick: function onClick(e) {
+	                                { 'data-pk': league.pk, onClick: function onClick(e) {
 	                                        return _this3.handleClick(e);
 	                                    } },
 	                                league.name
@@ -25214,7 +25214,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'description_container' },
-	                _react2.default.createElement('img', { alt: this.team.shortcut, src: this.team.logo }),
+	                _react2.default.createElement('img', { alt: this.team.name, src: this.team.logo }),
 	                _react2.default.createElement(
 	                    'h1',
 	                    { className: 'title' },
