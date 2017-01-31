@@ -3,6 +3,7 @@ import { sendFormData } from '../ajax.jsx';
 var qs = require('qs');
 import {showError} from '../notification.jsx';
 import {showSuccess} from '../notification.jsx';
+import ReactDOM from 'react-dom';
 
 class CreateTeamForm extends Component
 {
@@ -10,7 +11,7 @@ class CreateTeamForm extends Component
     {
         super(props);
         this.url = '/fifa/api/teams/';
-        this.state = {name:'', description:'', logo: ''};
+        this.state = {name:'', description:'', logo: '', imagePreviewUrl:''};
         this.logo = '';
         this.handleName = this.handleName.bind(this);
         this.handleDescription = this.handleDescription.bind(this);
@@ -24,10 +25,17 @@ class CreateTeamForm extends Component
         data.append('name', this.state.name);
         data.append('description', this.state.description);
         data.append('logo', this.logo);
-
+        var form = this;
         sendFormData.post(this.url, data)
         .then(function (response) {
             showSuccess(response.data);
+            document.getElementById('id_team_logo').value = '';
+            form.setState({
+                name: '',
+                description: '',
+                logo: '',
+                imagePreviewUrl: ''
+            });
         })
         .catch(function (error) {
             showError(error.response.data);
@@ -92,7 +100,7 @@ class CreateTeamForm extends Component
                     required="true" />
                 <label htmlFor="id_logo">Logo (not required):</label>
                     <input
-                        id="id_logo"
+                        id="id_team_logo"
                         name="logo"
                         type="file"
                         onChange={this.handleLogo} />

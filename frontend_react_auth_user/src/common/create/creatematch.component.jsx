@@ -3,6 +3,7 @@ import { sendURLEncodedForm } from '../ajax.jsx';
 import {showError} from '../notification.jsx';
 import {showSuccess} from '../notification.jsx';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
 var qs = require('qs');
 
 class CreateMatchForm extends Component
@@ -50,7 +51,7 @@ class CreateMatchForm extends Component
     _handleSubmit(e)
     {
         e.preventDefault();
-
+        var form = this;
         sendURLEncodedForm.post(this.url, qs.stringify({
             team_home: this.state.team_home,
             team_guest: this.state.team_guest,
@@ -60,6 +61,10 @@ class CreateMatchForm extends Component
         }))
         .then(function (response) {
             showSuccess(response.data);
+            form.setState({
+                team_home_goals: '',
+                team_guest_goals: ''
+            });
         })
         .catch(function (error) {
             showError(error.response.data);
@@ -129,7 +134,7 @@ class CreateMatchForm extends Component
                 <select id="id_team_guest" name="team_guest" value={this.state.team_guest}
                     onChange={this.handleTeamGuest} required="true" >
                     { this.state.team_list.map( team =>
-                        <option value={team.shortcut}>{team.name}</option>
+                        <option value={team.pk}>{team.name}</option>
                     )}
                 </select>
 

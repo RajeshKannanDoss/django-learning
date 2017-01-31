@@ -140,9 +140,9 @@ class MatchCreateForm(forms.Form):
     team_guest_goals = forms.IntegerField(min_value=0)
 
     def create(self):
-        league_pk = self['league'].data
-        team_home_pk = self['team_home'].data
-        team_guest_pk = self['team_guest'].data
+        league_pk = int(self['league'].data)
+        team_home_pk = int(self['team_home'].data)
+        team_guest_pk = int(self['team_guest'].data)
         team_home_goals = int(self['team_home_goals'].data)
         team_guest_goals = int(self['team_guest_goals'].data)
 

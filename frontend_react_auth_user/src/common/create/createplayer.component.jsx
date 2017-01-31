@@ -3,6 +3,7 @@ import { sendFormData } from '../ajax.jsx';
 import {showError} from '../notification.jsx';
 import {showSuccess} from '../notification.jsx';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
 
 class CreatePlayerForm extends Component
 {
@@ -19,13 +20,18 @@ class CreatePlayerForm extends Component
         this.handlePhoto = this.handlePhoto.bind(this);
     }
 
-    componentDidMount() {
+    get_all_teams()
+    {
         axios.get('/fifa/api/teams/')
             .then(res => {
                 const team_list = res.data;
                 this.setState({ team_list });
                 this.setState({ team:team_list[0]['pk'] });
         });
+    }
+
+    componentDidMount() {
+        this.get_all_teams();
     }
 
 
@@ -37,10 +43,18 @@ class CreatePlayerForm extends Component
         data.append('team', this.state.team);
         data.append('age', this.state.age);
         data.append('photo', this.photo);
-
+        var form = this;
         sendFormData.post(this.url, data)
         .then(function (response) {
             showSuccess(response.data);
+            document.getElementById('id_player_photo').value = '';
+            form.get_all_teams();
+            form.setState({
+                name: '',
+                age: '',
+                photo: '',
+                imagePreviewUrl: ''
+            });
         })
         .catch(function (error) {
             showError(error.response.data);
@@ -119,7 +133,7 @@ class CreatePlayerForm extends Component
                     required="true" />
                 <label htmlFor="id_photo">Photo (not required):</label>
                     <input
-                        id="id_photo"
+                        id="id_player_photo"
                         name="photo"
                         type="file"
                         onChange={this.handlePhoto} />

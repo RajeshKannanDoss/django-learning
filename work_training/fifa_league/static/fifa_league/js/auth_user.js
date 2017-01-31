@@ -31121,13 +31121,15 @@
 	    _createClass(CreateLeagueForm, [{
 	        key: 'componentWillReceiveProps',
 	        value: function componentWillReceiveProps(nextProps) {
-	            this.setState({
-	                name: nextProps.league.name,
-	                short_description: nextProps.league.short_description,
-	                full_description: nextProps.league.full_description,
-	                logo: nextProps.league.logo,
-	                imagePreviewUrl: nextProps.league.logo
-	            });
+	            if (nextProps.league != undefined) {
+	                this.setState({
+	                    name: nextProps.league.name,
+	                    short_description: nextProps.league.short_description,
+	                    full_description: nextProps.league.full_description,
+	                    logo: nextProps.league.logo,
+	                    imagePreviewUrl: nextProps.league.logo
+	                });
+	            }
 	        }
 	    }, {
 	        key: '_handleSubmit',
@@ -31138,6 +31140,7 @@
 	            data.append('short_description', this.state.short_description);
 	            data.append('full_description', this.state.full_description);
 	            data.append('logo', this.logo);
+	            var form = this;
 	            if (this.is_update === false) {
 	                _ajax.sendFormData.post(this.url, data).then(function (response) {
 	                    (0, _notification.showSuccess)(response.data);
@@ -31146,8 +31149,16 @@
 	                    document.getElementById('main').innerHTML = '';
 	
 	                    _reactDom2.default.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
+	                    document.getElementById('id_league_logo').value = '';
+	                    form.setState({
+	                        name: '',
+	                        short_description: '',
+	                        full_description: '',
+	                        logo: '',
+	                        imagePreviewUrl: ''
+	                    });
 	                }).catch(function (error) {
-	                    (0, _notification.showError)(error.response.data);
+	                    (0, _notification.showError)(error);
 	                });
 	            } else {
 	                _ajax.sendFormData.put(this.url, data).then(function (response) {
@@ -31157,8 +31168,16 @@
 	                    document.getElementById('main').innerHTML = '';
 	
 	                    _reactDom2.default.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
+	                    document.getElementById('id_league_logo').value = '';
+	                    form.setState({
+	                        name: '',
+	                        short_description: '',
+	                        full_description: '',
+	                        logo: '',
+	                        imagePreviewUrl: ''
+	                    });
 	                }).catch(function (error) {
-	                    (0, _notification.showError)(error.response.data);
+	                    (0, _notification.showError)(error);
 	                });
 	            }
 	        }
@@ -31263,7 +31282,7 @@
 	                        'Logo (not required)'
 	                    ),
 	                    _react2.default.createElement('input', {
-	                        id: 'id_logo',
+	                        id: 'id_league_logo',
 	                        name: 'logo',
 	                        type: 'file',
 	                        onChange: this.handleLogo }),
@@ -31449,6 +31468,10 @@
 	
 	var _notification = __webpack_require__(/*! ../notification.jsx */ 266);
 	
+	var _reactDom = __webpack_require__(/*! react-dom */ 32);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31468,7 +31491,7 @@
 	        var _this = _possibleConstructorReturn(this, (CreateTeamForm.__proto__ || Object.getPrototypeOf(CreateTeamForm)).call(this, props));
 	
 	        _this.url = '/fifa/api/teams/';
-	        _this.state = { name: '', description: '', logo: '' };
+	        _this.state = { name: '', description: '', logo: '', imagePreviewUrl: '' };
 	        _this.logo = '';
 	        _this.handleName = _this.handleName.bind(_this);
 	        _this.handleDescription = _this.handleDescription.bind(_this);
@@ -31484,9 +31507,16 @@
 	            data.append('name', this.state.name);
 	            data.append('description', this.state.description);
 	            data.append('logo', this.logo);
-	
+	            var form = this;
 	            _ajax.sendFormData.post(this.url, data).then(function (response) {
 	                (0, _notification.showSuccess)(response.data);
+	                document.getElementById('id_team_logo').value = '';
+	                form.setState({
+	                    name: '',
+	                    description: '',
+	                    logo: '',
+	                    imagePreviewUrl: ''
+	                });
 	            }).catch(function (error) {
 	                (0, _notification.showError)(error.response.data);
 	            });
@@ -31575,7 +31605,7 @@
 	                        'Logo (not required):'
 	                    ),
 	                    _react2.default.createElement('input', {
-	                        id: 'id_logo',
+	                        id: 'id_team_logo',
 	                        name: 'logo',
 	                        type: 'file',
 	                        onChange: this.handleLogo }),
@@ -31628,6 +31658,10 @@
 	
 	var _axios2 = _interopRequireDefault(_axios);
 	
+	var _reactDom = __webpack_require__(/*! react-dom */ 32);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31656,8 +31690,8 @@
 	    }
 	
 	    _createClass(CreatePlayerForm, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
+	        key: 'get_all_teams',
+	        value: function get_all_teams() {
 	            var _this2 = this;
 	
 	            _axios2.default.get('/fifa/api/teams/').then(function (res) {
@@ -31665,6 +31699,11 @@
 	                _this2.setState({ team_list: team_list });
 	                _this2.setState({ team: team_list[0]['pk'] });
 	            });
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.get_all_teams();
 	        }
 	    }, {
 	        key: '_handleSubmit',
@@ -31675,9 +31714,17 @@
 	            data.append('team', this.state.team);
 	            data.append('age', this.state.age);
 	            data.append('photo', this.photo);
-	
+	            var form = this;
 	            _ajax.sendFormData.post(this.url, data).then(function (response) {
 	                (0, _notification.showSuccess)(response.data);
+	                document.getElementById('id_player_photo').value = '';
+	                form.get_all_teams();
+	                form.setState({
+	                    name: '',
+	                    age: '',
+	                    photo: '',
+	                    imagePreviewUrl: ''
+	                });
 	            }).catch(function (error) {
 	                (0, _notification.showError)(error.response.data);
 	            });
@@ -31789,7 +31836,7 @@
 	                        'Photo (not required):'
 	                    ),
 	                    _react2.default.createElement('input', {
-	                        id: 'id_photo',
+	                        id: 'id_player_photo',
 	                        name: 'photo',
 	                        type: 'file',
 	                        onChange: this.handlePhoto }),
@@ -31999,6 +32046,10 @@
 	
 	var _axios2 = _interopRequireDefault(_axios);
 	
+	var _reactDom = __webpack_require__(/*! react-dom */ 32);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32060,7 +32111,7 @@
 	        key: '_handleSubmit',
 	        value: function _handleSubmit(e) {
 	            e.preventDefault();
-	
+	            var form = this;
 	            _ajax.sendURLEncodedForm.post(this.url, qs.stringify({
 	                team_home: this.state.team_home,
 	                team_guest: this.state.team_guest,
@@ -32069,6 +32120,10 @@
 	                league: this.state.league
 	            })).then(function (response) {
 	                (0, _notification.showSuccess)(response.data);
+	                form.setState({
+	                    team_home_goals: '',
+	                    team_guest_goals: ''
+	                });
 	            }).catch(function (error) {
 	                (0, _notification.showError)(error.response.data);
 	            });
@@ -32172,7 +32227,7 @@
 	                        this.state.team_list.map(function (team) {
 	                            return _react2.default.createElement(
 	                                'option',
-	                                { value: team.shortcut },
+	                                { value: team.pk },
 	                                team.name
 	                            );
 	                        })

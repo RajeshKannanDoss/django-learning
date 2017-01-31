@@ -37,6 +37,7 @@ class CreateLeagueForm extends Component
 
     componentWillReceiveProps(nextProps)
     {
+        if(nextProps.league != undefined){
         this.setState({
             name: nextProps.league.name,
             short_description: nextProps.league.short_description,
@@ -44,6 +45,7 @@ class CreateLeagueForm extends Component
             logo: nextProps.league.logo,
             imagePreviewUrl: nextProps.league.logo
         });
+        }
     }
 
     _handleSubmit(e)
@@ -54,6 +56,7 @@ class CreateLeagueForm extends Component
         data.append('short_description', this.state.short_description);
         data.append('full_description', this.state.full_description);
         data.append('logo', this.logo);
+        var form = this;
         if(this.is_update === false){
         sendFormData.post(this.url, data)
         .then(function (response) {
@@ -66,9 +69,17 @@ class CreateLeagueForm extends Component
                 <LeaguesList />,
                 document.getElementById('main')
             );
+            document.getElementById('id_league_logo').value = '';
+            form.setState({
+                name: '',
+                short_description: '',
+                full_description: '',
+                logo: '',
+                imagePreviewUrl: ''
+            });
         })
         .catch(function (error) {
-            showError(error.response.data);
+            showError(error);
         });
         } else {
             sendFormData.put(this.url, data)
@@ -82,9 +93,18 @@ class CreateLeagueForm extends Component
                     <LeaguesList />,
                     document.getElementById('main')
                 );
+                document.getElementById('id_league_logo').value = '';
+                form.setState({
+                    name: '',
+                    short_description: '',
+                    full_description: '',
+                    logo: '',
+                    imagePreviewUrl: ''
+                });
+
             })
             .catch(function (error) {
-                showError(error.response.data);
+                showError(error);
             });
         }
     }
@@ -160,7 +180,7 @@ class CreateLeagueForm extends Component
                     required="true" />
                 <label htmlFor="id_logo">Logo (not required)</label>
                     <input
-                        id="id_logo"
+                        id="id_league_logo"
                         name="logo"
                         type="file"
                         onChange={this.handleLogo} />
