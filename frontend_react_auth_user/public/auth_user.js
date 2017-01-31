@@ -32085,7 +32085,7 @@
 	        value: function update_team_list() {
 	            var _this2 = this;
 	
-	            _axios2.default.get('/fifa/api/teams/' + this.state.league + '/get_teams_from_league/').then(function (res) {
+	            _axios2.default.get('/fifa/api/leagues/' + this.state.league + '/get_teams/').then(function (res) {
 	                var team_list = res.data;
 	                _this2.setState({ team_list: team_list });
 	                _this2.setState({

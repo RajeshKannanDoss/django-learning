@@ -139,6 +139,18 @@ class LeagueViewSet(viewsets.ModelViewSet):
         serializer = LeagueSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @list_route(['GET'], url_path='(?P<pk>[0-9]+)/get_teams')
+    def get_teams(self, request, *args, **kwargs):
+        """
+        :param kwargs: contains league_shortcut
+        :return: list of team related to league
+        """
+        pk = self.kwargs['pk']
+        queryset = Team.objects.filter(leagues_stat__in=TeamStat.objects
+                                       .filter(league__pk=pk))
+        serializer = TeamSerializer(queryset, many=True)
+        return Response(serializer.data)
+
     @detail_route(['DELETE'])
     def delete(self, request, pk, *args, **kwargs):
         league = get_object_or_404(League, pk=pk)
@@ -225,18 +237,6 @@ class TeamViewSet(viewsets.ViewSet):
         :return: List of all teams
         """
         queryset = Team.objects.all()
-        serializer = TeamSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @detail_route(['GET'])
-    def get_teams_from_league(self, request, pk, *args, **kwargs):
-        """
-        :param kwargs: contains league_shortcut
-        :return: list of team related to league
-        """
-        #shortcut = self.kwargs['shortcut']
-        queryset = Team.objects.filter(leagues_stat__in=TeamStat.objects
-                                       .filter(league__pk=pk))
         serializer = TeamSerializer(queryset, many=True)
         return Response(serializer.data)
 

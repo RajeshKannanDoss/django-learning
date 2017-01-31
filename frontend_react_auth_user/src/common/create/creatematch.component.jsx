@@ -24,7 +24,7 @@ class CreateMatchForm extends Component
 
     update_team_list()
     {
-        axios.get('/fifa/api/teams/' + this.state.league + '/get_teams_from_league/')
+        axios.get('/fifa/api/leagues/' + this.state.league + '/get_teams/')
             .then(res => {
                 const team_list = res.data;
                 this.setState({ team_list });

@@ -190,7 +190,7 @@ class APITestCase(TestCase):
 
     def test_get_teams_from_league(self):
         league = self.teamstat1.league
-        response = self.client.get('/fifa/api/teams/{}/get_teams_from_league/'
+        response = self.client.get('/fifa/api/leagues/{}/get_teams/'
                                    .format(league.pk))
         test_serializers = []
 
