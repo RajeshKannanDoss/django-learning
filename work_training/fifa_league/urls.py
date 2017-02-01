@@ -6,7 +6,7 @@ from . import views
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter()
-router.register(r'user', views.UserViewSet, base_name='user')
+router.register(r'users', views.UserViewSet, base_name='user')
 router.register(r'teams', views.TeamViewSet, base_name='teams')
 router.register(r'leagues', views.LeagueViewSet, base_name='leagues')
 router.register(r'teamstats', views.TeamStatViewSet, base_name='teamstat')

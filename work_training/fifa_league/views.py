@@ -367,8 +367,9 @@ class UserViewSet(viewsets.ViewSet):
                     'message': 'Your avatar successfully upload!'}
         return JsonResponse(response)
 
+    # unused, for future purpose
     @list_route(['GET'])
-    def get_user_leagues(self, request):
+    def get_leagues(self, request):
         leagues = League.objects.filter(author=request.user)
         serializer = LeagueSerializer(leagues, many=True)
         return Response(serializer.data)
