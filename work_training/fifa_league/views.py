@@ -188,8 +188,7 @@ class LeagueViewSet(viewsets.ModelViewSet):
         if league.author != request.user:
             return HttpResponseForbidden('No no no')
 
-        instance = get_object_or_404(League, pk=pk)
-        form = LeagueCreateForm(request.POST, request.FILES, instance=instance)
+        form = LeagueCreateForm(request.POST, request.FILES, instance=league)
         if not form.is_valid():
             return Response(form.errors, status=422)
 
