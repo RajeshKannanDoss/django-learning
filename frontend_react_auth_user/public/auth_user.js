@@ -31232,6 +31232,26 @@
 	                    'Please select avatar for preview'
 	                );
 	            }
+	
+	            var button = void 0;
+	            if (this.is_update) {
+	                button = _react2.default.createElement(
+	                    'button',
+	                    { type: 'submit', className: 'addmenu_btn', onSubmit: function onSubmit(e) {
+	                            return _this3._handleSubmit(e);
+	                        } },
+	                    'Change league'
+	                );
+	            } else {
+	                button = _react2.default.createElement(
+	                    'button',
+	                    { type: 'submit', className: 'addmenu_btn', onSubmit: function onSubmit(e) {
+	                            return _this3._handleSubmit(e);
+	                        } },
+	                    'Create league'
+	                );
+	            }
+	
 	            return _react2.default.createElement(
 	                'form',
 	                { className: 'menu_form', id: 'user-login-form', method: 'post', onSubmit: function onSubmit(e) {
@@ -31291,13 +31311,7 @@
 	                        { className: 'image_preview_div' },
 	                        $imagePreview
 	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'addmenu_btn', onSubmit: function onSubmit(e) {
-	                                return _this3._handleSubmit(e);
-	                            } },
-	                        'Create league'
-	                    )
+	                    button
 	                )
 	            );
 	        }

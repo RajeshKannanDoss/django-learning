@@ -150,6 +150,17 @@ class CreateLeagueForm extends Component
         } else {
             $imagePreview = (<div className='previewText'>Please select avatar for preview</div>);
         }
+
+        let button;
+        if(this.is_update)
+        {
+            button = (<button type="submit" className="addmenu_btn" onSubmit={(e)=>this._handleSubmit(e)}>Change league</button>)
+        }
+        else
+        {
+            button = (<button type="submit" className="addmenu_btn" onSubmit={(e)=>this._handleSubmit(e)}>Create league</button>)
+        }
+
         return (
             <form className='menu_form' id="user-login-form" method="post" onSubmit={(e)=>this._handleSubmit(e)}>
             <fieldset>
@@ -188,7 +199,7 @@ class CreateLeagueForm extends Component
                 <div className='image_preview_div'>
                     {$imagePreview}
                 </div>
-                <button type="submit" className="addmenu_btn" onSubmit={(e)=>this._handleSubmit(e)}>Create league</button>
+                { button }
             </fieldset>
             </form>
         );
