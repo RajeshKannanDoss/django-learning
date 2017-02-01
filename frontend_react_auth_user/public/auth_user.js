@@ -30754,7 +30754,7 @@
 	        value: function componentDidMount() {
 	            var _this2 = this;
 	
-	            _axios2.default.get('/fifa/api/teams/' + this.statpk + '/get_team_from_teamstat/').then(function (res) {
+	            _axios2.default.get('/fifa/api/teamstats/' + this.statpk + '/get_team/').then(function (res) {
 	                _this2.team = res.data;
 	                _reactDom2.default.render(_react2.default.createElement(_teamdescriptionComponent2.default, { team: _this2.team }), document.getElementById('team-description'));
 	                _reactDom2.default.render(_react2.default.createElement(_playersComponent2.default, { teampk: _this2.team.pk }), document.getElementById('players'));
@@ -30990,7 +30990,7 @@
 	        value: function componentDidMount() {
 	            var _this2 = this;
 	
-	            _axios2.default.get('/fifa/api/teamstat/' + this.statpk + '/get_matches/').then(function (res) {
+	            _axios2.default.get('/fifa/api/teamstats/' + this.statpk + '/get_matches/').then(function (res) {
 	                var matches = res.data;
 	                _this2.setState({ matches: matches });
 	            });
@@ -31921,7 +31921,7 @@
 	
 	        var _this = _possibleConstructorReturn(this, (CreateTeamStatForm.__proto__ || Object.getPrototypeOf(CreateTeamStatForm)).call(this, props));
 	
-	        _this.url = '/fifa/api/teamstat/';
+	        _this.url = '/fifa/api/teamstats/';
 	        _this.state = { team: '', league: '',
 	            team_list: [], league_list: [] };
 	        _this.handleTeam = _this.handleTeam.bind(_this);

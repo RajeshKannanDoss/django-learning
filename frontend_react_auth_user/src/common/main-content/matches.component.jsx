@@ -13,7 +13,7 @@ class Matches extends Component
     }
 
     componentDidMount() {
-        axios.get('/fifa/api/teamstat/' + this.statpk + '/get_matches/')
+        axios.get('/fifa/api/teamstats/' + this.statpk + '/get_matches/')
             .then(res => {
                 const matches = res.data;
                 this.setState({ matches });

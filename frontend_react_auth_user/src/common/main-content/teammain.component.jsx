@@ -14,7 +14,7 @@ class TeamMain extends Component
     }
 
     componentDidMount() {
-        axios.get('/fifa/api/teams/' + this.statpk + '/get_team_from_teamstat/')
+        axios.get('/fifa/api/teamstats/' + this.statpk + '/get_team/')
             .then(res => {
                 this.team = res.data;
                 ReactDOM.render(

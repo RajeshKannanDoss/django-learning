@@ -10,7 +10,7 @@ class CreateTeamStatForm extends Component
     constructor(props)
     {
         super(props);
-        this.url = '/fifa/api/teamstat/';
+        this.url = '/fifa/api/teamstats/';
         this.state = {team:'', league:'',
             team_list: [], league_list: []};
         this.handleTeam = this.handleTeam.bind(this);

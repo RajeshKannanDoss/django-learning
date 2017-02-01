@@ -9,7 +9,7 @@ router = SimpleRouter()
 router.register(r'user', views.UserViewSet, base_name='user')
 router.register(r'teams', views.TeamViewSet, base_name='teams')
 router.register(r'leagues', views.LeagueViewSet, base_name='leagues')
-router.register(r'teamstat', views.TeamStatViewSet, base_name='teamstat')
+router.register(r'teamstats', views.TeamStatViewSet, base_name='teamstat')
 router.register(r'match', views.MatchViewSet, base_name='match')
 router.register(r'players', views.PlayerViewSet, base_name='players')
 

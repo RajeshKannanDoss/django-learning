@@ -245,12 +245,6 @@ class TeamViewSet(viewsets.ViewSet):
         serializer = PlayerSerializer(players, many=True)
         return Response(serializer.data)
 
-    @detail_route(['GET'])
-    def get_team_from_teamstat(self, request, pk, *args, **kwargs):
-        team = get_object_or_404(Team, leagues_stat__pk=pk)
-        serializer = TeamSerializer(team)
-        return Response(serializer.data)
-
     def create(self, request):
         if not request.user.has_perm('fifa_league.add_team'):
             return HttpResponseForbidden()
@@ -398,6 +392,12 @@ class TeamStatViewSet(viewsets.ViewSet):
         matches = Match.objects.filter(Q(team_home=pk)
                                        | Q(team_guest=pk))
         serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+    @detail_route(['GET'])
+    def get_team(self, request, pk, *args, **kwargs):
+        team = get_object_or_404(Team, leagues_stat__pk=pk)
+        serializer = TeamSerializer(team)
         return Response(serializer.data)
 
     def create(self, request):
