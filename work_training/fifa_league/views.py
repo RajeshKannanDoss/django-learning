@@ -161,8 +161,8 @@ class LeagueViewSet(viewsets.ModelViewSet):
         league.delete()
         return Response(status=204)
 
-    @detail_route(['GET'])
-    def get_info(self, request, pk, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
+        # only auth user can get info about particular league
         if not request.user.is_authenticated:
             return HttpResponse(status=401)
 

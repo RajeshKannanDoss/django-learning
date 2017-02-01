@@ -30320,7 +30320,7 @@
 	        key: 'handleEdit',
 	        value: function handleEdit(e) {
 	            var league_pk = e.target.getAttribute('data-pk');
-	            _axios2.default.get('/fifa/api/leagues/' + league_pk + "/get_info/").then(function (res) {
+	            _axios2.default.get('/fifa/api/leagues/' + league_pk + "/").then(function (res) {
 	                var league = res.data;
 	                _reactDom2.default.render(_react2.default.createElement(_createleagueComponent2.default, { league: league }), document.getElementById('edit-container'));
 	                document.getElementById('fullscreen-edit-div').classList.remove('animation_to');

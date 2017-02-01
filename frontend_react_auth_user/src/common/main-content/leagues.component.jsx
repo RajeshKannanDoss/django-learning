@@ -46,7 +46,7 @@ class LeaguesList extends Component
     handleEdit(e)
     {
         var league_pk = e.target.getAttribute('data-pk');
-        axios.get('/fifa/api/leagues/' + league_pk + "/get_info/")
+        axios.get('/fifa/api/leagues/' + league_pk + "/")
             .then(res => {
                 var league = res.data;
                 ReactDOM.render(
