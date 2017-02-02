@@ -549,7 +549,7 @@ class TestCreateTeamStatTestCase(TestCase):
                           password=self.user_password)
 
     def test_create_with_valid_data(self):
-        response = self.client.post('/fifa/api/teamstat/',
+        response = self.client.post('/fifa/api/teamstats/',
                                     {'team': self.team.pk,
                                      'league': self.league.pk},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -559,7 +559,7 @@ class TestCreateTeamStatTestCase(TestCase):
                                                        self.league.name))
 
     def test_create_with_empty_fields(self):
-        response = self.client.post('/fifa/api/teamstat/',
+        response = self.client.post('/fifa/api/teamstats/',
                                     {'team': '',
                                      'league': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -569,7 +569,7 @@ class TestCreateTeamStatTestCase(TestCase):
 
     def test_unauthenticated_user(self):
         client = Client()
-        response = client.post('/fifa/api/teamstat/',
+        response = client.post('/fifa/api/teamstats/',
                                {'team': self.team.pk,
                                 'league': self.league.pk},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -579,7 +579,7 @@ class TestCreateTeamStatTestCase(TestCase):
         client = Client()
         User.objects.create_user(username='testuser', password='12345678')
         client.login(username='testuser', password='12345678')
-        response = client.post('/fifa/api/teamstat/',
+        response = client.post('/fifa/api/teamstats/',
                                {'team': self.team.pk,
                                 'league': self.league.pk},
                                HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -834,17 +834,17 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_password_with_get_method(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.get('/fifa/api/user/{}/change_password/')
+        response = self.client.get('/fifa/api/users/{}/change_password/')
         self.assertEqual(response.status_code, 405)
 
     def test_change_email_with_get_method(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.get('/fifa/api/user/{}/change_email/')
+        response = self.client.get('/fifa/api/users/{}/change_email/')
         self.assertEqual(response.status_code, 405)
 
     def test_change_password_with_valid_data(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': self.password,
                                      'new_password1': '1234',
@@ -856,7 +856,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_email_with_valid_data(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_email/'
+        response = self.client.post('/fifa/api/users/{}/change_email/'
                                     .format(self.user.pk),
                                     {'new_email': 'testuser1@mail.com'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -867,7 +867,7 @@ class TestUserViewSetAPITestCase(TestCase):
         self.assertEqual(self.user.email, 'testuser1@mail.com')
 
     def test_change_password_unauthenticated_user(self):
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': self.password,
                                      'new_password1': '1234',
@@ -876,7 +876,7 @@ class TestUserViewSetAPITestCase(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_change_email_unauthenticated_user(self):
-        response = self.client.post('/fifa/api/user/{}/change_email/'
+        response = self.client.post('/fifa/api/users/{}/change_email/'
                                     .format(self.user.pk),
                                     {'old_password': self.password,
                                      'new_password1': '1234',
@@ -886,7 +886,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_password_invalid_pk(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/2/change_password/',
+        response = self.client.post('/fifa/api/users/2/change_password/',
                                     {'old_password': self.password,
                                      'new_password1': '1234',
                                      'new_password2': '1234'},
@@ -895,14 +895,14 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_email_invalid_pk(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/2/change_email/',
+        response = self.client.post('/fifa/api/users/2/change_email/',
                                     {'new_email': 'testuser1@mail.com'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 403)
 
     def test_change_password_with_empty_data(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': '',
                                      'new_password1': '',
@@ -914,7 +914,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_email_with_empty_data(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_email/'
+        response = self.client.post('/fifa/api/users/{}/change_email/'
                                     .format(self.user.pk),
                                     {'new_email': ''},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -924,7 +924,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_password_with_bad_old_password(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': '5678',
                                      'new_password1': '1234',
@@ -936,7 +936,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_email_with_the_same_email(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_email/'
+        response = self.client.post('/fifa/api/users/{}/change_email/'
                                     .format(self.user.pk),
                                     {'new_email': 'test_user@mail.com'},
                                     HTTP_X_REQUESTED_WITH='XMLHttpRequest')
@@ -946,7 +946,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_password_with_the_same_password(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': '12345678',
                                      'new_password1': '12345678',
@@ -958,7 +958,7 @@ class TestUserViewSetAPITestCase(TestCase):
 
     def test_change_password_with_invalid_double_check_passwords(self):
         self.client.login(username='testuser', password=self.password)
-        response = self.client.post('/fifa/api/user/{}/change_password/'
+        response = self.client.post('/fifa/api/users/{}/change_password/'
                                     .format(self.user.pk),
                                     {'old_password': self.password,
                                      'new_password1': '1234',
