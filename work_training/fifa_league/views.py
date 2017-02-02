@@ -382,13 +382,6 @@ class TeamStatViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     @detail_route(['GET'])
-    def get_info(self, request, pk, *args, **kwargs):
-        teamstat = get_object_or_404(TeamStat, pk=pk)
-
-        serializer = TeamStatSerializer(teamstat)
-        return Response(serializer.data)
-
-    @detail_route(['GET'])
     def get_matches(self, request, pk, *args, **kwargs):
         matches = Match.objects.filter(Q(team_home=pk)
                                        | Q(team_guest=pk))
