@@ -182,7 +182,7 @@ color:grey;
     position: fixed;
     z-index: 3;
     top: 50%;
-    left: 0;
+    right: 0;
 
     display: none;
 
@@ -191,7 +191,7 @@ color:grey;
 
     color: blue;
     border: 0.15em solid blue;
-    border-left: none;
+    border-right: none;
     background-color: white;
 }
 

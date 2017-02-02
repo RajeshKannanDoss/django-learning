@@ -484,32 +484,6 @@ color:grey;
     margin: 1.2em auto;
 }
 
-#alert-success, #alert-error
-{
-    position: fixed;
-    z-index: 3;
-    top: 50%;
-    left: 0;
-
-    display: none;
-
-    width: 25%;
-    height: 15%;
-
-    color: blue;
-    border: 0.15em solid blue;
-    border-left: none;
-    background-color: white;
-}
-
-#alert-error img, #alert-success img
-{
-    width: 25%;
-    height: 80%;
-    margin-top: 2%;
-    float: right;
-}
-
 input
 {
     color: black;
