@@ -84,8 +84,8 @@ class CreateLeagueForm extends Component
         } else {
             sendFormData.put(this.url, data)
             .then(function (response) {
-                showSuccess(response.data);
-
+                showSuccess('Successfuly update!');
+                
                 // need this to re-render LeaguesList component
                 document.getElementById('main').innerHTML = '';
 
@@ -94,13 +94,6 @@ class CreateLeagueForm extends Component
                     document.getElementById('main')
                 );
                 document.getElementById('id_league_logo').value = '';
-                form.setState({
-                    name: '',
-                    short_description: '',
-                    full_description: '',
-                    logo: '',
-                    imagePreviewUrl: ''
-                });
 
             })
             .catch(function (error) {

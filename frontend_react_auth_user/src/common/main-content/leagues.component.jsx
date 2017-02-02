@@ -49,6 +49,7 @@ class LeaguesList extends Component
         axios.get('/fifa/api/leagues/' + league_pk + "/")
             .then(res => {
                 var league = res.data;
+                document.getElementById('edit-container').innerHTML = '';
                 ReactDOM.render(
                     <CreateLeagueForm league={league} />,
                     document.getElementById('edit-container')

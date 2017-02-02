@@ -30322,6 +30322,7 @@
 	            var league_pk = e.target.getAttribute('data-pk');
 	            _axios2.default.get('/fifa/api/leagues/' + league_pk + "/").then(function (res) {
 	                var league = res.data;
+	                document.getElementById('edit-container').innerHTML = '';
 	                _reactDom2.default.render(_react2.default.createElement(_createleagueComponent2.default, { league: league }), document.getElementById('edit-container'));
 	                document.getElementById('fullscreen-edit-div').classList.remove('animation_to');
 	                document.getElementById('fullscreen-edit-div').classList.add('animation_from');
@@ -31162,20 +31163,13 @@
 	                });
 	            } else {
 	                _ajax.sendFormData.put(this.url, data).then(function (response) {
-	                    (0, _notification.showSuccess)(response.data);
+	                    (0, _notification.showSuccess)('Successfuly update!');
 	
 	                    // need this to re-render LeaguesList component
 	                    document.getElementById('main').innerHTML = '';
 	
 	                    _reactDom2.default.render(_react2.default.createElement(_leaguesComponent2.default, null), document.getElementById('main'));
 	                    document.getElementById('id_league_logo').value = '';
-	                    form.setState({
-	                        name: '',
-	                        short_description: '',
-	                        full_description: '',
-	                        logo: '',
-	                        imagePreviewUrl: ''
-	                    });
 	                }).catch(function (error) {
 	                    (0, _notification.showError)(error);
 	                });
