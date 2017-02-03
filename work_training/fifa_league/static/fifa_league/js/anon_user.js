@@ -7115,7 +7115,7 @@
 	                            _react2.default.createElement(
 	                                'td',
 	                                null,
-	                                _react2.default.createElement('img', { className: 'team_logo', alt: teamstat.team.shortcut, src: teamstat.team.logo }),
+	                                _react2.default.createElement('img', { className: 'team_logo', alt: teamstat.team.name, src: teamstat.team.logo }),
 	                                _react2.default.createElement(
 	                                    'h3',
 	                                    { 'data-leaguepk': teamstat.league, 'data-statpk': teamstat.pk, onClick: function onClick(e) {
