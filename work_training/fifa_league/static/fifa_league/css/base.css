@@ -220,11 +220,10 @@ html
 
 #forms-container, #edit-container
 {
-    margin: 2.5vh auto;
-    width: 70vw;
-    height: 95vh;
+    margin: 30vh auto;
+    width: 50vw;
+    height: 10vh;
     background-color: white;
-    border: 0.2em solid skyblue;
 }
 
 .menus_choose_buttons_div
@@ -277,6 +276,7 @@ html
     width: 100%;
     margin-bottom: 1em;
     padding: 0.5em;
+    font-size: 1.1em;
 }
 
 .menu_form label
