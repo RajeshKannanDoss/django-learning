@@ -31434,7 +31434,7 @@
 	                        { className: 'logout_div' },
 	                        _react2.default.createElement(
 	                            'a',
-	                            { className: 'button-primary', href: '/fifa/logout_user/' },
+	                            { className: 'logout_button', href: '/fifa/logout_user/' },
 	                            'Log out'
 	                        )
 	                    )

@@ -41,7 +41,7 @@ class Main extends Component
                     </nav>
                 </div>
                 <div className='logout_div'>
-                    <a className='button-primary' href='/fifa/logout_user/'>Log out</a>
+                    <a className='logout_button' href='/fifa/logout_user/'>Log out</a>
                 </div>
             </div>
             <div className='main_content'>
