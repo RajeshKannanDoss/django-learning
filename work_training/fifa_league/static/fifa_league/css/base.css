@@ -96,7 +96,7 @@ html
 
     width: 20%;
     height: 100%;
-    padding-top: 3.5em;
+    padding-top: 5.5vh;
 
     text-align: center;
     text-decoration: none;
@@ -220,7 +220,7 @@ html
 
 #forms-container, #edit-container
 {
-    margin: 30vh auto;
+    margin: 20vh auto;
     width: 50vw;
     height: 10vh;
     background-color: white;
